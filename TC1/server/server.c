@@ -32,11 +32,11 @@ int main(int argc, char argv[])
     int fdimg;
     int on = 1;
 
-    // Inicializar file descriptor de servidor con protocolo TCP/IP
+    // Inicializar socket de servidor con protocolo TCP/IP
     fd_server = socket(AF_INET, SOCK_STREAM, 0);
     if(fd_server < 0)
     {
-        perror("socket error");
+        perror("Error al crear Socket");
         exit(1);
     }
 
@@ -51,29 +51,31 @@ int main(int argc, char argv[])
     // BIND, llamada al sistema permite enlazar el programa a un puerto proporcionado por el SO
     if(bind(fd_server, (struct sockaddr *) &server_addr, sizeof(server_addr)) == -1)
     {
-        perror("bind error");
+        perror("Error de enlace (Bind)");
         close(fd_server);
         exit(1);
     }
 
+    // Escuchar el puerto determinado para comunicacion
     if(listen(fd_server, SOMAXCONN) == -1)
     {
-        perror("listen error on port"+PORT);
+        perror("Error de comunicacion con puerto "+PORT);
         close(fd_server);
         exit(1);
     }
 
     while(1)
     {
+        // Aceptar comunicacion en socket
         fd_client = accept(fd_server, (struct sockaddr *) &client_addr, &sin_len);
 
         if(fd_client == -1)
         {
-            perror("Connection failed\n");
+            perror("Conexion fallida\n");
             continue;
         }
 
-        printf("Connection on port %i\n",PORT);
+        printf("Conexion en puerto %i\n",PORT);
 
         if(!fork())
         {
