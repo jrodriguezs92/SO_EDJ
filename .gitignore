@@ -1,0 +1,4 @@
+WebServer-TC1/bin/*
+*.o
+*.a
+*.so
