@@ -67,10 +67,10 @@ void iniciarServidor(char* puerto) {
 
 void responderSolicitud(int n) {
 	printf("** Inicio comunicacion con %i **\n",n);
-	char mesg[MSGLEN], *reqline[3], data_to_send[BYTES], path[MSGLEN];
-	int rcvd, fd, bytesLeidos, bytesAnteriores;
-	memset( (void*) mesg, (int)'\0', MSGLEN );
-	rcvd=recv(clientes[n], mesg, MSGLEN, 0);
+	char mensaje[MSGLEN], *reqline[3], data_to_send[BYTES], path[MSGLEN];
+	int rcvd, fd, bytesLeidos;
+	memset( (void*) mensaje, (int)'\0', MSGLEN );
+	rcvd=recv(clientes[n], mensaje, MSGLEN, 0);
 
 	if (rcvd<0) {    // se recibe error
 		fprintf(stderr,("recv() error\n"));
@@ -82,9 +82,9 @@ void responderSolicitud(int n) {
 
 	}
 
-	else {    // mensaje recibido
-		printf("Mensaje recibido: \n%s", mesg);
-		reqline[0] = strtok (mesg, " \t\n");
+	else if((strcmp(mensaje, "\n")) != 0){    // mensaje recibido
+		printf("Mensaje recibido: \n%s", mensaje);
+		reqline[0] = strtok (mensaje, " \t\n");
 
 		if ( strncmp(reqline[0], "GET\0", 4)==0 ){
 			reqline[1] = strtok (NULL, " \t");
