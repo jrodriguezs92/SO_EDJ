@@ -35,4 +35,4 @@
 > Si se desea eliminar todos los archivos de compilacion
 	make clean
 
-
+* Si se desea agregar mas contenido en el servidor, se debe copiar en la carpeta bin/res
