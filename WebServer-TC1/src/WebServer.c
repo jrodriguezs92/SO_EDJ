@@ -33,6 +33,7 @@ int main(int argc, char* argv[]){
 	strcpy(puerto,"10101");
 
 	int slot=0;
+	int	last_fd;
 
 	//Parseo de los argumentos
 	while ((bandera = getopt (argc, argv, "p:r:")) != -1)
@@ -52,6 +53,7 @@ int main(int argc, char* argv[]){
 		}
 	
 	printf("> Servidor iniciado\n\t Puerto: %s%s%s \n\t Directorio Root: %s%s%s\n","\033[92m",puerto,"\033[0m","\033[92m",dirRoot,"\033[0m");
+
 	// se ponen todos los clientes en -1, que significa que no esta conectado
 	int i;
 	for (i=0; i<CONEXMAX; i++) {
@@ -62,6 +64,7 @@ int main(int argc, char* argv[]){
 
 	// loop para aceptar conexiones nuevas
 	while (1) {
+		last_fd = sockfd;
 		addrLen = sizeof(clienteAddr);
 		clientes[slot] = accept (sockfd, (struct sockaddr *) &clienteAddr, &addrLen); // system call para crer la conexion de sockets
 
@@ -70,7 +73,7 @@ int main(int argc, char* argv[]){
 
 		}
 
-		else{
+		else {
 			responderSolicitud(slot); // atiende una solicitud a la vez
 			/*
 			// codigo para aceptar mas de una solicitud a la vez
@@ -83,11 +86,10 @@ int main(int argc, char* argv[]){
 		}
 
 		while (clientes[slot]!=-1) {
-			printf(">Slot 1: %i\n", slot);
 			slot = (slot+1)%CONEXMAX; 
-			printf(">Slot 2: %i\n", slot);
 
 		}
 	}
+	
 	return 0;
 }

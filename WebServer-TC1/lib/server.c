@@ -63,13 +63,21 @@ void iniciarServidor(char* puerto) {
 		exit(1);
 
 	}
+
+	//fcntl(sockfd, F_SETFL, O_NONBLOCK); /* Change the socket into non-blocking state	*/
+
 }
 
 void responderSolicitud(int n) {
-	printf("** Inicio comunicacion con %i **\n",n);
+	printf("\n** Inicio comunicacion con %i **\n",n);
 	char mensaje[MSGLEN], *reqline[3], data_to_send[BYTES], path[MSGLEN];
 	int rcvd, fd, bytesLeidos;
 	memset( (void*) mensaje, (int)'\0', MSGLEN );
+
+	// timeout de 5 segundos
+	struct timeval tv = {5, 0};
+	setsockopt(clientes[n], SOL_SOCKET, SO_RCVTIMEO, (struct timeval *)&tv, sizeof(struct timeval));
+
 	rcvd=recv(clientes[n], mensaje, MSGLEN, 0);
 
 	if (rcvd<0) {    // se recibe error
@@ -89,7 +97,7 @@ void responderSolicitud(int n) {
 		if ( strncmp(reqline[0], "GET\0", 4)==0 ){
 			reqline[1] = strtok (NULL, " \t");
 			reqline[2] = strtok (NULL, " \t\n");
-			if ( strncmp( reqline[2], "HTTP/1.1", 8)!=0 && strncmp( reqline[2], "HTTP/1.1", 8)!=0 )	{
+			if ( strncmp( reqline[2], "HTTP/1.1", 8)!=0 )	{
 				write(clientes[n], "HTTP/1.1 400 Bad Request\n", 25);
 
 			}
@@ -121,10 +129,9 @@ void responderSolicitud(int n) {
 	}
 
 	// cerrado del socket
-	shutdown (clientes[n], SHUT_RDWR); // apaga la conexion
 	close(clientes[n]);
 	clientes[n]=-1;
-	printf("** Fin comunicacion con %i **\n",n);
+	printf("\n** Fin comunicacion con %i **\n",n);
 }
 
 /*server.c*/
