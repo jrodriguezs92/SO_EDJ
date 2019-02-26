@@ -34,8 +34,8 @@
 #define MSGLEN 9999
 
 char* dirRoot;
-int sockfd, clientes[CONEXMAX]; // fd=file descriptor
-void starServer(char *);
+int sockfd, clients[CONEXMAX]; // fd=file descriptor
+void startServer(char *);
 void requestResponse(int);
 
 /*server.h*/

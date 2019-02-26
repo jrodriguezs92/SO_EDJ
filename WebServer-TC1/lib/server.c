@@ -78,9 +78,9 @@ void requestResponse(int n) {
 
 	// 5s timeout
 	struct timeval tv = {5, 0};
-	setsockopt(clientes[n], SOL_SOCKET, SO_RCVTIMEO, (struct timeval *)&tv, sizeof(struct timeval));
+	setsockopt(clients[n], SOL_SOCKET, SO_RCVTIMEO, (struct timeval *)&tv, sizeof(struct timeval));
 
-	rcvd=recv(clientes[n], message, MSGLEN, 0);
+	rcvd=recv(clients[n], message, MSGLEN, 0);
 
 	if (rcvd<0) {    // receive an error
 		fprintf(stderr,("recv() error\n"));
@@ -100,7 +100,7 @@ void requestResponse(int n) {
 			reqline[1] = strtok (NULL, " \t");
 			reqline[2] = strtok (NULL, " \t\n");
 			if ( strncmp( reqline[2], "HTTP/1.1", 8)!=0 )	{
-				write(clientes[n], "HTTP/1.1 400 Bad Request\n", 25);
+				write(clients[n], "HTTP/1.1 400 Bad Request\n", 25);
 
 			}
 
@@ -114,16 +114,16 @@ void requestResponse(int n) {
 				printf("Enviando: %s\n", path);
 
 				if ( (fd=open(path, O_RDONLY))!=-1 ) { // file found
-					send(clientes[n], "HTTP/1.1 200 OK\n\n", 17, 0);
+					send(clients[n], "HTTP/1.1 200 OK\n\n", 17, 0);
 
 					while ( (bytesLeidos=read(fd, data_to_send, BYTES))>0 ) {
-						write (clientes[n], data_to_send, bytesLeidos);
+						write (clients[n], data_to_send, bytesLeidos);
 
 					}
 
 				}
 				else { // file not found
-					write(clientes[n], "HTTP/1.1 404 Not Found\n", 23);
+					write(clients[n], "HTTP/1.1 404 Not Found\n", 23);
 
 				}
 			}
@@ -131,8 +131,8 @@ void requestResponse(int n) {
 	}
 
 	// closing socket
-	close(clientes[n]);
-	clientes[n]=-1;
+	close(clients[n]);
+	clients[n]=-1;
 	printf("\n** End communication with %i **\n",n);
 }
 
