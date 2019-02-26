@@ -20,7 +20,7 @@
 	make all / make libserver.a
 
 > Pasos para ejecutar:
-	./calculadora_X *-p *XXXX *-r */XX/XX
+	./WebServer *-p *XXXX *-r */XX/XX
 		> Donde :
 			-p : puerto
 			-r : directorio root
