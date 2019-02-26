@@ -2,18 +2,18 @@
 *******************************************************************
 
 				Instituto Tecnológico de Costa Rica
-					Ingeniería en Computadores
+					Computer Engineering
 
-		Programador: Esteban Agüero Pérez (estape11)
-		Lenguaje: C++
-		Versión: 1.0
-		Última Modificación: 24/02/2019
+		Programmer: Esteban Agüero Pérez (estape11)
+		Programming Language: C
+		Version: 1.0
+		Last Update: 26/02/2019
 
-		Entradas: Valor de puerto y/o directorio root
-		Restricciones: Puerto numerico / Directorio string
+		Inputs: Port and/ or root directory
+		Restrictions: Numeric Value / String
 
-					Principios de Sistemas Operativos
-						Prof. Diego Vargas
+					Operating Systems Principles
+					Professor. Diego Vargas
 
 *******************************************************************
 */
@@ -24,68 +24,69 @@ int main(int argc, char* argv[]){
 
 	struct sockaddr_in clienteAddr;
 	socklen_t addrLen;
-	char bandera;    
+	char flag;    
 	
-	// el directorio por defecto = ~/res y puerto puerto=10101
-	char puerto[6];
-	dirRoot = getenv("PWD"); // obtiene la variable del entorno del directorio actual
+	// default root = ~/res and port=10101
+	char port[6];
+	dirRoot = getenv("PWD"); // gets the current directory
 	strcat(dirRoot, "/res"); // $(PWD)/res
-	strcpy(puerto,"10101");
+	strcpy(port,"10101"); // port=10101
 
 	int slot=0;
-	int	last_fd;
 
-	//Parseo de los argumentos
-	while ((bandera = getopt (argc, argv, "p:r:")) != -1)
-		switch (bandera) {
+	// parse the arguments
+	while ((flag = getopt (argc, argv, "p:r:")) != -1)
+		switch (flag) {
 			case 'r':
 				dirRoot = malloc(strlen(optarg));
 				strcpy(dirRoot,optarg);
 				break;
 			case 'p':
-				strcpy(puerto,optarg);
+				strcpy(port,optarg);
 				break;
 			case '?':
-				fprintf(stderr,"Argumento invalido\n");
+				fprintf(stderr,"Wrong argument\n");
 				exit(1);
 			default:
 				exit(1);
 		}
 	
-	printf("> Servidor iniciado\n\t Puerto: %s%s%s \n\t Directorio Root: %s%s%s\n","\033[92m",puerto,"\033[0m","\033[92m",dirRoot,"\033[0m");
+	printf("> Server started\n\t Port: %s%s%s \n\t Root directory: %s%s%s\n","\033[92m",
+			port,"\033[0m","\033[92m",dirRoot,"\033[0m");
 
-	// se ponen todos los clientes en -1, que significa que no esta conectado
+	// set all the clients in -1, means theyre not connected
 	int i;
 	for (i=0; i<CONEXMAX; i++) {
-		clientes[i]=-1;
+		clients[i]=-1;
 
 	}
-	iniciarServidor(puerto);
 
-	// loop para aceptar conexiones nuevas
+	startServer(port);
+
+	// loop to accept new connections
 	while (1) {
-		last_fd = sockfd;
 		addrLen = sizeof(clienteAddr);
-		clientes[slot] = accept (sockfd, (struct sockaddr *) &clienteAddr, &addrLen); // system call para crer la conexion de sockets
+		// system call to create new socket connection
+		clients[slot] = accept (sockfd, (struct sockaddr *) &clienteAddr, &addrLen);
 
-		if (clientes[slot]<0){
+		if (clients[slot]<0){
 			perror("accept() error");
 
 		}
 
 		else {
-			responderSolicitud(slot); // atiende una solicitud a la vez
+			requestResponse(slot); // serve one request at the time
 			/*
-			// codigo para aceptar mas de una solicitud a la vez
+			// serve more then one request at the time
 			if ( fork()==0 ){
-				responderSolicitud(slot);
+				requestResponse(slot);
 				exit(0);
 
 			}
 			*/
 		}
 
-		while (clientes[slot]!=-1) {
+		while (clients[slot]!=-1) {
 			slot = (slot+1)%CONEXMAX; 
 
 		}

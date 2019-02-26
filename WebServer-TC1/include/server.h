@@ -4,15 +4,15 @@
 *******************************************************************
 
 				Instituto Tecnológico de Costa Rica
-					Ingeniería en Computadores
+					Computer Engineering
 
-		Programador: Esteban Agüero Pérez (estape11)
-		Lenguaje: C++
-		Versión: 1.0
-		Última Modificación: 24/02/2019
+		Programmer: Esteban Agüero Pérez (estape11)
+		Programming Language: C
+		Version: 1.0
+		Last Update: 26/02/2019
 
-					Principios de Sistemas Operativos
-						Prof. Diego Vargas
+					Operating Systems Principles
+					Professor. Diego Vargas
 
 *******************************************************************
 */
@@ -35,7 +35,7 @@
 
 char* dirRoot;
 int sockfd, clientes[CONEXMAX]; // fd=file descriptor
-void iniciarServidor(char *);
-void responderSolicitud(int);
+void starServer(char *);
+void requestResponse(int);
 
 /*server.h*/

@@ -4,25 +4,25 @@
 *******************************************************************
 
 				Instituto Tecnológico de Costa Rica
-					Ingeniería en Computadores
+					Computer Engineering
 
-		Programador: Esteban Agüero Pérez (estape11)
-		Lenguaje: C++
-		Versión: 1.0
-		Última Modificación: 24/02/2019
+		Programmer: Esteban Agüero Pérez (estape11)
+		Programming Language: C
+		Version: 1.0
+		Last Update: 26/02/2019
 
-					Principios de Sistemas Operativos
-						Prof. Diego Vargas
+					Operating Systems Principles
+					Professor. Diego Vargas
 
 *******************************************************************
 */
 
 #include <server.h>
 
-void iniciarServidor(char* puerto) {
+void startServer(char* puerto) {
 	struct addrinfo hints, *res, *p;
 
-	// getaddrinfo para el host
+	// getaddrinfo for the host
 	memset (&hints, 0, sizeof(hints));
 	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_STREAM;
@@ -34,65 +34,67 @@ void iniciarServidor(char* puerto) {
 
 	}
 
-	// socket y bind
+	// socket and bind
 	for (p = res; p!=NULL; p=p->ai_next){
-		sockfd = socket (p->ai_family, p->ai_socktype, 0); // se crea el punto de conexion para conexion
+		// creates the connection point
+		sockfd = socket (p->ai_family, p->ai_socktype, 0); 
 
 		if (sockfd == -1) {
 			continue;
 
 		}
 
-		if (bind(sockfd, p->ai_addr, p->ai_addrlen) == 0) { // se asigna la direccion al socket
+		// sets the socket addres
+		if (bind(sockfd, p->ai_addr, p->ai_addrlen) == 0) { 
 			break;
 
 		}
 
 	}
-	if (p==NULL) { // en caso que no se pueda crear la conexion
+	if (p==NULL) { // case connection can be done
 		perror ("socket() or bind()");
 		exit(1);
 
 	}
 
-	freeaddrinfo(res); // se libera la la memoria dinamica de res, para evitar leaks de memoria
+	freeaddrinfo(res); // release mem to avoit memory leaks
 
-	// se escucha a las conexiones entrantes
+	// listening new connections
 	if ( listen (sockfd, 1000000) != 0 ) {
 		perror("listen() error");
 		exit(1);
 
 	}
 
-	//fcntl(sockfd, F_SETFL, O_NONBLOCK); /* Change the socket into non-blocking state	*/
+	//fcntl(sockfd, F_SETFL, O_NONBLOCK); // change the socket into non-blocking state
 
 }
 
-void responderSolicitud(int n) {
-	printf("\n** Inicio comunicacion con %i **\n",n);
-	char mensaje[MSGLEN], *reqline[3], data_to_send[BYTES], path[MSGLEN];
+void requestResponse(int n) {
+	printf("\n** Start communication with %i **\n",n);
+	char message[MSGLEN], *reqline[3], data_to_send[BYTES], path[MSGLEN];
 	int rcvd, fd, bytesLeidos;
-	memset( (void*) mensaje, (int)'\0', MSGLEN );
+	memset( (void*) message, (int)'\0', MSGLEN );
 
-	// timeout de 5 segundos
+	// 5s timeout
 	struct timeval tv = {5, 0};
 	setsockopt(clientes[n], SOL_SOCKET, SO_RCVTIMEO, (struct timeval *)&tv, sizeof(struct timeval));
 
-	rcvd=recv(clientes[n], mensaje, MSGLEN, 0);
+	rcvd=recv(clientes[n], message, MSGLEN, 0);
 
-	if (rcvd<0) {    // se recibe error
+	if (rcvd<0) {    // receive an error
 		fprintf(stderr,("recv() error\n"));
 
 	}
 
-	else if (rcvd==0) {    // socket recibido cerrado
-		fprintf(stderr,"> Cliente desconectado.\n");
+	else if (rcvd==0) {    // socket closed
+		fprintf(stderr,"> Client disconnected.\n");
 
 	}
 
-	else if((strcmp(mensaje, "\n")) != 0){    // mensaje recibido
-		printf("Mensaje recibido: \n%s", mensaje);
-		reqline[0] = strtok (mensaje, " \t\n");
+	else if((strcmp(message, "\n")) != 0){    // message received
+		printf("Message received: \n%s", message);
+		reqline[0] = strtok (message, " \t\n");
 
 		if ( strncmp(reqline[0], "GET\0", 4)==0 ){
 			reqline[1] = strtok (NULL, " \t");
@@ -104,14 +106,14 @@ void responderSolicitud(int n) {
 
 			else {
 				if ( strncmp(reqline[1], "/\0", 2)==0 ) {
-					reqline[1] = "/index.html"; // pagina por defecto
+					reqline[1] = "/index.html"; // defaul file to show
 				}
 
 				strcpy(path, dirRoot);
 				strcpy(&path[strlen(dirRoot)], reqline[1]);
 				printf("Enviando: %s\n", path);
 
-				if ( (fd=open(path, O_RDONLY))!=-1 ) { // archivo encontrado
+				if ( (fd=open(path, O_RDONLY))!=-1 ) { // file found
 					send(clientes[n], "HTTP/1.1 200 OK\n\n", 17, 0);
 
 					while ( (bytesLeidos=read(fd, data_to_send, BYTES))>0 ) {
@@ -120,7 +122,7 @@ void responderSolicitud(int n) {
 					}
 
 				}
-				else { // archivo no encontrado
+				else { // file not found
 					write(clientes[n], "HTTP/1.1 404 Not Found\n", 23);
 
 				}
@@ -128,10 +130,10 @@ void responderSolicitud(int n) {
 		}
 	}
 
-	// cerrado del socket
+	// closing socket
 	close(clientes[n]);
 	clientes[n]=-1;
-	printf("\n** Fin comunicacion con %i **\n",n);
+	printf("\n** End communication with %i **\n",n);
 }
 
 /*server.c*/
