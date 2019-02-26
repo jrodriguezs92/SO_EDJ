@@ -36,3 +36,6 @@
 	make clean
 
 * Si se desea agregar mas contenido en el servidor, se debe copiar en la carpeta bin/res
+* Si se desea generar un archivo de prueba de X cantidad de bytes
+	dd if=/dev/zero of=1g.img bs=1 count=0 seek=X
+* Puede ser X=1G, o 1k
