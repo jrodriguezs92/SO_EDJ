@@ -31,14 +31,14 @@ int main(int argc, char* argv[]){
 		{NULL, 0, 0, 0}
 	};
 
-	int value, option_index = 0;
-	log_file_name = NULL;
-	start_daemonized = 0;
+	int value, optionIndex = 0;
+	logFileName = NULL;
+	startDaemonized = 0;
 	running = 0;
-	conf_file_name = NULL;
-	pid_file_name = NULL;
-	pid_fd = -1;
-	app_name = NULL;
+	confFileName = NULL;
+	pidFileName = NULL;
+	pidFd = -1;
+	appName = NULL;
 
 	// server
 	
@@ -53,71 +53,69 @@ int main(int argc, char* argv[]){
 
 	// server
 
-	app_name = argv[0];
+	appName = argv[0];
 
-	/* Try to process all command line arguments */
-	while ((value = getopt_long(argc, argv, "c:l:t:p:dh", long_options, &option_index)) != -1) {
+	// process all command line arguments
+	while ((value = getopt_long(argc, argv, "c:l:t:p:dh", long_options, &optionIndex)) != -1) {
 		switch (value) {
 			case 'c':
-				conf_file_name = strdup(optarg);
+				confFileName = strdup(optarg);
 				break;
 			case 'l':
-				log_file_name = strdup(optarg);
+				logFileName = strdup(optarg);
 				break;
 			case 'p':
-				pid_file_name = strdup(optarg);
+				pidFileName = strdup(optarg);
 				break;
 			case 't':
-				return test_conf_file(optarg);
+				return testConfFile(optarg);
 			case 'd':
-				start_daemonized = 1;
+				startDaemonized = 1;
 				break;
 			case 'h':
-				print_help();
+				printHelp();
 				return EXIT_SUCCESS;
 			case '?':
-				print_help();
+				printHelp();
 				return EXIT_FAILURE;
 			default:
 				break;
 		}
 	}
 
-	/* When daemonizing is requested at command line. */
-	if (start_daemonized == 1) {
-		/* It is also possible to use glibc function deamon()
-		 * at this point, but it is useful to customize your daemon. */
+	// when daemonizing is requested at command line
+	if (startDaemonized == 1) {
 		daemonize();
 	}
 
-	/* Open system log and write message to it */
+	// open system log and write message to it
 	openlog(argv[0], LOG_PID|LOG_CONS, LOG_DAEMON);
-	syslog(LOG_INFO, "Started %s", app_name);
+	syslog(LOG_INFO, "Started %s", appName);
 
-	/* Daemon will handle two signals */
-	signal(SIGINT, handle_signal);
-	signal(SIGHUP, handle_signal);
+	// Daemon will handle two signals
+	signal(SIGINT, handleSignal);
+	signal(SIGHUP, handleSignal);
 
-	/* Try to open log file to this daemon */
-	if (log_file_name != NULL) {
-		log_stream = fopen(log_file_name, "a+");
-		if (log_stream == NULL) {
+	// try to open log file to this daemon
+	if (logFileName != NULL) {
+		logStream = fopen(logFileName, "a+");
+		if (logStream == NULL) {
 			syslog(LOG_ERR, "Can not open log file: %s, error: %s",
-				log_file_name, strerror(errno));
-			log_stream = stdout;
+				logFileName, strerror(errno));
+			logStream = stdout;
 		}
 	} else {
-		log_stream = stdout;
+		logStream = stdout;
 	}
 
-	/* Read configuration from config file */
-	read_conf_file(0);
+	// reads configuration from config file
+	readConfFile(0);
 
 	// server
 
-	fprintf(log_stream,"> Server started\n\t Port: %s%s%s \n\t Root directory: %s%s%s\n","\033[92m",
+	fprintf(logStream,"> Server started\n\t Port: %s%s%s \n\t Root directory: %s%s%s\n","\033[92m",
 			port,"\033[0m","\033[92m",dirRoot,"\033[0m");
-	fflush(log_stream);
+	fflush(logStream);
 
 	int i;
 	for (i=0; i<CONEXMAX; i++) {
@@ -127,10 +125,9 @@ int main(int argc, char* argv[]){
 
 	startServer(port);
 
-	/* This global variable can be changed in function handling signal */
+	// this global variable can be changed in function handling signal
 	running = 1;
 
-	/* Never ending loop of server */
 	while (running == 1) {
 
 		addrLen = sizeof(clienteAddr);
@@ -138,8 +135,8 @@ int main(int argc, char* argv[]){
 		clients[slot] = accept (sockfd, (struct sockaddr *) &clienteAddr, &addrLen);
 
 		if (clients[slot]<0){
-			fprintf(log_stream,"accept() error\n");
-			fflush(log_stream);
+			fprintf(logStream,"accept() error\n");
+			fflush(logStream);
 
 		}
 
@@ -157,19 +154,23 @@ int main(int argc, char* argv[]){
 
 	// server
 	
-	/* Close log file, when it is used. */
-	if (log_stream != stdout) {
-		fclose(log_stream);
+	// close log file, when it is used.
+	if (logStream != stdout) {
+		fclose(logStream);
 	}
 
-	/* Write system log and close it. */
-	syslog(LOG_INFO, "Stopped %s", app_name);
+	// write system log and close it
+	syslog(LOG_INFO, "Stopped %s", appName);
 	closelog();
 
-	/* Free allocated memory */
-	if (conf_file_name != NULL) free(conf_file_name);
-	if (log_file_name != NULL) free(log_file_name);
-	if (pid_file_name != NULL) free(pid_file_name);
+	// free allocated memory
+	if (confFileName != NULL) free(confFileName);
+	if (logFileName != NULL) free(logFileName);
+	if (pidFileName != NULL) free(pidFileName);
+	if (dirRoot != NULL) free(dirRoot);
+	if (clients != NULL) free(clients);
+	if (appName != NULL) free(appName);
+	if (logStream != NULL) free(logStream);
 
 	return EXIT_SUCCESS;
 }

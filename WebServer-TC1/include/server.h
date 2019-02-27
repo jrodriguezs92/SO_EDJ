@@ -36,28 +36,31 @@
 #define BYTES 1024
 #define MSGLEN 9999
 
+// global variables
+
 int running;
 int delay;
-char *conf_file_name;
-char *pid_file_name;
-int pid_fd;
-char *app_name;
-FILE *log_stream;
-char *log_file_name;
-int start_daemonized;
-
-char* dirRoot;
+int pidFd;
+int startDaemonized;
+char* confFileName;
+char* pidFileName;
+char* appName;
+FILE* logStream;
+char* logFileName;
 int sockfd; // fd=file descriptor
-int* clients;
 struct sockaddr_in clienteAddr;
 socklen_t addrLen;
+char* dirRoot;
+int* clients;
+
+// function definitions
 
 void startServer(char *);
 void requestResponse(int);
-int read_conf_file(int);
-int test_conf_file(char *);
-void handle_signal(int);
+int readConfFile(int);
+int testConfFile(char *);
+void handleSignal(int);
 void daemonize();
-void print_help(void);
+void printHelp(void);
 
 /*server.h*/
