@@ -35,6 +35,12 @@
 > To remove compilation files
 	make clean
 
+> To install the daemon
+		./scripts/InstallDaemon
+
+> To uninstall the daemon
+		./scripts/UninstallDaemon
+		
 * To use more content, copy the files in bin/res
 * To generate file file.ext of X bytes
 	dd if=/dev/zero of=file.ext bs=1 count=0 seek=X

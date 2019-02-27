@@ -52,6 +52,7 @@ struct sockaddr_in clienteAddr;
 socklen_t addrLen;
 char* dirRoot;
 int* clients;
+char* port;
 
 // function definitions
 

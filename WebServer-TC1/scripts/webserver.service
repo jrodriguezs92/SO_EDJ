@@ -1,0 +1,13 @@
+[Unit]
+Description=WebServer EDJ
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/WebServer \
+	--conf_file /etc/webserver/webserver.conf \
+	--log_file /var/log/webserver.log
+User=root
+ExecReload=/bin/kill -HUP $MAINPID
+
+[Install]
+WantedBy=multi-user.target

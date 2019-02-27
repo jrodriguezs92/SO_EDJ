@@ -35,6 +35,7 @@ void startServer(char* puerto) {
 		exit(1);
 
 	}
+	
 	int on = 1;
 
 	// socket and bind

@@ -43,7 +43,7 @@ int main(int argc, char* argv[]){
 	// server
 	
 	// default root = ~/res and port=10101
-	char* port = (char*)malloc(6 * sizeof(char));
+	port = (char*)malloc(6 * sizeof(char));
 	//dirRoot = getenv("HOME"); // gets the current directory
 	//strcat(dirRoot, "/res"); // $(HOME)/res
 	dirRoot = "/home/estape11/res";
@@ -171,6 +171,7 @@ int main(int argc, char* argv[]){
 	if (clients != NULL) free(clients);
 	if (appName != NULL) free(appName);
 	if (logStream != NULL) free(logStream);
+	if (port != NULL) free(port);
 
 	return EXIT_SUCCESS;
 }
