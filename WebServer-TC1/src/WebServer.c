@@ -42,13 +42,13 @@ int main(int argc, char* argv[]){
 
 	// server
 	
-	// default root = ~/res and port=10101
 	port = (char*)malloc(10 * sizeof(char));
 	dirRoot = (char*)malloc(50 * sizeof(char));
-	//dirRoot = getenv("HOME"); // gets the current directory
-	//strcat(dirRoot, "/res"); // $(HOME)/res
-	strcpy(dirRoot, "/home/estape11/res");
+
+	// default values of root & port
+	strcpy(dirRoot, "/home/user/res");
 	strcpy(port,"10101"); // port=10101
+	
 	int slot=0;
 	clients = (int*)malloc(CONEXMAX * sizeof(int));
 
