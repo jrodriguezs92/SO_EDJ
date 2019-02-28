@@ -9,7 +9,7 @@
 		Programmer: Esteban Agüero Pérez (estape11)
 		Programming Language: C
 		Version: 1.0
-		Last Update: 26/02/2019
+		Last Update: 28/02/2019
 
 					Operating Systems Principles
 					Professor. Diego Vargas
@@ -181,7 +181,9 @@ int readConfFile(int reload){
 
 	}
 
-	ret = fscanf(conf_file, "%d", &delay);
+	char buf[100];
+	ret = fscanf(conf_file, "%s", buf);
+	strcpy(dirRoot, buf);
 
 	if (ret > 0) {
 		if (reload == 1) {
@@ -200,6 +202,7 @@ int readConfFile(int reload){
 	fclose(conf_file);
 
 	return ret;
+
 }
 
 /**
@@ -218,7 +221,10 @@ int testConfFile(char *_confFileName){
 
 	}
 
-	ret = fscanf(conf_file, "%d", &delay);
+	char buf[100];
+	ret = fscanf(conf_file, "%s", buf);
+	strcpy(dirRoot, buf);
+	printf("Root: %s\n", dirRoot );
 
 	if (ret <= 0) {
 		fprintf(stderr, "Wrong config file %s\n",

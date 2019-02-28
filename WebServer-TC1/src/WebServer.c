@@ -7,7 +7,7 @@
 		Programmer: Esteban Agüero Pérez (estape11)
 		Programming Language: C
 		Version: 1.0
-		Last Update: 26/02/2019
+		Last Update: 28/02/2019
 
 		Inputs: Port and/ or root directory
 		Restrictions: Numeric Value / String
@@ -43,10 +43,11 @@ int main(int argc, char* argv[]){
 	// server
 	
 	// default root = ~/res and port=10101
-	port = (char*)malloc(6 * sizeof(char));
+	port = (char*)malloc(10 * sizeof(char));
+	dirRoot = (char*)malloc(50 * sizeof(char));
 	//dirRoot = getenv("HOME"); // gets the current directory
 	//strcat(dirRoot, "/res"); // $(HOME)/res
-	dirRoot = "/home/estape11/res";
+	strcpy(dirRoot, "/home/estape11/res");
 	strcpy(port,"10101"); // port=10101
 	int slot=0;
 	clients = (int*)malloc(CONEXMAX * sizeof(int));
@@ -110,10 +111,11 @@ int main(int argc, char* argv[]){
 
 	// reads configuration from config file
 	readConfFile(0);
-
+	printf("%s\n",dirRoot);
 	// server
 
-	fprintf(logStream,"%s > Server started @ Port: %s | Root directory: %s \n", getTime(), port,dirRoot);
+	fprintf(logStream,"%s > Server started @ Port: %s | Root directory: %s \n",
+			getTime(), port, dirRoot);
 	fflush(logStream);
 
 	int i;
@@ -168,6 +170,7 @@ int main(int argc, char* argv[]){
 	if (pidFileName != NULL) free(pidFileName);
 	if (clients != NULL) free(clients);
 	if (port != NULL) free(port);
+	if (dirRoot != NULL) free(dirRoot);
 
 	return EXIT_SUCCESS;
 }
