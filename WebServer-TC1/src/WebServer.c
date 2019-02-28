@@ -167,10 +167,7 @@ int main(int argc, char* argv[]){
 	if (confFileName != NULL) free(confFileName);
 	if (logFileName != NULL) free(logFileName);
 	if (pidFileName != NULL) free(pidFileName);
-	if (dirRoot != NULL) free(dirRoot);
 	if (clients != NULL) free(clients);
-	if (appName != NULL) free(appName);
-	if (logStream != NULL) free(logStream);
 	if (port != NULL) free(port);
 
 	return EXIT_SUCCESS;

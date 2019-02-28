@@ -31,6 +31,7 @@
 #include <syslog.h>
 #include <getopt.h>
 #include <errno.h>
+#include <time.h>
 
 #define CONEXMAX 1000
 #define BYTES 1024
@@ -63,5 +64,5 @@ int testConfFile(char *);
 void handleSignal(int);
 void daemonize();
 void printHelp(void);
-
+char* getTime(void);
 /*server.h*/

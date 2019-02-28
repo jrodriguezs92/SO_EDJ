@@ -85,8 +85,9 @@ void startServer(char* puerto) {
 }
 
 void requestResponse(int n) {
-	fprintf(logStream,"\n** Start communication with %i **\n",n);
+	fprintf(logStream,"\n ** Start communication with %i **\n\n",n);
 	fflush(logStream);
+
 	char* reqline[3];
 	char* data_to_send = (char*)malloc(BYTES * sizeof(char));
 	char* message = (char*)malloc(MSGLEN * sizeof(char));
@@ -115,7 +116,6 @@ void requestResponse(int n) {
 
 	else if((strcmp(message, "\n")) != 0){    // message received
 		fprintf(logStream,"Message received: \n%s", message);
-		fflush(logStream);
 		reqline[0] = strtok (message, " \t\n");
 
 		if ( strncmp(reqline[0], "GET\0", 4)==0 ){
@@ -382,6 +382,11 @@ void printHelp(void){
 	printf("   -p --pid_file  filename   PID file used by daemonized app\n");
 	printf("\n");
 
+}
+
+char* getTime(void){
+	time_t current_time = time(NULL);
+    return ctime(&current_time);
 }
 
 /*server.c*/
