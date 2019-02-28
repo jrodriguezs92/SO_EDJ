@@ -30,7 +30,7 @@ void startServer(char* puerto) {
 
 	if (getaddrinfo( NULL, puerto, &hints, &res) != 0) {
 		//perror ("getaddrinfo() error");
-		fprintf(logStream,"getaddrinfo() error\n");
+		fprintf(logStream,"%s > getaddrinfo() error\n", getTime());
 		fflush(logStream);
 		exit(1);
 
@@ -56,14 +56,14 @@ void startServer(char* puerto) {
 
 		}
 		if (listen(sockfd, CONEXMAX) < 0) {
-		    fprintf(logStream,"listen() or bind()\n");
+		    fprintf(logStream,"%s > listen() or bind()\n", getTime());
 		    fflush(logStream);
 		}
 
 	}
 	if (p==NULL) { // case connection can be done
 		//perror ("socket() or bind()");
-		fprintf(logStream,"socket() or bind()\n");
+		fprintf(logStream,"%s > socket() or bind()\n", getTime());
 		fflush(logStream);
 		exit(1);
 
@@ -74,7 +74,7 @@ void startServer(char* puerto) {
 	// listening new connections
 	if ( listen (sockfd, 1000000) != 0 ) {
 		//perror("listen() error");
-		fprintf(logStream,"listen() error\n");
+		fprintf(logStream,"%s > listen() error\n", getTime());
 		fflush(logStream);
 		exit(1);
 
@@ -85,7 +85,7 @@ void startServer(char* puerto) {
 }
 
 void requestResponse(int n) {
-	fprintf(logStream,"\n ** Start communication with %i **\n\n",n);
+	fprintf(logStream,"%s > ** Start communication with %i **\n", getTime(), n);
 	fflush(logStream);
 
 	char* reqline[3];
@@ -103,19 +103,19 @@ void requestResponse(int n) {
 	rcvd=recv(clients[n], message, MSGLEN, 0);
 
 	if (rcvd<0) {    // receive an error
-		fprintf(logStream,("recv() error\n"));
+		fprintf(logStream,"%s > recv() error\n", getTime());
 		fflush(logStream);
 
 	}
 
 	else if (rcvd==0) {    // socket closed
-		fprintf(logStream,"> Client disconnected.\n");
+		fprintf(logStream,"%s > Client disconnected.\n", getTime());
 		fflush(logStream);
 
 	}
 
 	else if((strcmp(message, "\n")) != 0){    // message received
-		fprintf(logStream,"Message received: \n%s", message);
+		fprintf(logStream,"%s > Message received: \n\n%s", getTime(), message);
 		reqline[0] = strtok (message, " \t\n");
 
 		if ( strncmp(reqline[0], "GET\0", 4)==0 ){
@@ -133,7 +133,7 @@ void requestResponse(int n) {
 
 				strcpy(path, dirRoot);
 				strcpy(&path[strlen(dirRoot)], reqline[1]);
-				fprintf(logStream,"Sending: %s\n", path);
+				fprintf(logStream,"%s > Sending: %s\n", getTime(), path);
 				fflush(logStream);
 
 				if ( (fd=open(path, O_RDONLY))!=-1 ) { // file found
@@ -156,7 +156,7 @@ void requestResponse(int n) {
 	// closing socket
 	close(clients[n]);
 	clients[n]=-1;
-	fprintf(logStream,"\n** End communication with %i **\n",n);
+	fprintf(logStream,"%s > ** End communication with %i **\n", getTime(), n);
 	fflush(logStream);
 }
 
@@ -243,7 +243,7 @@ int testConfFile(char *_confFileName){
  */
 void handleSignal(int sig){
 	if (sig == SIGINT) {
-		fprintf(logStream, "Debug: stopping daemon ...\n");
+		fprintf(logStream, "%s > Debug: stopping daemon ...\n", getTime());
 		fflush(logStream);
 
 		// unlock and close lockfile
@@ -270,12 +270,12 @@ void handleSignal(int sig){
 		signal(SIGINT, SIG_DFL);
 
 	} else if (sig == SIGHUP) {
-		fprintf(logStream, "Debug: reloading daemon config file ...\n");
+		fprintf(logStream, "%s > Debug: reloading daemon config file ...\n", getTime());
 		fflush(logStream);
 		readConfFile(1);
 
 	} else if (sig == SIGCHLD) {
-		fprintf(logStream, "Debug: received SIGCHLD signal\n");
+		fprintf(logStream, "%s > Debug: received SIGCHLD signal\n", getTime());
 		fflush(logStream);
 
 	}
@@ -384,9 +384,15 @@ void printHelp(void){
 
 }
 
+/**
+ *  gets the current date time
+ */
 char* getTime(void){
-	time_t current_time = time(NULL);
-    return ctime(&current_time);
+	char* timeString;
+    time_t tm = time(NULL);
+    timeString = strtok(ctime(&tm), "\n"); // removes new line
+    return timeString;
+
 }
 
 /*server.c*/

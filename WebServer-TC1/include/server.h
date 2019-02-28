@@ -9,7 +9,7 @@
 		Programmer: Esteban Agüero Pérez (estape11)
 		Programming Language: C
 		Version: 1.0
-		Last Update: 26/02/2019
+		Last Update: 28/02/2019
 
 					Operating Systems Principles
 					Professor. Diego Vargas

@@ -113,8 +113,7 @@ int main(int argc, char* argv[]){
 
 	// server
 
-	fprintf(logStream,"> Server started\n\t Port: %s%s%s \n\t Root directory: %s%s%s\n","\033[92m",
-			port,"\033[0m","\033[92m",dirRoot,"\033[0m");
+	fprintf(logStream,"%s > Server started @ Port: %s | Root directory: %s \n", getTime(), port,dirRoot);
 	fflush(logStream);
 
 	int i;
@@ -135,7 +134,7 @@ int main(int argc, char* argv[]){
 		clients[slot] = accept (sockfd, (struct sockaddr *) &clienteAddr, &addrLen);
 
 		if (clients[slot]<0){
-			fprintf(logStream,"accept() error\n");
+			fprintf(logStream,"%s > accept() error\n", getTime());
 			fflush(logStream);
 
 		}
