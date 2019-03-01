@@ -32,7 +32,9 @@
 #include <getopt.h>
 #include <errno.h>
 #include <time.h>
+#include <ctype.h>
 
+#define MAXLEN 80
 #define CONEXMAX 1000
 #define BYTES 1024
 #define MSGLEN 9999
@@ -65,4 +67,7 @@ void handleSignal(int);
 void daemonize();
 void printHelp(void);
 char* getTime(void);
+struct parameters;
+char * trim (char * );
+void parseConfig (struct parameters * );
 /*server.h*/

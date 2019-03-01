@@ -160,6 +160,80 @@ void requestResponse(int n) {
 	fflush(logStream);
 }
 
+struct parameters{
+  char logFileTmp[MAXLEN];
+  char portTmp[MAXLEN];
+  char rootTmp[MAXLEN];
+}
+  parameters;
+
+/** 
+  *This function trims the value found in parseConfig
+ */
+char * trimValue (char * line){
+  //Initialize start, end pointers 
+  char *start = line, *end = &line[strlen (line) - 1];
+
+  //Trim right side 
+  while ( (isspace (*end)) && (end >= start) )
+    end--;
+  *(end+1) = '\0';
+
+  //Trim left side 
+  while ( (isspace (*start)) && (start < end) )
+    start++;
+
+  //Copy finished string 
+  strcpy (line, start);
+  return line;
+}
+
+/**
+* This function read line by line and parse the configuration file  
+*/
+void parseConfig (struct parameters * parms)
+{
+  char *line, buff[256];
+  //Opens file
+  FILE *conf_file = fopen(confFileName,"r");
+  //Reads line by line
+  while ((line = fgets (buff, sizeof buff, conf_file)) != NULL)
+  {
+    //Ignore comments with "#" and blankspaces
+    if (buff[0] == '\n' || buff[0] == '#')
+      continue;
+
+    //Get words after and before "="
+    char parameter[MAXLEN], value[MAXLEN];
+    line = strtok (buff, "=");
+    if (line==NULL)
+      continue;
+    else
+      strncpy (parameter, line, MAXLEN);
+    line = strtok (NULL, "=");
+    if (line==NULL)
+      continue;
+    else
+      strncpy (value, line, MAXLEN);
+    trimValue (value);
+
+    //Get the value of the parameters
+    if (strcmp(parameter, "LOGFILE")==0)
+      strncpy (parms->logFileTmp, value, MAXLEN);
+    else if (strcmp(parameter, "PORT")==0)
+      strncpy (parms->portTmp, value, MAXLEN);
+    else if (strcmp(parameter, "ROOT")==0)
+      strncpy (parms->rootTmp, value, MAXLEN);
+    //If config file contains more information 
+    else
+      printf ("WARNING: %s/%s: Unknown name/value pair!\n", parameter, value);
+  }
+
+  /* Close file */
+  fclose (conf_file);
+}
+
+
 /**
  * this function read configuration from config file
  */
@@ -180,10 +254,19 @@ int readConfFile(int reload){
 		return -1;
 
 	}
+	else{
+		//Parse configuration file
+		char buf[100];
+		struct parameters parms;
+		parseConfig (&parms);
+	    strcpy(parms.logFileTmp, logFileName);
+	    strcpy(parms.portTmp, port);
+	    strcpy(parms.rootTmp, dirRoot);
+	    printf("%s, %s, %s\n", logFileName, port, dirRoot);
+		ret = fscanf(conf_file, "%s", buf);
+		//strcpy(dirRoot, buf);
 
-	char buf[100];
-	ret = fscanf(conf_file, "%s", buf);
-	strcpy(dirRoot, buf);
+	}
 
 	if (ret > 0) {
 		if (reload == 1) {
