@@ -104,14 +104,17 @@ int main(int argc, char* argv[]){
 			syslog(LOG_ERR, "Can not open log file: %s, error: %s",
 				logFileName, strerror(errno));
 			logStream = stdout;
+			customLog=1;
+		} else{
+			customLog=1;
 		}
 	} else {
 		logStream = stdout;
+		customLog=0;
 	}
 
 	// reads configuration from config file
 	readConfFile(0);
-	printf("%s\n",dirRoot);
 	// server
 
 	fprintf(logStream,"%s > Server started @ Port: %s | Root directory: %s \n",

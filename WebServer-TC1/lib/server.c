@@ -395,10 +395,13 @@ void printHelp(void){
  */
 char* getTime(void){
 	char* timeString;
-    time_t tm = time(NULL);
-    timeString = strtok(ctime(&tm), "\n"); // removes new line
-    return timeString;
-
+	if(customLog==1){
+		time_t tm = time(NULL);
+    	timeString = strtok(ctime(&tm), "\n"); // removes new line
+	} else{
+		timeString="";
+	}
+	return timeString;
 }
 
 /*server.c*/

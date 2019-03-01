@@ -52,6 +52,7 @@ socklen_t addrLen;
 char* dirRoot;
 int* clients;
 char* port;
+int customLog;
 
 // function definitions
 
