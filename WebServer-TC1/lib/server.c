@@ -161,6 +161,27 @@ void requestResponse(int n) {
 	fflush(logStream);
 }
 
+/** 
+  *This function trims the value found in parseConfig
+ */
+char * trimValue (char * line){
+  //Initialize start, end pointers 
+  char *start = line, *end = &line[strlen (line) - 1];
+
+  //Trim right side 
+  while ( (isspace (*end)) && (end >= start) )
+    end--;
+  *(end+1) = '\0';
+
+  //Trim left side 
+  while ( (isspace (*start)) && (start < end) )
+    start++;
+
+  //Copy finished string 
+  strcpy (line, start);
+  return line;
+}
+
 /**
  * this function read configuration from config file
  */
@@ -182,22 +203,87 @@ int readConfFile(int reload){
 
 	}
 
-	char buf[100];
-	ret = fscanf(conf_file, "%s", buf);
-	strcpy(dirRoot, buf);
-
 	// SETEAR: dirRoot | port | logFileName 
 
-	if (ret > 0) {
-		if (reload == 1) {
-			syslog(LOG_INFO, "Reloaded configuration file %s of %s",
-				confFileName,
-				appName);
-
-		} else {
-			syslog(LOG_INFO, "Configuration of %s read from file %s",
-				appName,
-				confFileName);
+	char *line, buff[256];
+	ret = 0;
+	while ((line = fgets (buff, sizeof buff, conf_file)) != NULL){
+	    //Ignore comments with "#" and blankspaces
+	    if (buff[0] == '\n' || buff[0] == '#'){
+	      continue;
+	    }
+	    
+	    //Get words after and before "="
+	    char parameter[MAXLEN], value[MAXLEN];
+	    line = strtok (buff, "=");
+	    if (line==NULL)
+	      continue;
+	    else {
+	      strncpy (parameter, line, MAXLEN);
+	      line = strtok (NULL, "=");
+	    }
+	    if (line==NULL)
+	      continue;
+	    else
+	    {
+	      strncpy (value, line, MAXLEN);
+	      trimValue (value);
+	    }
+	    
+	    //Get the value of the parameters
+	    if (strcmp(parameter, "LOGFILE")==0){
+	      strncpy (logFileTmp, value, MAXLEN);
+	      ret += 1;
+	    }
+	    else if (strcmp(parameter, "PORT")==0){
+	      strncpy (portTmp, value, MAXLEN);
+	      ret += 1;
+	    }
+	    else if (strcmp(parameter, "ROOT")==0){
+	      strncpy (rootTmp, value, MAXLEN);
+	      ret += 1;
+	    }
+	    //If config file contains more information 
+	    else{
+	      printf ("WARNING: %s/%s: Unknown name/value pair!\n", parameter, value);
+	      ret += 1;
+	    }
+	}
+	
+	//Validate if the 3 parameters were found
+	if(strcmp(logFileTmp,"")==0 && strcmp(portTmp,"")==0 && strcmp(rootTmp,"")==0){
+		return EXIT_FAILURE;
+	}
+	else if(strcmp(logFileTmp,"")>0 && strcmp(portTmp,"")>0 && strcmp(rootTmp,"")>0){
+		strcpy(logFileName, logFileTmp);
+	    strcpy(port, portTmp);
+	    strcpy(dirRoot, rootTmp);
+	}
+	else{
+		if(strcmp(logFileTmp,"")>0){
+			if (strcmp(portTmp,"")==0 && strcmp(rootTmp,"")==0){
+				strcpy(logFileName, logFileTmp);
+			}
+			else if (strcmp(portTmp,"")>0 && strcmp(rootTmp,"")==0){
+				strcpy(logFileName, logFileTmp);
+	    		strcpy(port, portTmp);
+			}
+			else{
+				strcpy(logFileName, logFileTmp);
+				strcpy(dirRoot, rootTmp);
+			}
+		}
+		else if(strcmp(portTmp,"")>0){
+			if (strcmp(rootTmp,"")==0){
+				strcpy(port, portTmp);
+			}
+			else{
+				strcpy(port, portTmp);
+				strcpy(dirRoot, rootTmp);
+			}
+		}
+		else{
+			strcpy(dirRoot, rootTmp);
 
 		}
 	}
@@ -224,17 +310,93 @@ int testConfFile(char *_confFileName){
 
 	}
 
-	char buf[100];
-	ret = fscanf(conf_file, "%s", buf);
-	strcpy(dirRoot, buf);
-	printf("Root: %s\n", dirRoot );
+	char *line, buff[256];
+	ret = 0;
+	while ((line = fgets (buff, sizeof buff, conf_file)) != NULL){
+	    //Ignore comments with "#" and blankspaces
+	    if (buff[0] == '\n' || buff[0] == '#'){
+	      continue;
+	    }
+	    
+	    //Get words after and before "="
+	    char parameter[MAXLEN], value[MAXLEN];
+	    line = strtok (buff, "=");
+	    if (line==NULL)
+	      continue;
+	    else {
+	      strncpy (parameter, line, MAXLEN);
+	      line = strtok (NULL, "=");
+	    }
+	    if (line==NULL)
+	      continue;
+	    else
+	    {
+	      strncpy (value, line, MAXLEN);
+	      trimValue (value);
+	    }
+	    
+	    //Get the value of the parameters
+	    if (strcmp(parameter, "LOGFILE")==0){
+	      strncpy (logFileTmp, value, MAXLEN);
+	      ret += 1;
+	    }
+	    else if (strcmp(parameter, "PORT")==0){
+	      strncpy (portTmp, value, MAXLEN);
+	      ret += 1;
+	    }
+	    else if (strcmp(parameter, "ROOT")==0){
+	      strncpy (rootTmp, value, MAXLEN);
+	      ret += 1;
+	    }
+	    //If config file contains more information 
+	    else{
+	      printf ("WARNING: %s/%s: Unknown name/value pair!\n", parameter, value);
+	      ret += 1;
+	    }
+	}
 	
-	// SETEAR: dirRoot | port | logFileName 
-
-	if (ret <= 0) {
-		fprintf(stderr, "Wrong config file %s\n",
-			_confFileName);
-
+	//Validate if the 3 parameters were found
+	if(strcmp(logFileTmp,"")==0 && strcmp(portTmp,"")==0 && strcmp(rootTmp,"")==0){
+		return EXIT_FAILURE;
+	}
+	else if(strcmp(logFileTmp,"")>0 && strcmp(portTmp,"")>0 && strcmp(rootTmp,"")>0){
+		strcpy(logFileName, logFileTmp);
+	    strcpy(port, portTmp);
+	    strcpy(dirRoot, rootTmp);
+	    printf("Encontre LOGFILE:%s, PORT:%s y ROOT:%s\n",logFileTmp,port,dirRoot);
+	}
+	else{
+		if(strcmp(logFileTmp,"")>0){
+			if (strcmp(portTmp,"")==0 && strcmp(rootTmp,"")==0){
+				strcpy(logFileName, logFileTmp);
+				printf("Encontre solo LOGFILE:%s\n",logFileTmp);
+			}
+			else if (strcmp(portTmp,"")>0 && strcmp(rootTmp,"")==0){
+				strcpy(logFileName, logFileTmp);
+	    		strcpy(port, portTmp);
+				printf("Encontre solo LOGFILE:%s, PORT:%s\n",logFileTmp,port);
+			}
+			else{
+				strcpy(logFileName, logFileTmp);
+				strcpy(dirRoot, rootTmp);
+				printf("Encontre solo LOGFILE:%s y ROOT:%s\n",logFileTmp,dirRoot);
+			}
+		}
+		else if(strcmp(portTmp,"")>0){
+			if (strcmp(rootTmp,"")==0){
+				strcpy(port, portTmp);
+				printf("Encontre solo PORT:%s\n",port);
+			}
+			else{
+				strcpy(port, portTmp);
+				strcpy(dirRoot, rootTmp);
+				printf("Encontre solo PORT:%s y ROOT:%s\n",port,dirRoot);
+			}
+		}
+		else{
+			strcpy(dirRoot, rootTmp);
+			printf("Encontre solo ROOT:%s\n",dirRoot);
+		}
 	}
 
 	fclose(conf_file);

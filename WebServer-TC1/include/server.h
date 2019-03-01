@@ -30,7 +30,9 @@
 #include <getopt.h>
 #include <errno.h>
 #include <time.h>
+#include <ctype.h>
 
+#define MAXLEN 80
 #define CONEXMAX 1000
 #define BYTES 1024
 #define MSGLEN 9999
@@ -53,6 +55,9 @@ char* dirRoot;
 int* clients;
 char* port;
 int customLog;
+char logFileTmp[MAXLEN];
+char portTmp[MAXLEN];
+char rootTmp[MAXLEN];
 
 // function definitions
 
@@ -64,4 +69,6 @@ void handleSignal(int);
 void daemonize();
 void printHelp(void);
 char* getTime(void);
+char * trim (char * );
+//void parseConfig ();
 /*server.h*/
