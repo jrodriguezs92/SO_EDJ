@@ -1,5 +1,18 @@
 #! /bin/bash
 
+#************************************************************
+#	Instituto Tecnológico de Costa Rica
+#	Computer Engineering
+#
+#	Programmer: Esteban Agüero Pérez (estape11)
+#
+#	Last update: 26/02/2019
+#
+#	Operating Systems Principles
+#	Professor. Diego Vargas
+#
+#************************************************************
+
 echo "> Uninstalling WebServer Daemon"
 sudo systemctl stop webserver.service
 sudo rm -f /usr/bin/WebServer
