@@ -32,7 +32,7 @@ int main(int argc, char* argv[]){
 	};
 
 	int value, optionIndex = 0;
-	logFileName = NULL;
+	logFileName = (char *)malloc(50*sizeof(char));
 	startDaemonized = 0;
 	running = 0;
 	confFileName = NULL;

@@ -56,6 +56,9 @@ socklen_t addrLen;
 char* dirRoot;
 int* clients;
 char* port;
+char logFileTmp[MAXLEN];
+char portTmp[MAXLEN];
+char rootTmp[MAXLEN];
 
 // function definitions
 
@@ -67,7 +70,6 @@ void handleSignal(int);
 void daemonize();
 void printHelp(void);
 char* getTime(void);
-struct parameters;
 char * trim (char * );
-void parseConfig (struct parameters * );
+//void parseConfig ();
 /*server.h*/
