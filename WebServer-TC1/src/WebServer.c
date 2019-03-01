@@ -20,6 +20,9 @@
 
 #include <server.h>
 
+/**
+ * main thread of the server
+ */
 int main(int argc, char* argv[]){
 	static struct option long_options[] = {
 		{"conf_file", required_argument, 0, 'c'},

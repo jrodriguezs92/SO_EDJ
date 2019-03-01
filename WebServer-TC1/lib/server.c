@@ -19,7 +19,10 @@
 
 #include <server.h>
 
-void startServer(char* puerto) {
+/**
+ * this function starts the server @ port
+ */
+void startServer(char* port) {
 	struct addrinfo hints, *res, *p;
 
 	// getaddrinfo for the host
@@ -28,8 +31,7 @@ void startServer(char* puerto) {
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = AI_PASSIVE;
 
-	if (getaddrinfo( NULL, puerto, &hints, &res) != 0) {
-		//perror ("getaddrinfo() error");
+	if (getaddrinfo( NULL, port, &hints, &res) != 0) {
 		fprintf(logStream,"%s > getaddrinfo() error\n", getTime());
 		fflush(logStream);
 		exit(1);
@@ -62,7 +64,6 @@ void startServer(char* puerto) {
 
 	}
 	if (p==NULL) { // case connection can be done
-		//perror ("socket() or bind()");
 		fprintf(logStream,"%s > socket() or bind()\n", getTime());
 		fflush(logStream);
 		exit(1);
@@ -73,17 +74,17 @@ void startServer(char* puerto) {
 
 	// listening new connections
 	if ( listen (sockfd, 1000000) != 0 ) {
-		//perror("listen() error");
 		fprintf(logStream,"%s > listen() error\n", getTime());
 		fflush(logStream);
 		exit(1);
 
 	}
 
-	//fcntl(sockfd, F_SETFL, O_NONBLOCK); // change the socket into non-blocking state
-
 }
 
+/**
+ * this funtion response a client request
+ */
 void requestResponse(int n) {
 	fprintf(logStream,"%s > ** Start communication with %i **\n", getTime(), n);
 	fflush(logStream);
@@ -185,6 +186,8 @@ int readConfFile(int reload){
 	ret = fscanf(conf_file, "%s", buf);
 	strcpy(dirRoot, buf);
 
+	// SETEAR: dirRoot | port | logFileName 
+
 	if (ret > 0) {
 		if (reload == 1) {
 			syslog(LOG_INFO, "Reloaded configuration file %s of %s",
@@ -225,6 +228,8 @@ int testConfFile(char *_confFileName){
 	ret = fscanf(conf_file, "%s", buf);
 	strcpy(dirRoot, buf);
 	printf("Root: %s\n", dirRoot );
+	
+	// SETEAR: dirRoot | port | logFileName 
 
 	if (ret <= 0) {
 		fprintf(stderr, "Wrong config file %s\n",
