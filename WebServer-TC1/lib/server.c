@@ -245,8 +245,9 @@ int readConfFile(int reload){
 	    }
 	    //If config file contains more information 
 	    else{
-	      printf ("WARNING: %s/%s: Unknown name/value pair!\n", parameter, value);
+	      syslog(LOG_INFO, "%s/%s: Unknown name/value pair!\n", parameter, value);
 	      ret += 1;
+	      
 	    }
 	}
 	
@@ -444,6 +445,7 @@ void handleSignal(int sig){
 
 	} else if (sig == SIGHUP) {
 		fprintf(logStream, "%s > Debug: reloading daemon config file ...\n", getTime());
+		// falta implementar
 		fflush(logStream);
 		readConfFile(1);
 

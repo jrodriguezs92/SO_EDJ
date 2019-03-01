@@ -20,17 +20,20 @@
 	make all / make libserver.a
 
 > To execute:
-	./WebServer *-p *XXXX *-r */XX/XX
-		> Where :
-			-p : port
-			-r : root dir
-			(*=opcional)
+	./WebServer -flags
+		> Where flags:
+			-h --help                 Print help
+			-c --conf_file filename   Read configuration from the file
+			-t --test_conf filename   Test configuration file
+			-l --log_file  filename   Write logs to the file
+			-d --daemon               Daemonize this application
+			-p --pid_file  filename   PID file used by daemonized app
 
 	# Example:
 		estape11@MacBook:~/WebServer-TC1$ ./bin/WebServer
 		> Server started
 	 		Port: 10101 
-	 		Root directory: ~/WebServer-TC1/bin/res
+	 		Root directory: ~/home/user/res
 
 > To remove compilation files
 	make clean

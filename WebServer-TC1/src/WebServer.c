@@ -36,6 +36,7 @@ int main(int argc, char* argv[]){
 
 	int value, optionIndex = 0;
 	logFileName = (char *)malloc(50*sizeof(char));
+	logFileName[0] = '\0';
 	startDaemonized = 0;
 	running = 0;
 	confFileName = NULL;
@@ -100,29 +101,38 @@ int main(int argc, char* argv[]){
 	signal(SIGINT, handleSignal);
 	signal(SIGHUP, handleSignal);
 
+	// reads configuration from config file
+	readConfFile(0);
+
 	// try to open log file to this daemon
-	if (logFileName != NULL) {
+	if (logFileName[0] != '\0') {
 		logStream = fopen(logFileName, "a+");
 		if (logStream == NULL) {
 			syslog(LOG_ERR, "Can not open log file: %s, error: %s",
 				logFileName, strerror(errno));
 			logStream = stdout;
-			customLog=1;
+			customLog=0;
+			syslog(LOG_INFO, "Default Log file loaded @ /var/log/syslog");
 		} else{
 			customLog=1;
+			syslog(LOG_INFO, "Log file loaded @ %s", logFileName);
 		}
 	} else {
 		logStream = stdout;
 		customLog=0;
+		syslog(LOG_INFO, "Default Log file loaded @ /var/log/syslog");
 	}
 
-	// reads configuration from config file
-	readConfFile(0);
 	// server
 
 	fprintf(logStream,"%s > Server started @ Port: %s | Root directory: %s \n",
 			getTime(), port, dirRoot);
 	fflush(logStream);
+
+	if(customLog==1){
+		fprintf(logStream,"%sLog file loaded @ %s", getTime(), appName);
+		fflush(logStream);
+	}
 
 	int i;
 	for (i=0; i<CONEXMAX; i++) {
