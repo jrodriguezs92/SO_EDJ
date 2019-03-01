@@ -197,6 +197,7 @@ void parseConfig (struct parameters * parms)
   //Opens file
   FILE *conf_file = fopen(confFileName,"r");
   //Reads line by line
+
   while ((line = fgets (buff, sizeof buff, conf_file)) != NULL)
   {
     //Ignore comments with "#" and blankspaces
@@ -256,14 +257,51 @@ int readConfFile(int reload){
 	}
 	else{
 		//Parse configuration file
-		char buf[100];
 		struct parameters parms;
 		parseConfig (&parms);
-	    strcpy(parms.logFileTmp, logFileName);
-	    strcpy(parms.portTmp, port);
-	    strcpy(parms.rootTmp, dirRoot);
-	    printf("%s, %s, %s\n", logFileName, port, dirRoot);
-		ret = fscanf(conf_file, "%s", buf);
+		//Validate if the 3 parameters were found
+		if(strcmp(parms.logFileTmp,"")==0 && strcmp(parms.portTmp,"")==0 && strcmp(parms.rootTmp,"")==0)
+			ret=0;
+		else if(strcmp(parms.logFileTmp,"")==1 && strcmp(parms.portTmp,"")==1 && strcmp(parms.rootTmp,"")==1){
+			ret=3;
+			strcpy(parms.logFileTmp, logFileName);
+		    strcpy(parms.portTmp, port);
+		    strcpy(parms.rootTmp, dirRoot);
+		}
+		else{
+			if(strcmp(parms.logFileTmp,"")==1){
+				if (strcmp(parms.portTmp,"")==0 && strcmp(parms.rootTmp,"")==0){
+					ret=1;
+					strcpy(parms.logFileTmp,logFileName);
+				}
+				else if (strcmp(parms.portTmp,"")==1 && strcmp(parms.rootTmp,"")==0){
+					ret = 2;
+					strcpy(parms.logFileTmp, logFileName);
+					strcpy(parms.portTmp, port);
+				}
+				else{
+					ret = 2;
+					strcpy(parms.logFileTmp, logFileName);
+					strcpy(parms.rootTmp, dirRoot);
+				}
+			}
+			else if(strcmp(parms.portTmp,"")==1){
+				if (strcmp(parms.rootTmp,"")==0){
+					ret=1;
+					strcpy(parms.portTmp, port);
+				}
+				else{
+					ret=2;
+					strcpy(parms.portTmp, port);
+					strcpy(parms.rootTmp, dirRoot);
+				}
+			}
+			else{
+				ret=1;
+				strcpy(parms.rootTmp, dirRoot);
+			}
+		}
+	    
 		//strcpy(dirRoot, buf);
 
 	}
