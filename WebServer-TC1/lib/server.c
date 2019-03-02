@@ -162,7 +162,7 @@ void requestResponse(int n) {
 }
 
 /** 
-  *This function trims the value found in parseConfig
+  *This function trims the value found in readConfFile
  */
 char * trimValue (char * line){
   //Initialize start, end pointers 
@@ -364,39 +364,39 @@ int testConfFile(char *_confFileName){
 		strcpy(logFileName, logFileTmp);
 	    strcpy(port, portTmp);
 	    strcpy(dirRoot, rootTmp);
-	    printf("Encontre LOGFILE:%s, PORT:%s y ROOT:%s\n",logFileTmp,port,dirRoot);
+	    printf("Found LOGFILE:%s, PORT:%s y ROOT:%s\n",logFileTmp,port,dirRoot);
 	}
 	else{
 		if(strcmp(logFileTmp,"")>0){
 			if (strcmp(portTmp,"")==0 && strcmp(rootTmp,"")==0){
 				strcpy(logFileName, logFileTmp);
-				printf("Encontre solo LOGFILE:%s\n",logFileTmp);
+				printf("Just LOGFILE:%s found\n",logFileTmp);
 			}
 			else if (strcmp(portTmp,"")>0 && strcmp(rootTmp,"")==0){
 				strcpy(logFileName, logFileTmp);
 	    		strcpy(port, portTmp);
-				printf("Encontre solo LOGFILE:%s, PORT:%s\n",logFileTmp,port);
+				printf("Found LOGFILE:%s, PORT:%s\n",logFileTmp,port);
 			}
 			else{
 				strcpy(logFileName, logFileTmp);
 				strcpy(dirRoot, rootTmp);
-				printf("Encontre solo LOGFILE:%s y ROOT:%s\n",logFileTmp,dirRoot);
+				printf("Found LOGFILE:%s y ROOT:%s\n",logFileTmp,dirRoot);
 			}
 		}
 		else if(strcmp(portTmp,"")>0){
 			if (strcmp(rootTmp,"")==0){
 				strcpy(port, portTmp);
-				printf("Encontre solo PORT:%s\n",port);
+				printf("Just PORT:%s found\n",port);
 			}
 			else{
 				strcpy(port, portTmp);
 				strcpy(dirRoot, rootTmp);
-				printf("Encontre solo PORT:%s y ROOT:%s\n",port,dirRoot);
+				printf("Found PORT:%s y ROOT:%s\n",port,dirRoot);
 			}
 		}
 		else{
 			strcpy(dirRoot, rootTmp);
-			printf("Encontre solo ROOT:%s\n",dirRoot);
+			printf("Just ROOT:%s found\n",dirRoot);
 		}
 	}
 
