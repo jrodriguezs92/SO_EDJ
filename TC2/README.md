@@ -19,7 +19,12 @@ qemu-system-i386 -fda boot.bin
 nasm -f bin boot.asm -o boot.com
 ```
 
+## Get path for USB drive (usbPath)
+```
+sudo fdisk -l
+```
+
 ## Copy in USB 
 ```
-sudo dd if=boot.com of=/dev/sdb bs=512 count=1
+sudo dd if=boot.com of=<usbPath> bs=512 count=1
 ```
