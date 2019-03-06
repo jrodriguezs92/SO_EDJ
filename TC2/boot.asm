@@ -1,3 +1,5 @@
+; HELLO WORLD FROM 16 BIT REAL MODE
+
 org 0x7C00                      ; BIOS loads our programm at this address
 bits 16                         ; We're working at 16-bit mode here
 
