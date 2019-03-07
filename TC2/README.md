@@ -1,8 +1,17 @@
-## Getting Start  
+# Description
+boot.asm -> HELLO WORLD FROM 16 BIT REAL MODE 
+
+boot2.asm -> HELLO WORLD FROM 32 BIT PROTECTED MODE
+
+boot3.asm -> HELLO WORLD FROM 32 BIT PROTECTED MODE LOADING 512 BYTES FROM SECOND SECTOR INTO MEMORY
+
+# Getting Start  
 Install nasm and qemu
 ```
 sudo apt-get install nasm qemu
 ```
+
+# Instructions
 
 ## Compile  
 ```
