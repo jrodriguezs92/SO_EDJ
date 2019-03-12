@@ -14,6 +14,7 @@
 APP=tetris
 COMPILER=nasm
 FLAGS= -f bin
+USB= ""
 
 all: tetris.img
 
@@ -36,4 +37,11 @@ clean:
 emu: $(APP).img
 		qemu-system-i386 -fda $(APP).img
 
-.PHONY=all clean
+install: $(APP).img
+ifeq ($(USB),"")
+		@echo "Error: USB not defined"
+else
+		sudo dd if=$(APP).img of=$(USB)
+endif
+
+.PHONY=clean

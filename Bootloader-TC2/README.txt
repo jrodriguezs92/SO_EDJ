@@ -17,4 +17,5 @@
 > To compile and run
 	make emu
 > To copy to USB
-	sudo dd if=tetris.img of=/dev/sXX
+	make install USB=/dev/sXX
+	*be sure that /dev/sXX is your USB stick
