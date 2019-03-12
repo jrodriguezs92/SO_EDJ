@@ -29,6 +29,11 @@ main:
 	mov bh, 0x00 	;page #0
 	;int 0x10
 
+	mov al, 0x8		;Set dark gray color
+	mov cx, 110		;Set column (x) to 20
+	mov dx, 10		;Set row (y) to 20
+	call draw_board
+
 	;draw a car
 	mov word [car_vx], 0
 	mov word [car_vy], 1
@@ -69,7 +74,29 @@ main:
 	;mov bx, 0x021f
 	;int 0x16
 
-	jmp victory 			;Game main loop
+	jmp game 			;Game main loop
+
+;Draw mai board, x value =100, y value =180
+draw_board:
+	pusha			;Push registers onto the stack
+	int 0x10		;Draw initial pixel
+	mov bx, cx		;Move initial x position to bx
+	add bx, 100		;Add 80 to determine the final position of the block
+	call draw_line_x	;Draw top horizontal line
+	sub cx, 100		; Substract 80 to obtain initial value
+	add dx, 180		; Add 70 to determine the position of the down horizontal line
+	call draw_line_x 	; Draw bottom horizontal line
+	sub dx, 180		; Substract 70 to obtain initial value
+	sub cx, 100		; Substract 80 to obtain initial value
+	mov bx, dx		; Move dx to bx
+	add bx, 180		; Add 70 to obtain final value
+	call draw_line_y	;Draw left vertical line
+	add cx, 100		; Add 80 to obtain second vertical line initial position
+	sub dx, 180		; Substract 70 to obtain initial value
+	call draw_line_y	;Draw right vertical line
+	popa			;Pops registers from the stack
+	ret				; Return
+
 
 ;Drawing a large box
 draw_large_box:
@@ -155,7 +182,7 @@ draw_rectangle:
 	mov word bx, [rectangle_w]	;gets the rectangle width
 	add bx, cx									;calculate the x boundary
 	call draw_line_x						;draws the line
-	popa												;resotores the registers
+	popa												;restores the registers
 	;draws the bottom line
 	pusha												;saves the registers
 	mov word bx, [rectangle_h] 	;gets the rectangle height
@@ -1329,6 +1356,37 @@ halt:
 	cmp ah, 0x1c	;Restart if enter arrow pressed
 	je main
 	jmp halt
+
+; pieces used in 
+pieces_origin:
+    piece_t dw 1605, 1610, 1615, 3210 ; point down
+             dw 10, 1610, 1615, 3210   ; point right
+             dw 10, 1605, 1610, 1615   ; point up
+             dw 10, 1605, 1610, 3210   ; point left
+    piece_j dw 1605, 1610, 1615, 3215 ; point down
+             dw 10, 15, 1610, 3210     ; point right
+             dw 5, 1605, 1610, 1615    ; point up
+             dw 10, 1610, 3205, 3210   ; point left
+    piece_l dw 1605, 1610, 1615, 3205 ; point down
+             dw 10, 1610, 3210, 3215   ; point right
+             dw 15, 1605, 1610, 1615   ; point up
+             dw 5, 10, 1610, 3210      ; point left
+    piece_z dw 1605, 1610, 3210, 3215 ; horizontal z
+             dw 15, 1610, 1615, 3210   ; vertical z
+             dw 1605, 1610, 3210, 3215 ; horizontal z
+             dw 15, 1610, 1615, 3210   ; vertical z
+    piece_s dw 1610, 1615, 3205, 3210 ; horizontal s
+             dw 10, 1610, 1615, 3215   ; vertical s
+             dw 1610, 1615, 3205, 3210 ; horizontal s
+             dw 10, 1610, 1615, 3215   ; vertical s
+    piece_square dw 1605, 1610, 3205, 3210 ; a square
+                  dw 1605, 1610, 3205, 3210 ; another square
+                  dw 1605, 1610, 3205, 3210 ; nothing but 
+                  dw 1605, 1610, 3205, 3210 ; squares here
+    piece_line dw 1600, 1605, 1610, 1615 ; horizontal line
+                dw 10, 1610, 3210, 4810   ; vertical line
+                dw 1600, 1605, 1610, 1615 ; horizontal line
+                dw 10, 1610, 3210, 4810   ; vertical line
 
 section .data
 	v_msg	db 'Tetris In progress!', 0

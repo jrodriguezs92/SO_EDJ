@@ -34,6 +34,13 @@ clean:
 		rm -f *.img
 		clear
 
+tetrisWIP.img: bootloader.bin
+		tasm $(APP)WIP.asm, $(APP)WIP.bin
+		dd if=/dev/zero of=$(APP)WIP.img bs=1024 count=512
+		dd if=bootloader.bin of=$(APP)WIP.img conv=notrunc
+		dd if=$(APP)WIP.bin of=$(APP)WIP.img bs=512 seek=1 conv=notrunc
+
+
 emu: $(APP).img
 		qemu-system-i386 -fda $(APP).img
 
