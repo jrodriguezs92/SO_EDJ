@@ -11,92 +11,92 @@
 ;
 ;************************************************************
 
-bits 16
+bits 16								;16 bits mode
 org 0x0000
 
-; The bootloader jumped to 0x1000:0x0000 which sets CS=0x1000 and IP=0x0000
-; We need to manually set the DS register so it can properly find our variables
+;The bootloader jumped to 0x1000:0x0000 which sets CS=0x1000 and IP=0x0000
+;We need to manually set the DS register so it can properly find our variables
+;NOTE: ax, bx, dx... are general register, so may change a lot, make sure it has 
+;	   the value that its expected
 
 mov ax, cs
-mov ds, ax   	; Copy CS to DS (we can't do it directly so we use AX temporarily)
+mov ds, ax   						;Copy CS to DS (we can't do it directly so we use AX temporarily)
 
 main:
-	mov ah, 0x00 	;Set video mode
-	mov al, 0x13	;graphics, 320x200 res, 8x8 pixel box
+	mov ah, 0x00 					;Set video mode
+	mov al, 0x13					;graphics, 320x200 res, 8x8 pixel box
 	int 0x10
+	mov ah, 0x0c					;Write graphics pixel
+	mov bh, 0x00 					;Page #0
 
-	mov ah, 0x0c	;Write graphics pixel
-	mov bh, 0x00 	;page #0
-	;int 0x10
+	;Print text
+	pusha
+	mov bl, 9
+	mov word si, welcomeTitle
+	mov dh, 0
+	mov dl, 0
+	call printMsg
+	popa
 
-	mov al, 0x8		;Set dark gray color
-	mov cx, 110		;Set column (x) to 20
-	mov dx, 10		;Set row (y) to 20
-	call draw_board
+	mov word [blockUnit], 10 		;Size of block
+	mov word [lastColor], 5			;The last color
 
-	;draw a car
-	mov word [car_vx], 0
-	mov word [car_vy], 1
-	mov word [car_x], 5       ;saves the car x coordinate
-	mov word [car_y], 34      	;saves the car y coordinate
-	mov al, 0x04               	;set the red color for the rectangle
-	call draw_car
+	mov al, 0x3						;Set dark gray color
+	mov cx, 110						;Set column (x) to 110
+	mov dx, 10						;Set row (y) to 1
+	call drawBoard
 
-	;draw a bus
-	mov word [bus_vx], 1
-	mov word [bus_vy], 0
-	mov word [bus_w], 30        ;saves the bus width
-	mov word [bus_h], 11        ;saves the bus height
-	mov word [bus_x], 25        ;saves the bus x coordinate
-	mov word [bus_y], 94        ;saves the bus y coordinate
-	mov al, 0x0C                ;set the red color for the rectangle
-	call draw_bus
+	mov word [startX], 150			;Loading starting position
+	mov word [startY], 10
 
-	;draw a truck
-	mov word [bus_vx], 1
-	mov word [bus_vy], 0
-	mov word [truck_w], 50      ;saves the bus width
-	mov word [truck_h], 11      ;saves the bus height
-	mov word [truck_x], 125      ;saves the truck x coordinate
-	mov word [truck_y], 174      ;saves the truck y coordinate
-	mov al, 0x02                ;set the red color for the rectangle
-	call draw_truck
+	mov word [points], 0			;Clearing points
 
-	mov word [pacman_x], 50	;Loading starting position
-	mov word [pacman_y], 50
-	mov word [points], 0	;Clearing points
+	;when its generated check the x and y
+	mov word cx, [startX]
+	mov word dx, [startY]
 
-	mov word cx, [pacman_x]	;Drawing pacman in its starting position
-	mov word dx, [pacman_y]
-	call draw_pac
+	mov word [lastPieceX], cx
+	mov word [lastPieceY], dx
 
-	;mov ax, 0x0305
-	;mov bx, 0x021f
-	;int 0x16
+	;mov word cx, [lastPieceX]		;draw a piece
+	;mov word dx, [lastPieceY]
 
-	jmp game 			;Game main loop
+	call drawIShape
 
-;Draw mai board, x value =100, y value =180
-draw_board:
-	pusha			;Push registers onto the stack
-	int 0x10		;Draw initial pixel
-	mov bx, cx		;Move initial x position to bx
-	add bx, 100		;Add 80 to determine the final position of the block
-	call draw_line_x	;Draw top horizontal line
-	sub cx, 100		; Substract 80 to obtain initial value
-	add dx, 180		; Add 70 to determine the position of the down horizontal line
-	call draw_line_x 	; Draw bottom horizontal line
-	sub dx, 180		; Substract 70 to obtain initial value
-	sub cx, 100		; Substract 80 to obtain initial value
-	mov bx, dx		; Move dx to bx
-	add bx, 180		; Add 70 to obtain final value
-	call draw_line_y	;Draw left vertical line
-	add cx, 100		; Add 80 to obtain second vertical line initial position
-	sub dx, 180		; Substract 70 to obtain initial value
-	call draw_line_y	;Draw right vertical line
-	popa			;Pops registers from the stack
-	ret				; Return
+	;mov cx, 140
+	;mov dx, 70
+	;call drawTShape
 
+	;mov cx, 120
+	;mov dx, 90
+	;call drawLShape
+
+	jmp game 						;Game main loop
+
+;Draw the board board, x value =100, y value =180
+;Params:
+;		cx = X coordinate
+;		dx = Y coordinate
+;		al = Color
+drawBoard:
+	pusha							;Push registers onto the stack
+	int 0x10						;Draw initial pixel
+	mov bx, cx						;Move initial x position to bx
+	add bx, 100						;Add 80 to determine the final position of the block
+	call drawLineX					;Draw top horizontal line
+	sub cx, 100						;Substract 80 to obtain initial value
+	add dx, 180						;Add 70 to determine the position of the down horizontal line
+	call drawLineX 					;Draw bottom horizontal line
+	sub dx, 180						;Substract 70 to obtain initial value
+	sub cx, 100						;Substract 80 to obtain initial value
+	mov bx, dx						;Move dx to bx
+	add bx, 180						;Add 70 to obtain final value
+	call drawLineY					;Draw left vertical line
+	add cx, 100						;Add 80 to obtain second vertical line initial position
+	sub dx, 180						;Substract 70 to obtain initial value
+	call drawLineY					;Draw right vertical line
+	popa							;Pops registers from the stack
+	ret								;Return
 
 ;Drawing a large box
 draw_large_box:
@@ -104,40 +104,63 @@ draw_large_box:
 	int 0x10		;Draw initial pixel
 	mov bx, cx		;Move initial x position to bx
 	add bx, 80		;Add 80 to determine the final position of the block
-	call draw_line_x	;Draw top horizontal line
+	call drawLineX	;Draw top horizontal line
 	sub cx, 80		; Substract 80 to obtain initial value
 	add dx, 60		; Add 70 to determine the position of the down horizontal line
-	call draw_line_x 	; Draw bottom horizontal line
+	call drawLineX 	; Draw bottom horizontal line
 	sub dx, 60		; Substract 70 to obtain initial value
 	sub cx, 80		; Substract 80 to obtain initial value
 	mov bx, dx		; Move dx to bx
 	add bx, 60		; Add 70 to obtain final value
-	call draw_line_y	;Draw left vertical line
+	call drawLineY	;Draw left vertical line
 	add cx, 80		; Add 80 to obtain second vertical line initial position
 	sub dx, 60		; Substract 70 to obtain initial value
-	call draw_line_y	;Draw right vertical line
+	call drawLineY	;Draw right vertical line
 	popa			;Pops registers from the stack
 	ret				; Return
 
 ;Horizontal line from cx to bx
-draw_line_x:
+;Params:
+;		cx = X coordinate
+;		bx = length
+drawLineX:
 	cmp cx, bx 		;Compare if currrent x equals desired x
 	je return		;Returns if true
 	inc cx			;Increments x coordinate (cx)
 	int 0x10 		;Writes graphics pixel
-	jmp draw_line_x	;Loops to itself
+	jmp drawLineX	;Loops to itself
 
 
 ;Vertical line from dx to bx
-draw_line_y:
+;Params:
+;		dx = Y coordinate
+;		bx = length
+drawLineY:
 	cmp dx, bx 		;Compare if currrent y equals desired y
 	je return		;Returns if true
 	inc dx			;Increments y coordinate (dx)
 	int 0x10 		;Writes graphics pixel
-	jmp draw_line_y	;Loops to itself
+	jmp drawLineY	;Loops to itself
 
 ;Return from procedure
 return:
+	ret
+
+;Restores the color of the las piece
+restoreLastColor:
+	pusha
+	mov word dx, [lastColorCopy]	;Stores the las color copy
+	mov word [lastColor], dx		;The last color
+	popa
+	ret
+
+;Set the color to black (clear)
+lastColorToBlack:
+	pusha
+	mov word dx, [lastColor]		;Stores the las color copy
+	mov word [lastColorCopy], dx	;The last color
+	mov word [lastColor], 0x0		;The last color to black
+	popa
 	ret
 
 ;Draw a 4x4 dot in the center of a 20x20 grid
@@ -181,7 +204,7 @@ draw_rectangle:
 	pusha												;saves the registers
 	mov word bx, [rectangle_w]	;gets the rectangle width
 	add bx, cx									;calculate the x boundary
-	call draw_line_x						;draws the line
+	call drawLineX						;draws the line
 	popa												;restores the registers
 	;draws the bottom line
 	pusha												;saves the registers
@@ -190,13 +213,13 @@ draw_rectangle:
 	int 0x10										;draws the first pixel
 	mov word bx, [rectangle_w]	;gets the rectangle width
 	add bx, cx									;calculate the x boundary
-	call draw_line_x						;draws the line
+	call drawLineX						;draws the line
 	popa												;resotores the registers
 	;draws the left line
 	pusha												;saves the registers
 	mov word bx, [rectangle_h] 	;gets the rectangle height
 	add bx, dx									;obtains the y boundary
-	call draw_line_y						;draws the line
+	call drawLineY						;draws the line
 	popa												;resotores the registers
 	;draws the right line
 	pusha												;saves the registers
@@ -204,7 +227,7 @@ draw_rectangle:
 	add cx, bx									;get the x for the right line
 	mov word bx, [rectangle_h] 	;gets the rectangle height
 	add bx, dx									;obtains the y boundary
-	call draw_line_y						;draws the line
+	call drawLineY						;draws the line
 	popa												;resotores the registers
 	ret 												;return
 
@@ -243,10 +266,223 @@ draw_truck:
 	call draw_rectangle
 	ret
 
+;=========;=========;=========; Pieces Draws ;=========;=========;=========;
+
+;Draws a square
+;Params:
+;		cx = X coordinate
+;		dx = Y coordinate
+;Requires:
+;		blockUnit
+;		lastColor
+drawSquare:
+	pusha							;Push registers from the stack
+	call drawSquareColor
+	popa							;Pop registers from the stack
+	ret
+
+drawSquareColor:
+	mov ah, 0x0C 					;Write graphics pixel
+	mov bx, cx						;Move dx to bx
+	add bx, [blockUnit] 			;Define the square size
+	mov al, 0						;Set al to 0
+
+drawSquareLoop:
+	cmp al, [blockUnit]				;Loop for the size of block
+	je return
+	inc dx 							;Decrement y coordinate
+	pusha							;Push registers to the stack
+	mov al, [lastColor]				;Set the color
+	call drawLineX
+	popa							;Pop registers from the stack
+	inc al							;Increment al
+	jmp drawSquareLoop				;Loop until finished the square
+
+;Draws the I shape
+;Params:
+;		cx = X coordinate
+;		dx = Y coordinate
+drawIShape:
+	mov word [lastOrientation], 90	;Saves the orientation
+	mov word [lastShape], 1			;Saves the shape
+	call drawSquare
+	add word dx, [blockUnit]		;Move Y one block down
+	call drawSquare
+	add word dx, [blockUnit]		;Move Y one block down
+	call drawSquare
+	add word dx, [blockUnit]		;Move Y one block down
+	call drawSquare
+	ret
+
+;Clears the I shape
+;Params:
+;		cx = X coordinate
+;		dx = Y coordinate
+clearIShape:
+	cmp word [lastOrientation], 90
+	je clearIShape90
+	ret
+
+clearIShape90:
+	pusha
+	call lastColorToBlack
+	call drawIShape
+	call restoreLastColor
+	popa
+	ret
+
+;Draws the L shape
+;Params:
+;		cx = X coordinate
+;		dx = Y coordinate
+drawLShape:
+	mov word [lastOrientation], 90	;Saves the orientation
+	mov word [lastShape], 2			;Saves the shape
+	call drawSquare
+	add word dx, [blockUnit]		;Move Y one block down
+	call drawSquare
+	add word dx, [blockUnit]		;Move Y one block down
+	call drawSquare
+	add word cx, [blockUnit]		;Move X one block righ
+	call drawSquare
+	ret
+
+;Draws the Z shape
+;Params:
+;		cx = X coordinate
+;		dx = Y coordinate
+drawZShape:
+	mov word [lastOrientation], 90	;Saves the orientation
+	mov word [lastShape], 3			;Saves the shape
+	call drawSquare
+	add word cx, [blockUnit]		;Move X one block righ
+	call drawSquare
+	add word dx, [blockUnit]		;Move Y one block down
+	call drawSquare
+	add word cx, [blockUnit]		;Move X one block righ
+	call drawSquare
+	ret
+
+;Draws the B(block) shape
+;Params:
+;		cx = X coordinate
+;		dx = Y coordinate
+drawBShape:
+	mov word [lastOrientation], 90	;Saves the orientation
+	mov word [lastShape], 0			;Saves the shape
+	call drawSquare
+	add word cx, [blockUnit]		;Move X one block righ
+	call drawSquare
+	add word dx, [blockUnit]		;Move Y one block down
+	call drawSquare
+	sub word cx, [blockUnit]		;Move X one block left
+	call drawSquare
+	ret
+
+;Draws the T shape
+;Params:
+;		cx = X coordinate
+;		dx = Y coordinate
+drawTShape:
+	mov word [lastOrientation], 90	;Saves the orientation
+	mov word [lastShape], 4			;Saves the shape
+	call drawSquare
+	add word dx, [blockUnit]		;Move Y one block down
+	call drawSquare
+	add word cx, [blockUnit]		;Move X one block righ
+	call drawSquare
+	add word dx, [blockUnit]		;Move Y one block down
+	sub word cx, [blockUnit]		;Move X one block left
+	call drawSquare
+	ret
+
+;=========;=========;=========; Pieces Draws ;=========;=========;=========;
+
+;========;========;=========; Pieces Movement ;=========;========;========;
+
+;Compares which shape the last piece has and move it down
+moveLastPiece:
+	cmp word [lastShape],1			;Case I Shape
+	je moveLastPieceIShape
+	ret
+
+;Compares which shape the last piece has and move it left
+moveLastPieceL:
+	cmp word [lastShape],1			;Case I Shape
+	je moveLastPieceIShapeL
+	ret
+
+;Compares which shape the last piece has and move it right
+moveLastPieceR:
+	cmp word [lastShape],1			;Case I Shape
+	je moveLastPieceIShapeR
+	ret
+
+;Moves the last piece I to the bottom
+;Requires:
+;		lastPieceX
+;		lastPieceY
+moveLastPieceIShape:
+	;Delay of .5 s
+	pusha
+	mov cx, 0x0007
+	mov dx, 0xA102
+	mov ah, 0x86
+	int 0x15
+	popa
+	mov word cx, [lastPieceX]		;Loads the x component
+	mov word dx, [lastPieceY]		;Loads the y component
+	call clearIShape
+	mov word cx, [lastPieceX]		;Loads the x component
+	mov word dx, [lastPieceY]		;Loads the y component
+	add dx, [blockUnit]
+	mov word [lastPieceY], dx
+	call drawIShape
+	ret
+
+;Moves the last piece I to the left
+moveLastPieceIShapeL:
+	call clearIShape
+	mov word cx, [lastPieceX]		;Loads the x component
+	sub word cx, [blockUnit]		;To the left
+	mov word [lastPieceX], cx
+	call drawIShape
+	ret
+
+;Moves the last piece I to the right
+moveLastPieceIShapeR:
+	call clearIShape
+	mov word cx, [lastPieceX]		;Loads the x component
+	add word cx, [blockUnit]		;To the right
+	mov word [lastPieceX], cx
+	call drawIShape
+	ret
+
+;========;========;=========; Pieces Movement ;=========;========;========;
+
+getKey:
+	mov ah, 0x1						;Set ah to 1
+	int 0x16						;Check keystroke interrupt
+	jz return						;Return if no keystroke
+	mov ah, 0x0						;Set ah to 1
+	int 0x16						;Get keystroke interrupt
+	mov word cx, [lastPieceX]
+	mov word dx, [lastPieceY]
+	;cmp ah, 0x48					;Jump if up arrow pressed
+	;je move_up
+	cmp ah, 0x4d					;Jump if right arrow pressed
+	je moveLastPieceR
+	cmp ah, 0x4b					;Jump if left arrow pressed
+	je moveLastPieceL
+	ret
+	;cmp ah, 0x50					;Jump if down arrow pressed
+	;je move_down
+
+;Here starts the drawing of pac
 ;Draws pacman given its color
 draw_pac_c:
 	mov ah, 0x0c	;Write graphics pixel
-	add cx, 4		;X starting point
+	add cx, 1		;X starting point
 	add dx, 9		;Y starting point
 	mov bx, dx		;Move dx to bx
 	mov al, 0		;Set al to 0
@@ -254,13 +490,13 @@ draw_pac_c:
 ;Draws the left half of the character
 draw_pac_loop_l:
 	cmp al, 6		;Loop for 6 iterations
-	je draw_pac_loop_r
+	je return;je draw_pac_loop_r
 	inc cx			;Increment x coordinate
 	dec dx 			;Decrement y coordinate
 	inc bx 			;Increment vertical line length
 	pusha			;Push registers to the stack
 	mov al, [pacman_color]		;Set pacman color
-	call draw_line_y
+	call drawLineY
 	popa			;Pop registers from the stack
 	inc al			;Increment al
 	jmp draw_pac_loop_l		;Loop to itself
@@ -274,10 +510,12 @@ draw_pac_loop_r:
 	dec bx 			;Decrement vertical line length
 	pusha			;Push registers to the stack
 	mov al, [pacman_color]		;Set pacman color
-	call draw_line_y
+	call drawLineY
 	popa			;Pop registers from the stack
 	dec al			;Decrement al
 	jmp draw_pac_loop_r		;Loop to itself
+
+;Till this line
 
 ;Checks for user input
 get_input:
@@ -286,8 +524,8 @@ get_input:
 	jz ret_input	;Return if no keystroke
 	mov ah, 0x0		;Set ah to 1
 	int 0x16		;Get keystroke interrupt
-	mov word cx, [pacman_x]
-	mov word dx, [pacman_y]
+	mov word cx, [lastPieceX]
+	mov word dx, [lastPieceY]
 	cmp ah, 0x48	;Jump if up arrow pressed
 	je move_up
 	cmp ah, 0x4d	;Jump if right arrow pressed
@@ -309,8 +547,8 @@ move_up:
 	call check_points
 	popa			;Pop registers from the stack
 	call clear_pac	;Clear the last pacman position
-	sub dx, 20		;Update the pacman_y value in memory
-	mov word [pacman_y], dx
+	sub dx, 20		;Update the lastPieceY value in memory
+	mov word [lastPieceY], dx
 	call draw_pac 	;Draw pacman in its new position
 	jmp ret_input	;Return to main loop
 
@@ -326,8 +564,8 @@ move_down:
 	call check_points
 	popa			;Pop registers from the stack
 	call clear_pac	;Clear the last pacman position
-	add dx, 20		;Update the pacman_y value in memory
-	mov word [pacman_y], dx
+	add dx, 20		;Update the lastPieceY value in memory
+	mov word [lastPieceY], dx
 	call draw_pac 	;Draw pacman in its new position
 	jmp ret_input	;Return to main loop
 
@@ -342,8 +580,8 @@ move_left:
 	call check_points
 	popa			;Pop registers from the stack
 	call clear_pac	;Clear the last pacman position
-	sub cx, 20		;Update the pacman_y value in memory
-	mov word [pacman_x], cx
+	sub cx, 20		;Update the lastPieceY value in memory
+	mov word [lastPieceX], cx
 	call draw_pac 	;Draw pacman in its new position
 	jmp ret_input	;Return to main loop
 
@@ -359,8 +597,8 @@ move_right:
 	call check_points
 	popa			;Pop registers from the stack
 	call clear_pac	;Clear the last pacman position
-	add cx, 20		;Update the pacman_y value in memory
-	mov word [pacman_x], cx
+	add cx, 20		;Update the lastPieceY value in memory
+	mov word [lastPieceX], cx
 	call draw_pac 	;Draw pacman in its new position
 	jmp ret_input	;Return to main loop
 
@@ -420,8 +658,8 @@ pac_col:
 
 ;Check all pacman sides for a collision
 check_pac:
-	mov word cx, [pacman_x]	;Get current pacman coordinates
-	mov word dx, [pacman_y]
+	mov word cx, [lastPieceX]	;Get current pacman coordinates
+	mov word dx, [lastPieceY]
 	add cx, 5		;Add an offset for graphics comparison
 	add dx, 9
 	call pac_col 	;Check for collisions
@@ -1037,6 +1275,7 @@ truck_turn_u_d_desc_r:
 
 move_truck_left:
 	mov word cx, [truck_x]	;loads the x component
+	jmp ret_input
 	mov word dx, [truck_y]	;loads the y component
 	cmp cx, 5							;compare with the x boundary
 	jle truck_turn_u_d_desc	;decides if go up or down
@@ -1305,9 +1544,10 @@ random:
 ;Game main loop
 game:
 	;--------------------------MOVE ENEMIES-------------------------------
-	call check_pac
-	call move_enemies
-	;call get_input	;Check for user input
+	;call check_pac
+	call moveLastPiece
+	;call get_input	;Check for user inputget_input:
+	call getKey
 	ret_input:
 	cmp word [points], 71	;Game ends when player eats all of the pellets
 	je victory
@@ -1321,33 +1561,37 @@ game:
 victory:
 	mov si, v_msg
 	mov bl, 2   ;Set green color
-	jmp print_msg
+	call printMsg
+	jmp halt
 
 ;Print a red defeat message
 defeat:
 	mov si, go_msg
 	mov bl, 4   	;Set red color
-	jmp print_msg
+	call printMsg
 
 ;Print a message given its color
-print_msg:
-	mov bh, 0   ;Set page 0
-	mov cx, 1	;Set number of times
-	mov dh, 12	;Set char print row
-	mov dl, 16	;Set char print column
+;Params:
+;		bl = color
+;		si = message
+;		dh = rox
+;		dl = column
+printMsg:
+	mov bh, 0  						;Set page 0
+	mov cx, 1						;Set number of times
 
-msg_loop:
-	mov ah, 0x2	;Set cursor position interrupt
+printLoop:
+	mov ah, 0x2						;Set cursor position interrupt
 	int 10h
 
-	lodsb		;Move si pointer contents to al
-	or al, al	;Break if end of string
-	jz halt
+	lodsb							;Move si pointer contents to al
+	or al, al						;Break if end of string
+	jz return
 
-	mov ah, 0xa	;Teletype output interrupt
-	int 10h		;
-	inc dl		;Increment column index
-	jmp msg_loop	;Loop to itself
+	mov ah, 0xa						;Teletype output interrupt
+	int 10h							
+	inc dl							;Increment column index
+	jmp printLoop					;Loop to itself
 
 ;Halt execution
 halt:
@@ -1357,44 +1601,22 @@ halt:
 	je main
 	jmp halt
 
-; pieces used in 
-pieces_origin:
-    piece_t dw 1605, 1610, 1615, 3210 ; point down
-             dw 10, 1610, 1615, 3210   ; point right
-             dw 10, 1605, 1610, 1615   ; point up
-             dw 10, 1605, 1610, 3210   ; point left
-    piece_j dw 1605, 1610, 1615, 3215 ; point down
-             dw 10, 15, 1610, 3210     ; point right
-             dw 5, 1605, 1610, 1615    ; point up
-             dw 10, 1610, 3205, 3210   ; point left
-    piece_l dw 1605, 1610, 1615, 3205 ; point down
-             dw 10, 1610, 3210, 3215   ; point right
-             dw 15, 1605, 1610, 1615   ; point up
-             dw 5, 10, 1610, 3210      ; point left
-    piece_z dw 1605, 1610, 3210, 3215 ; horizontal z
-             dw 15, 1610, 1615, 3210   ; vertical z
-             dw 1605, 1610, 3210, 3215 ; horizontal z
-             dw 15, 1610, 1615, 3210   ; vertical z
-    piece_s dw 1610, 1615, 3205, 3210 ; horizontal s
-             dw 10, 1610, 1615, 3215   ; vertical s
-             dw 1610, 1615, 3205, 3210 ; horizontal s
-             dw 10, 1610, 1615, 3215   ; vertical s
-    piece_square dw 1605, 1610, 3205, 3210 ; a square
-                  dw 1605, 1610, 3205, 3210 ; another square
-                  dw 1605, 1610, 3205, 3210 ; nothing but 
-                  dw 1605, 1610, 3205, 3210 ; squares here
-    piece_line dw 1600, 1605, 1610, 1615 ; horizontal line
-                dw 10, 1610, 3210, 4810   ; vertical line
-                dw 1600, 1605, 1610, 1615 ; horizontal line
-                dw 10, 1610, 3210, 4810   ; vertical line
-
 section .data
-	v_msg	db 'Tetris In progress!', 0
+	welcomeTitle db 'Tetris EDJ', 0	;Title of the game
+	v_msg db 'Tetris In progress!', 0
 	go_msg	db 'Game Over', 0
 
 section .bss
-	pacman_x	resw 1
-	pacman_y 	resw 1
+	blockUnit resw 1				;Stores the size of one block
+	startX resw 1
+	startY resw 2
+	lastColor resw 1				;Stores the last color (piece)
+	lastColorCopy resw 1				;Stores the last color (piece) copy
+	lastOrientation resw 1			;Last orientation of the piece
+	lastPieceX	resw 1				;X coordinate of the last piece
+	lastPieceY 	resw 1				;Y coordinate of the last piece
+	lastShape resw 1				;Stores the shape of the last piece
+
 	pacman_color resb 1
 	points 		resw 1
 	rectangle_w resw 1

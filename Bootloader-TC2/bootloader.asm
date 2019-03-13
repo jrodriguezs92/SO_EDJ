@@ -11,38 +11,36 @@
 ;
 ;************************************************************
 
-bits 16						; Define to nasm that we are running in real mode
-org 0x7C00  				; Physical address of the bootloader
+bits 16							; Define to nasm that we are running in real mode
+org 0x7C00  					; Physical address of the bootloader
 
 init:
-	XOR AX, AX				; Reset AX
-	MOV DS, AX  			; DS = 0
+	mov ax, 07C0h				; Set up 4K stack space after this bootloader
+	add ax, 288					; (4096 + 512) / 16 bytes per paragraph
+	mov ss, ax
+	mov sp, 0x2000				; 8k of stack space.
 
-	CLI        				; Turn off interrupts
+	mov ax, 07C0h				; Set data segment to where we're loaded
+	mov ds, ax
 
-	MOV SS, AX 				; SS = 0x0000
-	MOV SP, 0x7C00			; SP = 0x7c00
+	xor ax, ax   				; Reset AX
+	int 0x13
+	jc init        				; If failed, re-run init again
 
-	STI          			; Turn on interrupts
+	mov ax, 0x1000				; When we read the sector, reads from address 0x1000
+	mov es,ax     				; Set ES with 0x1000
 
-	XOR AX, AX   			; Reset AXr
-	INT 0x13
-	JC init        			; If failed, re-run init again
+prepare_game:					; Set up to read the second stage (the game)
+	xor bx, bx   				; Reset value of bx to ensure that the buffer offset is 0
+	mov ah, 0x2  				; 2 = Read USB drive
+	mov al, 0x10  				; Read eight sectors
+	mov ch, 0x0  				; Track 1
+	mov cl, 0x2  				; Sector 2, track 1
+	mov dh, 0x0  				; Head 1
+	int 0x13
+	jc prepare_game   			; If failed, re-run prepare_game
 
-	MOV AX, 0x1000			; When we read the sector, reads from address 0x1000
-	MOV ES, AX     			; Set ES with 0x1000
+	jmp 0x1000:0000 			; Otherwise jumps to Tetris game address
 
-prepare_game:				; Set up to read the second stage (the game)
-	XOR BX, BX   			; Reset value of register to ensure that the buffer offset is 0
-	MOV AH, 0x2  			; 2 = Read USB drive
-	MOV AL, 0x8  			; Read eight sectors
-	MOV CH, 0x0  			; Track 1
-	MOV CL, 0x2  			; Sector 2, track 1
-	MOV DH, 0x0  			; Head 1
-	INT 0x13
-	JC prepare_game   		; If failed, re-run prepare_game
-
-	JMP 0x1000:0000 		; Otherwise jumps to Tetris game address
-
-TIMES 510 - ($ - $$) DB 0	; Fill the rest of the sector with zeros
-DW 0xAA55   				; To make it bootable
+times 510 - ($ - $$) db 0		; Padding the rest of the sector with zeros
+dw 0xAA55   					; To make it bootable

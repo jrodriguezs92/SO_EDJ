@@ -15,7 +15,7 @@ APP=tetris
 COMPILER=nasm
 FLAGS= -f bin
 USB= ""
-
+COND=Funci
 all: tetris.img
 
 bootloader.bin:bootloader.asm
@@ -34,11 +34,12 @@ clean:
 		rm -f *.img
 		clear
 
-tetrisWIP.img: bootloader.bin
-		tasm $(APP)WIP.asm, $(APP)WIP.bin
-		dd if=/dev/zero of=$(APP)WIP.img bs=1024 count=512
-		dd if=bootloader.bin of=$(APP)WIP.img conv=notrunc
-		dd if=$(APP)WIP.bin of=$(APP)WIP.img bs=512 seek=1 conv=notrunc
+$(APP)$(COND).img:
+		nasm -f bin $(APP)$(COND).asm -o $(APP)$(COND).bin
+		dd if=/dev/zero of=$(APP)$(COND).img bs=1024 count=512
+		dd if=bootloader.bin of=$(APP)$(COND).img conv=notrunc
+		dd if=$(APP)$(COND).bin of=$(APP)$(COND).img bs=512 seek=1 conv=notrunc
+		qemu-system-i386 -fda $(APP)$(COND).img
 
 
 emu: $(APP).img
@@ -51,4 +52,4 @@ else
 		sudo dd if=$(APP).img of=$(USB)
 endif
 
-.PHONY=clean
+.PHONY=clean tetrisWIP.img
