@@ -213,16 +213,19 @@ menu:
 ;Update actualLevel when key 1 pressed
 onePressed: 
 	mov word [actualLevel], 1		;Loading actual level
+	mov word [actualSpeed], 0x00010 ;Set the speed for level 1
 	ret
 
 ;Update actualLevel when key 2 pressed	
 twoPressed:
 	mov word [actualLevel], 2		;Loading actual level
+	mov word [actualSpeed], 0x0007 ;Set the speed for level 2
 	ret
 
 ;Update actualLevel when key 3 pressed
 threePressed:
 	mov word [actualLevel], 3		;Loading actual level
+	mov word [actualSpeed], 0x0001 ;Set the speed for level 3
 	ret
 	
 
@@ -494,14 +497,15 @@ clearTShape90:
 	popa
 	ret
 
+
 ;=========;=========;=========; Pieces Draws ;=========;=========;=========;
 
 ;========;========;=========; Pieces Movement ;=========;========;========;
 
 ;Compares which shape the last piece has and move it down
 moveLastPiece:
-	pusha							;Delay of 5 secs
-	mov cx, 0x0007
+	pusha
+	mov word cx, [actualSpeed]
 	mov dx, 0xA102
 	mov ah, 0x86
 	int 0x15
@@ -889,5 +893,6 @@ section .bss
 	velocity resw 1					;Stores velocity
 	;================MENU================================;
 	actualLevel resw 1				;Stores actual level 
+	actualSpeed resw 0x0001			;Stores the speed level
 
 	points 		resw 1
