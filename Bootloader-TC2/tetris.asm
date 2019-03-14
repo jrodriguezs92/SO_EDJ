@@ -1,15 +1,15 @@
 ;************************************************************
-;	Instituto Tecnológico de Costa Rica
-;	Computer Engineering
+;		Instituto Tecnológico de Costa Rica
+;		Computer Engineering
 ;
-;	Programmers: Esteban Agüero Pérez
-;				 Jeremy Rodriguez Solorzano
-;				 Daniela Hernandez Alvarado
+;		Programmers: Esteban Agüero Pérez
+;					 Jeremy Rodriguez Solorzano
+;					 Daniela Hernandez Alvarado
 ;
-;	Last update: 14/03/2019
+;		Last update: 14/03/2019
 ;
-;	Operating Systems Principles
-;	Professor. Diego Vargas
+;		Operating Systems Principles
+;		Professor. Diego Vargas
 ;
 ;************************************************************
 
@@ -24,14 +24,17 @@ org 0x0000
 mov ax, cs
 mov ds, ax   						;Copy CS to DS
 
+;Initialized the screen and the needed variables
 main:
 	mov ah, 0x00 					;Set video mode
 	mov al, 0x13					;graphics, 320x200 res, 8x8 pixel box
 	int 0x10
 	mov ah, 0x0c					;Write graphics pixel
 	mov bh, 0x00 					;Page #0
+
+	mov word [actualLevel], 0x0 	;actualLevel=0
 	call menu
-	call clear 
+	call clear
 
 	mov ah, 0x00 					;Set video mode
 	mov al, 0x13					;graphics, 320x200 res, 8x8 pixel box
@@ -97,23 +100,16 @@ main:
 	mov dl, 27
 	call printMsg
 	popa
-	;Level num
-	pusha
-	mov bl, 15
-	mov word si, levelNumber1
-	;cmp word [actualLevel], 1
-	;je writeOne
-	;call writeOne
-	;cmp word [actualLevel], 2
-	;je writeTwo
-	;call writeTwo
-	;cmp word [actualLevel], 3
-	;je writeThree
-	;call writeThree
-	mov dh, 4
-	mov dl, 34
-	call printMsg
-	popa
+
+	;Draws the numer of the actualLevel
+	cmp word [actualLevel], 1
+	je writeOne
+	cmp word [actualLevel], 2
+	je writeTwo
+	cmp word [actualLevel], 3
+	je writeThree
+
+	continue: 						;Continues after setup the level print
 
 	mov word [blockUnit], 10 		;Size of block
 	mov word [lastColor], 88		;The last color
@@ -143,16 +139,38 @@ main:
 
 	jmp game 						;Game main loop
 
+;========;=======;=======;=======; Menu ;=======;========;=======;=======;
 writeOne:
+	pusha
+	mov bl, 15
 	mov word si, levelNumber1
-	ret
-writeTwo:
-	mov word si, levelNumber2
-	ret
-writeThree:
-	mov word si, levelNumber3
-	ret
+	mov dh, 4
+	mov dl, 34
+	call printMsg
+	popa
+	jmp continue
 
+writeTwo:
+	pusha
+	mov bl, 15
+	mov word si, levelNumber2
+	mov dh, 4
+	mov dl, 34
+	call printMsg
+	popa
+	jmp continue
+
+writeThree:
+	pusha
+	mov bl, 15
+	mov word si, levelNumber3
+	mov dh, 4
+	mov dl, 34
+	call printMsg
+	popa
+	jmp continue
+
+;Clears the screen
 clear:
 	mov ah, 0x00
 	mov al, 0x13
@@ -206,8 +224,9 @@ menu:
 	mov dl, 14
 	call printMsg
 	popa
-	
-	call getMenuKey
+
+	call getMenuKeyLoop				;Reads the keys
+
 	ret
 
 ;Update actualLevel when key 1 pressed
@@ -227,8 +246,11 @@ threePressed:
 	mov word [actualLevel], 3		;Loading actual level
 	mov word [actualSpeed], 0x0001 ;Set the speed for level 3
 	ret
-	
 
+;========;=======;=======;=======; Menu ;=======;========;=======;=======;
+
+
+;=========;=========;========; Drawing Tools ;========;=========;=========;
 ;Draw the board, x value =100, y value =180
 ;Params:
 ;		cx = X coordinate
@@ -277,10 +299,6 @@ drawLineY:
 	int 0x10 		;Writes graphics pixel
 	jmp drawLineY	;Loops to itself
 
-;Return from procedure
-return:
-	ret
-
 ;Restores the color of the last piece
 restoreLastColor:
 	pusha
@@ -297,6 +315,8 @@ lastColorToBlack:
 	mov word [lastColor], 0x0		;The last color to black
 	popa
 	ret
+
+;==========;==========;==========; Tools ;==========;==========;==========;
 
 
 ;=========;=========;=========; Pieces Draws ;=========;=========;=========;
@@ -789,9 +809,14 @@ getKey:
 	ret
 	;cmp ah, 0x50					;Jump if down arrow pressed
 	;je move_down
+
 ;=======;========;==========; Velocity selection ;========;=======;=======;
 
+;Gets the actual key for the menu
 getMenuKey:
+	mov ah, 0x1						;Set ah to 1
+	int 0x16						;Check keystroke interrupt
+	jz return						;Return if no keystroke
 	mov ah, 0x0						;Set ah to 0
 	int 0x16						;Check keystroke interrupt
 	cmp ah, 0x02					;Jump if key one pressed
@@ -801,10 +826,19 @@ getMenuKey:
 	cmp ah, 0x04					;Jump if key three pressed
 	je threePressed
 	ret 
-	
-;=========;=========;=========; Game main loop ;=========;=========;=========;
+
+getMenuKeyLoop:
+	call getMenuKey
+	cmp word [actualLevel], 0		;If actualLevel !=0
+	jne return
+	jmp getMenuKeyLoop				;Else
+
+;=======;========;==========; Velocity selection ;========;=======;=======;
+
+
+;=========;=========;=========; Game ;=========;=========;=========;
 game:
-	;call check_pac
+	;call the Movement
 	call moveLastPiece
 	;call get_input	;Check for user inputget_input:
 	call getKey
@@ -829,7 +863,9 @@ defeat:
 	mov si, go_msg
 	mov bl, 4   	;Set red color
 	call printMsg
+;=========;=========;=========; Game ;=========;=========;=========;
 
+;========;========;=========; Tools ;=========;========;========;
 ;Print a message given its color
 ;Params:
 ;		bl = color
@@ -861,6 +897,14 @@ halt:
 	je main
 	jmp halt
 
+;Return from procedure
+return:
+	ret
+
+;========;========;=========; Tools ;=========;========;========;
+
+;========;========;=========; Variables ;=========;========;========;
+
 section .data
 	welcomeTitle db 'Tetris EDJ', 0		;Title of the game
 	HotKeysTitle db 'HOT KEYS', 0 		;Hot keys section title
@@ -885,7 +929,7 @@ section .bss
 	startX resw 1
 	startY resw 2
 	lastColor resw 1				;Stores the last color (piece)
-	lastColorCopy resw 1				;Stores the last color (piece) copy
+	lastColorCopy resw 1			;Stores the last color (piece) copy
 	lastOrientation resw 1			;Last orientation of the piece
 	lastPieceX	resw 1				;X coordinate of the last piece
 	lastPieceY 	resw 1				;Y coordinate of the last piece
@@ -894,5 +938,6 @@ section .bss
 	;================MENU================================;
 	actualLevel resw 1				;Stores actual level 
 	actualSpeed resw 0x0001			;Stores the speed level
-
 	points 		resw 1
+
+;========;========;=========; Variables ;=========;========;========;
