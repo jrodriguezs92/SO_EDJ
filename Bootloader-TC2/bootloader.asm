@@ -2,7 +2,9 @@
 ;	Instituto Tecnológico de Costa Rica
 ;	Computer Engineering
 ;
-;	Programmer: Esteban Agüero Pérez (estape11)
+;	Programmers: Esteban Agüero Pérez
+;				 Jeremy Rodriguez Solorzano
+;				 Daniela Hernandez Alvarado
 ;
 ;	Last update: 12/03/2019
 ;

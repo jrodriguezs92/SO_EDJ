@@ -2,7 +2,9 @@
 ;	Instituto Tecnológico de Costa Rica
 ;	Computer Engineering
 ;
-;	Programmer: Esteban Agüero Pérez (estape11)
+;	Programmers: Esteban Agüero Pérez
+;				 Jeremy Rodriguez Solorzano
+;				 Daniela Hernandez Alvarado
 ;
 ;	Last update: 12/03/2019
 ;
@@ -17,10 +19,10 @@ org 0x0000
 ;The bootloader jumped to 0x1000:0x0000 which sets CS=0x1000 and IP=0x0000
 ;We need to manually set the DS register so it can properly find our variables
 ;NOTE: ax, bx, dx... are general register, so may change a lot, make sure it has 
-;	   the value that its expected
+;the value that its expected
 
 mov ax, cs
-mov ds, ax   						;Copy CS to DS (we can't do it directly so we use AX temporarily)
+mov ds, ax   						;Copy CS to DS
 
 main:
 	mov ah, 0x00 					;Set video mode
@@ -29,11 +31,37 @@ main:
 	mov ah, 0x0c					;Write graphics pixel
 	mov bh, 0x00 					;Page #0
 
-	;Print text
+	;Print Title
 	pusha
-	mov bl, 9
+	mov bl, 4
 	mov word si, welcomeTitle
 	mov dh, 0
+	mov dl, 0
+	call printMsg
+	popa
+
+	;Print hotkeys
+	;Title
+	pusha
+	mov bl, 3
+	mov word si, HotKeysTitle
+	mov dh, 10
+	mov dl, 0
+	call printMsg
+	popa
+	;Left key
+	pusha
+	mov bl, 15
+	mov word si, LeftKey
+	mov dh, 12
+	mov dl, 0
+	call printMsg
+	popa
+	;Right key
+	pusha
+	mov bl, 15
+	mov word si, RightKey
+	mov dh, 14
 	mov dl, 0
 	call printMsg
 	popa
@@ -73,7 +101,7 @@ main:
 
 	jmp game 						;Game main loop
 
-;Draw the board board, x value =100, y value =180
+;Draw the board, x value =100, y value =180
 ;Params:
 ;		cx = X coordinate
 ;		dx = Y coordinate
@@ -82,18 +110,18 @@ drawBoard:
 	pusha							;Push registers onto the stack
 	int 0x10						;Draw initial pixel
 	mov bx, cx						;Move initial x position to bx
-	add bx, 100						;Add 80 to determine the final position of the block
+	add bx, 100						;Add 100 to determine the final position of the block
 	call drawLineX					;Draw top horizontal line
-	sub cx, 100						;Substract 80 to obtain initial value
-	add dx, 180						;Add 70 to determine the position of the down horizontal line
+	sub cx, 100						;Substract 100 to obtain initial value
+	add dx, 180						;Add 180 to determine the position of the down horizontal line
 	call drawLineX 					;Draw bottom horizontal line
-	sub dx, 180						;Substract 70 to obtain initial value
-	sub cx, 100						;Substract 80 to obtain initial value
+	sub dx, 180						;Substract 180 to obtain initial value
+	sub cx, 100						;Substract 100 to obtain initial value
 	mov bx, dx						;Move dx to bx
-	add bx, 180						;Add 70 to obtain final value
+	add bx, 180						;Add 180 to obtain final value
 	call drawLineY					;Draw left vertical line
-	add cx, 100						;Add 80 to obtain second vertical line initial position
-	sub dx, 180						;Substract 70 to obtain initial value
+	add cx, 100						;Add 100 to obtain second vertical line initial position
+	sub dx, 180						;Substract 180 to obtain initial value
 	call drawLineY					;Draw right vertical line
 	popa							;Pops registers from the stack
 	ret								;Return
@@ -146,10 +174,10 @@ drawLineY:
 return:
 	ret
 
-;Restores the color of the las piece
+;Restores the color of the last piece
 restoreLastColor:
 	pusha
-	mov word dx, [lastColorCopy]	;Stores the las color copy
+	mov word dx, [lastColorCopy]	;Stores the last color copy
 	mov word [lastColor], dx		;The last color
 	popa
 	ret
@@ -424,6 +452,8 @@ moveLastPieceR:
 ;		lastPieceY
 moveLastPieceIShape:
 	;Delay of .5 s
+	cmp dx, 14
+	je game
 	pusha
 	mov cx, 0x0007
 	mov dx, 0xA102
@@ -464,7 +494,7 @@ getKey:
 	mov ah, 0x1						;Set ah to 1
 	int 0x16						;Check keystroke interrupt
 	jz return						;Return if no keystroke
-	mov ah, 0x0						;Set ah to 1
+	mov ah, 0x0						;Set ah to 0
 	int 0x16						;Get keystroke interrupt
 	mov word cx, [lastPieceX]
 	mov word dx, [lastPieceY]
@@ -1541,9 +1571,8 @@ random:
 	popa
   ret
 
-;Game main loop
+;=========;=========;=========; Game main loop ;=========;=========;=========;
 game:
-	;--------------------------MOVE ENEMIES-------------------------------
 	;call check_pac
 	call moveLastPiece
 	;call get_input	;Check for user inputget_input:
@@ -1574,7 +1603,7 @@ defeat:
 ;Params:
 ;		bl = color
 ;		si = message
-;		dh = rox
+;		dh = row
 ;		dl = column
 printMsg:
 	mov bh, 0  						;Set page 0
@@ -1603,6 +1632,9 @@ halt:
 
 section .data
 	welcomeTitle db 'Tetris EDJ', 0	;Title of the game
+	HotKeysTitle db 'HOT KEYS', 0 ;Hot keys section title
+	LeftKey db 'Left: <-', 0 ;Hot key left
+	RightKey db 'Right: ->', 0 ;Hot key left
 	v_msg db 'Tetris In progress!', 0
 	go_msg	db 'Game Over', 0
 
