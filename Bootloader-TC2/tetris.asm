@@ -99,7 +99,7 @@ main:
 	popa
 
 	mov word [blockUnit], 10 		;Size of block
-	mov word [lastColor], 5			;The last color
+	mov word [lastColor], 88		;The last color
 
 	mov al, 0x3						;Set dark gray color
 	mov cx, 110						;Set column (x) to 110
@@ -121,7 +121,7 @@ main:
 	;mov word cx, [lastPieceX]		;draw a piece
 	;mov word dx, [lastPieceY]
 
-	call drawIShape
+	call drawTShape
 
 	;mov cx, 140
 	;mov dx, 70
@@ -407,6 +407,23 @@ drawLShape:
 	call drawSquare
 	ret
 
+;Clears the L shape
+;Params:
+;		cx = X coordinate
+;		dx = Y coordinate
+clearLShape:
+	cmp word [lastOrientation], 90
+	je clearLShape90
+	ret
+
+clearLShape90:
+	pusha
+	call lastColorToBlack
+	call drawLShape
+	call restoreLastColor
+	popa
+	ret
+
 ;Draws the Z shape
 ;Params:
 ;		cx = X coordinate
@@ -423,6 +440,23 @@ drawZShape:
 	call drawSquare
 	ret
 
+;Clears the Z shape
+;Params:
+;		cx = X coordinate
+;		dx = Y coordinate
+clearZShape:
+	cmp word [lastOrientation], 90
+	je clearZShape90
+	ret
+
+clearZShape90:
+	pusha
+	call lastColorToBlack
+	call drawZShape
+	call restoreLastColor
+	popa
+	ret
+
 ;Draws the B(block) shape
 ;Params:
 ;		cx = X coordinate
@@ -437,6 +471,23 @@ drawBShape:
 	call drawSquare
 	sub word cx, [blockUnit]		;Move X one block left
 	call drawSquare
+	ret
+
+;Clears the B(block) shape
+;Params:
+;		cx = X coordinate
+;		dx = Y coordinate
+clearBShape:
+	cmp word [lastOrientation], 90
+	je clearBShape90
+	ret
+
+clearBShape90:
+	pusha
+	call lastColorToBlack
+	call drawBShape
+	call restoreLastColor
+	popa
 	ret
 
 ;Draws the T shape
@@ -456,26 +507,73 @@ drawTShape:
 	call drawSquare
 	ret
 
+;Clears the T shape
+;Params:
+;		cx = X coordinate
+;		dx = Y coordinate
+clearTShape:
+	cmp word [lastOrientation], 90
+	je clearTShape90
+	ret
+
+clearTShape90:
+	pusha
+	call lastColorToBlack
+	call drawTShape
+	call restoreLastColor
+	popa
+	ret
+
 ;=========;=========;=========; Pieces Draws ;=========;=========;=========;
 
 ;========;========;=========; Pieces Movement ;=========;========;========;
 
 ;Compares which shape the last piece has and move it down
 moveLastPiece:
+	pusha							;Delay of 5 secs
+	mov cx, 0x0007
+	mov dx, 0xA102
+	mov ah, 0x86
+	int 0x15
+	popa
+	cmp word [lastShape],0			;Case B(block) Shape
+	je moveLastPieceBShape
 	cmp word [lastShape],1			;Case I Shape
 	je moveLastPieceIShape
+	cmp word [lastShape],2			;Case L Shape
+	je moveLastPieceLShape
+	cmp word [lastShape],3			;Case Z Shape
+	je moveLastPieceZShape
+	cmp word [lastShape],4			;Case T Shape
+	je moveLastPieceTShape
 	ret
 
 ;Compares which shape the last piece has and move it left
 moveLastPieceL:
+	cmp word [lastShape],0			;Case B(block) Shape
+	je moveLastPieceBShapeL
 	cmp word [lastShape],1			;Case I Shape
 	je moveLastPieceIShapeL
+	cmp word [lastShape],2			;Case L Shape
+	je moveLastPieceLShapeL
+	cmp word [lastShape],3			;Case Z Shape
+	je moveLastPieceZShapeL
+	cmp word [lastShape],4			;Case T Shape
+	je moveLastPieceTShapeL
 	ret
 
 ;Compares which shape the last piece has and move it right
 moveLastPieceR:
+	cmp word [lastShape],0			;Case B(block) Shape
+	je moveLastPieceBShapeR
 	cmp word [lastShape],1			;Case I Shape
 	je moveLastPieceIShapeR
+	cmp word [lastShape],2			;Case L Shape
+	je moveLastPieceLShapeR
+	cmp word [lastShape],3			;Case Z Shape
+	je moveLastPieceZShapeR
+	cmp word [lastShape],4			;Case T Shape
+	je moveLastPieceTShapeR
 	ret
 
 ;Moves the last piece I to the bottom
@@ -486,12 +584,6 @@ moveLastPieceIShape:
 	;Delay of .5 s
 	cmp word [lastPieceY], 150		;Case lower collision
 	je game
-	pusha
-	mov cx, 0x0007
-	mov dx, 0xA102
-	mov ah, 0x86
-	int 0x15
-	popa
 	mov word cx, [lastPieceX]		;Loads the x component
 	mov word dx, [lastPieceY]		;Loads the y component
 	call clearIShape
@@ -503,6 +595,8 @@ moveLastPieceIShape:
 	ret
 
 ;Moves the last piece I to the left
+;Requires:
+;		lastPieceX
 moveLastPieceIShapeL:
 	cmp word [lastPieceX], 110		;Case left collision
 	je getKey
@@ -514,6 +608,8 @@ moveLastPieceIShapeL:
 	ret
 
 ;Moves the last piece I to the right
+;Requires:
+;		lastPieceX
 moveLastPieceIShapeR:
 	cmp word [lastPieceX], 200		;Case right collision
 	je getKey
@@ -522,6 +618,182 @@ moveLastPieceIShapeR:
 	add word cx, [blockUnit]		;To the right
 	mov word [lastPieceX], cx
 	call drawIShape
+	ret
+
+;Moves the last piece L to the bottom
+;Requires:
+;		lastPieceX
+;		lastPieceY
+moveLastPieceLShape:
+	;Delay of .5 s
+	cmp word [lastPieceY], 150		;Case lower collision
+	je game
+	mov word cx, [lastPieceX]		;Loads the x component
+	mov word dx, [lastPieceY]		;Loads the y component
+	call clearLShape
+	mov word cx, [lastPieceX]		;Loads the x component
+	mov word dx, [lastPieceY]		;Loads the y component
+	add dx, [blockUnit]
+	mov word [lastPieceY], dx
+	call drawLShape
+	ret
+
+;Moves the last piece L to the left
+;Requires:
+;		lastPieceX
+moveLastPieceLShapeL:
+	cmp word [lastPieceX], 110		;Case left collision
+	je getKey
+	call clearLShape
+	mov word cx, [lastPieceX]		;Loads the x component
+	sub word cx, [blockUnit]		;To the left
+	mov word [lastPieceX], cx
+	call drawLShape
+	ret
+
+;Moves the last piece L to the right
+;Requires:
+;		lastPieceX
+moveLastPieceLShapeR:
+	cmp word [lastPieceX], 200		;Case right collision
+	je getKey
+	call clearLShape
+	mov word cx, [lastPieceX]		;Loads the x component
+	add word cx, [blockUnit]		;To the right
+	mov word [lastPieceX], cx
+	call drawLShape
+	ret
+
+;Moves the last piece Z to the bottom
+;Requires:
+;		lastPieceX
+;		lastPieceY
+moveLastPieceZShape:
+	;Delay of .5 s
+	cmp word [lastPieceY], 150		;Case lower collision
+	je game
+	mov word cx, [lastPieceX]		;Loads the x component
+	mov word dx, [lastPieceY]		;Loads the y component
+	call clearZShape
+	mov word cx, [lastPieceX]		;Loads the x component
+	mov word dx, [lastPieceY]		;Loads the y component
+	add dx, [blockUnit]
+	mov word [lastPieceY], dx
+	call drawZShape
+	ret
+
+;Moves the last piece Z to the left
+;Requires:
+;		lastPieceX
+moveLastPieceZShapeL:
+	cmp word [lastPieceX], 110		;Case left collision
+	je getKey
+	call clearZShape
+	mov word cx, [lastPieceX]		;Loads the x component
+	sub word cx, [blockUnit]		;To the left
+	mov word [lastPieceX], cx
+	call drawZShape
+	ret
+
+;Moves the last piece Z to the right
+;Requires:
+;		lastPieceX
+moveLastPieceZShapeR:
+	cmp word [lastPieceX], 200		;Case right collision
+	je getKey
+	call clearZShape
+	mov word cx, [lastPieceX]		;Loads the x component
+	add word cx, [blockUnit]		;To the right
+	mov word [lastPieceX], cx
+	call drawZShape
+	ret
+
+;Moves the last piece B(block) to the bottom
+;Requires:
+;		lastPieceX
+;		lastPieceY
+moveLastPieceBShape:
+	;Delay of .5 s
+	cmp word [lastPieceY], 150		;Case lower collision
+	je game
+	mov word cx, [lastPieceX]		;Loads the x component
+	mov word dx, [lastPieceY]		;Loads the y component
+	call clearBShape
+	mov word cx, [lastPieceX]		;Loads the x component
+	mov word dx, [lastPieceY]		;Loads the y component
+	add dx, [blockUnit]
+	mov word [lastPieceY], dx
+	call drawBShape
+	ret
+
+;Moves the last piece B(block) to the left
+;Requires:
+;		lastPieceX
+moveLastPieceBShapeL:
+	cmp word [lastPieceX], 110		;Case left collision
+	je getKey
+	call clearBShape
+	mov word cx, [lastPieceX]		;Loads the x component
+	sub word cx, [blockUnit]		;To the left
+	mov word [lastPieceX], cx
+	call drawBShape
+	ret
+
+;Moves the last piece B(block) to the right
+;Requires:
+;		lastPieceX
+moveLastPieceBShapeR:
+	cmp word [lastPieceX], 200		;Case right collision
+	je getKey
+	call clearBShape
+	mov word cx, [lastPieceX]		;Loads the x component
+	add word cx, [blockUnit]		;To the right
+	mov word [lastPieceX], cx
+	call drawBShape
+	ret
+
+;Moves the last piece T to the bottom
+;Requires:
+;		lastPieceX
+;		lastPieceY
+moveLastPieceTShape:
+	;Delay of .5 s
+	cmp word [lastPieceY], 150		;Case lower collision
+	je game
+	mov word cx, [lastPieceX]		;Loads the x component
+	mov word dx, [lastPieceY]		;Loads the y component
+	call clearTShape
+	mov word cx, [lastPieceX]		;Loads the x component
+	mov word dx, [lastPieceY]		;Loads the y component
+	add dx, [blockUnit]
+	mov word [lastPieceY], dx
+	call drawTShape
+	ret
+
+;Moves the last piece T to the left
+;Requires:
+;		lastPieceX
+moveLastPieceTShapeL:
+	cmp word [lastPieceX], 110		;Case left collision
+	je getKey
+	call clearTShape
+	mov word cx, [lastPieceX]		;Loads the x component
+	sub word cx, [blockUnit]		;To the left
+	mov word [lastPieceX], cx
+	call drawTShape
+	ret
+
+;Moves the last piece T to the right
+;Requires:
+;		lastPieceX
+moveLastPieceTShapeR:
+	cmp word [lastPieceX], 200		;Case right collision
+	je getKey
+	call clearTShape
+	mov word cx, [lastPieceX]		;Loads the x component
+	add word cx, [blockUnit]		;To the right
+	mov word [lastPieceX], cx
+	call drawTShape
 	ret
 
 ;========;========;=========; Pieces Movement ;=========;========;========;
