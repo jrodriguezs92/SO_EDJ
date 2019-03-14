@@ -65,6 +65,38 @@ main:
 	mov dl, 0
 	call printMsg
 	popa
+	;Score Board Title
+	pusha
+	mov bl, 3
+	mov word si, ScoreTitle
+	mov dh, 2
+	mov dl, 27
+	call printMsg
+	popa
+	;Score
+	pusha
+	mov bl, 15
+	mov word si, Score
+	mov dh, 2
+	mov dl, 34
+	call printMsg
+	popa
+	;Level Title
+	pusha
+	mov bl, 3
+	mov word si, LevelTitle
+	mov dh, 4
+	mov dl, 27
+	call printMsg
+	popa
+	;Level num
+	pusha
+	mov bl, 15
+	mov word si, Level
+	mov dh, 4
+	mov dl, 34
+	call printMsg
+	popa
 
 	mov word [blockUnit], 10 		;Size of block
 	mov word [lastColor], 5			;The last color
@@ -1635,10 +1667,14 @@ halt:
 	jmp halt
 
 section .data
-	welcomeTitle db 'Tetris EDJ', 0	;Title of the game
-	HotKeysTitle db 'HOT KEYS', 0 ;Hot keys section title
-	LeftKey db 'Left: <-', 0 ;Hot key left
-	RightKey db 'Right: ->', 0 ;Hot key left
+	welcomeTitle db 'Tetris EDJ', 0		;Title of the game
+	HotKeysTitle db 'HOT KEYS', 0 		;Hot keys section title
+	LeftKey db 'Left: <-', 0 			;Hot key left
+	RightKey db 'Right: ->', 0 			;Hot key left
+	ScoreTitle db 'Score:', 0 			;Score Board
+	Score db '0000', 0					;Score
+	LevelTitle db 'Level:', 0			;Level Title
+	Level db '1', 0						;Level
 	v_msg db 'Tetris In progress!', 0
 	go_msg	db 'Game Over', 0
 
