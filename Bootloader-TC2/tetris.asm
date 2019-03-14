@@ -71,7 +71,7 @@ main:
 
 	mov al, 0x3						;Set dark gray color
 	mov cx, 110						;Set column (x) to 110
-	mov dx, 10						;Set row (y) to 1
+	mov dx, 10						;Set row (y) to 10
 	call drawBoard
 
 	mov word [startX], 150			;Loading starting position
@@ -472,6 +472,8 @@ moveLastPieceIShape:
 
 ;Moves the last piece I to the left
 moveLastPieceIShapeL:
+	cmp word [lastPieceX], 110		;Case left collision
+	je getKey
 	call clearIShape
 	mov word cx, [lastPieceX]		;Loads the x component
 	sub word cx, [blockUnit]		;To the left
@@ -481,6 +483,8 @@ moveLastPieceIShapeL:
 
 ;Moves the last piece I to the right
 moveLastPieceIShapeR:
+	cmp word [lastPieceX], 200		;Case right collision
+	je getKey
 	call clearIShape
 	mov word cx, [lastPieceX]		;Loads the x component
 	add word cx, [blockUnit]		;To the right
