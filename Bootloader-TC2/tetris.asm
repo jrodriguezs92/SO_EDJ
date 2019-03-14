@@ -452,7 +452,7 @@ moveLastPieceR:
 ;		lastPieceY
 moveLastPieceIShape:
 	;Delay of .5 s
-	cmp word [lastPieceY], 150
+	cmp word [lastPieceY], 150		;Case lower collision
 	je game
 	pusha
 	mov cx, 0x0007
