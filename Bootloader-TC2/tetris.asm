@@ -100,7 +100,12 @@ main2:
 	;Level num
 	pusha
 	mov bl, 15
-	mov word si, Level
+	cmp word [actualLevel], 1
+	mov word si, levelNumber1
+	cmp word [actualLevel], 2
+	mov word si, levelNumber2
+	cmp word [actualLevel], 3
+	mov word si, levelNumber3
 	mov dh, 4
 	mov dl, 34
 	call printMsg
@@ -185,27 +190,16 @@ menu:
 	jmp getMenuKey
 
 onePressed: 
+	mov word [actualLevel], 1		;Loading actual level
 	jmp main2
 	
 twoPressed:
-	pusha
-	mov bl, 10
-	mov word si,Level3
-	mov dh, 20
-	mov dl, 14
-	call printMsg
-	popa
-	jmp getMenuKey
+	mov word [actualLevel], 2		;Loading actual level
+	jmp main2
 
 threePressed:
-	pusha
-	mov bl, 10
-	mov word si,Level3
-	mov dh, 21
-	mov dl, 14
-	call printMsg
-	popa
-	jmp getMenuKey
+	mov word [actualLevel], 3		;Loading actual level
+	jmp main2
 
 ;Draw the board, x value =100, y value =180
 ;Params:
@@ -846,7 +840,9 @@ section .data
 	ScoreTitle db 'Score:', 0 			;Score Board
 	Score db '0000', 0					;Score
 	LevelTitle db 'Level:', 0			;Level Title
-	Level db '1', 0						;Level	
+	levelNumber1 db '1', 0				;Level	
+	levelNumber2 db '2', 0				;Level	
+	levelNumber3 db '3', 0				;Level	
 	v_msg db 'Winner!', 0
 	go_msg	db 'Game Over', 0
 	;==============MENU=================================;
@@ -865,5 +861,7 @@ section .bss
 	lastPieceX	resw 1				;X coordinate of the last piece
 	lastPieceY 	resw 1				;Y coordinate of the last piece
 	lastShape resw 1				;Stores the shape of the last piece
+	;================MENU================================;
+	actualLevel resw 1				;Stores actual level 
 
 	points 		resw 1
