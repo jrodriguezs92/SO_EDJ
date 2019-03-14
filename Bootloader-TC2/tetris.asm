@@ -30,9 +30,9 @@ main:
 	int 0x10
 	mov ah, 0x0c					;Write graphics pixel
 	mov bh, 0x00 					;Page #0
-	jmp menu
+	call menu
+	call clear 
 
-main2:
 	mov ah, 0x00 					;Set video mode
 	mov al, 0x13					;graphics, 320x200 res, 8x8 pixel box
 	int 0x10
@@ -145,16 +145,19 @@ main2:
 
 writeOne:
 	mov word si, levelNumber1
-	;ret
-	jmp return
+	ret
 writeTwo:
 	mov word si, levelNumber2
-	;ret
-	jmp return
+	ret
 writeThree:
 	mov word si, levelNumber3
-	;ret
-	jmp return
+	ret
+
+clear:
+	mov ah, 0x00
+	mov al, 0x13
+	int 0x10
+	ret
 
 ;Draw menu 
 menu:
@@ -204,25 +207,23 @@ menu:
 	call printMsg
 	popa
 	
-	jmp getMenuKey
+	call getMenuKey
 	ret
 
 ;Update actualLevel when key 1 pressed
 onePressed: 
 	mov word [actualLevel], 1		;Loading actual level
-	jmp main2
-	
+	ret
 
 ;Update actualLevel when key 2 pressed	
 twoPressed:
 	mov word [actualLevel], 2		;Loading actual level
-	jmp main2
-	
+	ret
 
 ;Update actualLevel when key 3 pressed
 threePressed:
 	mov word [actualLevel], 3		;Loading actual level
-	jmp main2
+	ret
 	
 
 ;Draw the board, x value =100, y value =180
