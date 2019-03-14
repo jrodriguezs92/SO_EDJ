@@ -100,12 +100,16 @@ main2:
 	;Level num
 	pusha
 	mov bl, 15
-	cmp word [actualLevel], 1
 	mov word si, levelNumber1
-	cmp word [actualLevel], 2
-	mov word si, levelNumber2
-	cmp word [actualLevel], 3
-	mov word si, levelNumber3
+	;cmp word [actualLevel], 1
+	;je writeOne
+	;call writeOne
+	;cmp word [actualLevel], 2
+	;je writeTwo
+	;call writeTwo
+	;cmp word [actualLevel], 3
+	;je writeThree
+	;call writeThree
 	mov dh, 4
 	mov dl, 34
 	call printMsg
@@ -138,6 +142,19 @@ main2:
 	call drawZShape
 
 	jmp game 						;Game main loop
+
+writeOne:
+	mov word si, levelNumber1
+	;ret
+	jmp return
+writeTwo:
+	mov word si, levelNumber2
+	;ret
+	jmp return
+writeThree:
+	mov word si, levelNumber3
+	;ret
+	jmp return
 
 ;Draw menu 
 menu:
@@ -780,7 +797,7 @@ game:
 	;call get_input	;Check for user inputget_input:
 	call getKey
 	ret_input:
-	cmp word [points], 71	;Game ends when player eats all of the pellets
+	cmp word [points], 71	;Game ends 
 	je victory
 	mov cx, 0x01 	;Delay for 100ms
 	mov dx, 0x86a0
@@ -861,6 +878,7 @@ section .bss
 	lastPieceX	resw 1				;X coordinate of the last piece
 	lastPieceY 	resw 1				;Y coordinate of the last piece
 	lastShape resw 1				;Stores the shape of the last piece
+	velocity resw 1					;Stores velocity
 	;================MENU================================;
 	actualLevel resw 1				;Stores actual level 
 
