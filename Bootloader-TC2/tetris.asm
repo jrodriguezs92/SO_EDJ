@@ -6,7 +6,7 @@
 ;				 Jeremy Rodriguez Solorzano
 ;				 Daniela Hernandez Alvarado
 ;
-;	Last update: 12/03/2019
+;	Last update: 14/03/2019
 ;
 ;	Operating Systems Principles
 ;	Professor. Diego Vargas
@@ -205,18 +205,25 @@ menu:
 	popa
 	
 	jmp getMenuKey
+	ret
 
+;Update actualLevel when key 1 pressed
 onePressed: 
 	mov word [actualLevel], 1		;Loading actual level
 	jmp main2
 	
+
+;Update actualLevel when key 2 pressed	
 twoPressed:
 	mov word [actualLevel], 2		;Loading actual level
 	jmp main2
+	
 
+;Update actualLevel when key 3 pressed
 threePressed:
 	mov word [actualLevel], 3		;Loading actual level
 	jmp main2
+	
 
 ;Draw the board, x value =100, y value =180
 ;Params:
@@ -789,7 +796,7 @@ getMenuKey:
 	cmp ah, 0x04					;Jump if key three pressed
 	je threePressed
 	ret 
-
+	
 ;=========;=========;=========; Game main loop ;=========;=========;=========;
 game:
 	;call check_pac
@@ -863,7 +870,7 @@ section .data
 	v_msg db 'Winner!', 0
 	go_msg	db 'Game Over', 0
 	;==============MENU=================================;
-	Menu db 'Select a level:', 0			;Select Level
+	Menu db 'Select a level:', 0		;Select Level
 	Level1 db 'Level 1: key 1', 0		;Hot key level 1
 	Level2 db 'Level 2: key 2', 0		;Hot key level 2
 	Level3 db 'Level 3: key 3', 0		;Hot key level 3
