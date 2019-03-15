@@ -594,7 +594,7 @@ moveLastPieceR:
 moveLastPieceIShape:
 	;Delay of .5 s
 	cmp word [lastPieceY], 150		;Case lower collision
-	je game
+	je getKey
 	mov word cx, [lastPieceX]		;Loads the x component
 	mov word dx, [lastPieceY]		;Loads the y component
 	call clearIShape
@@ -638,7 +638,7 @@ moveLastPieceIShapeR:
 moveLastPieceLShape:
 	;Delay of .5 s
 	cmp word [lastPieceY], 160		;Case lower collision
-	je game
+	je getKey
 	mov word cx, [lastPieceX]		;Loads the x component
 	mov word dx, [lastPieceY]		;Loads the y component
 	call clearLShape
@@ -682,7 +682,7 @@ moveLastPieceLShapeR:
 moveLastPieceZShape:
 	;Delay of .5 s
 	cmp word [lastPieceY], 170		;Case lower collision
-	je game
+	je getKey
 	mov word cx, [lastPieceX]		;Loads the x component
 	mov word dx, [lastPieceY]		;Loads the y component
 	call clearZShape
@@ -726,7 +726,7 @@ moveLastPieceZShapeR:
 moveLastPieceBShape:
 	;Delay of .5 s
 	cmp word [lastPieceY], 170		;Case lower collision
-	je game
+	je getKey
 	mov word cx, [lastPieceX]		;Loads the x component
 	mov word dx, [lastPieceY]		;Loads the y component
 	call clearBShape
@@ -770,7 +770,7 @@ moveLastPieceBShapeR:
 moveLastPieceTShape:
 	;Delay of .5 s
 	cmp word [lastPieceY], 160		;Case lower collision
-	je game
+	je getKey
 	mov word cx, [lastPieceX]		;Loads the x component
 	mov word dx, [lastPieceY]		;Loads the y component
 	call clearTShape
