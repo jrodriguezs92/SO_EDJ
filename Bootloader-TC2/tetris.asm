@@ -36,6 +36,7 @@ main:
 	call menu
 	call clear
 
+	restart:						;Label for restart option
 	mov ah, 0x00 					;Set video mode
 	mov al, 0x13					;graphics, 320x200 res, 8x8 pixel box
 	int 0x10
@@ -73,6 +74,22 @@ main:
 	mov bl, 15
 	mov word si, RightKey
 	mov dh, 14
+	mov dl, 0
+	call printMsg
+	popa
+	;ESC Key
+	pusha
+	mov bl, 15
+	mov word si, EscKey
+	mov dh, 16
+	mov dl, 0
+	call printMsg
+	popa
+	;R Key
+	pusha
+	mov bl, 15
+	mov word si, RestartKey
+	mov dh, 18
 	mov dl, 0
 	call printMsg
 	popa
@@ -806,6 +823,10 @@ getKey:
 	je moveLastPieceR
 	cmp ah, 0x4b					;Jump if left arrow pressed
 	je moveLastPieceL
+	cmp ah, 0x01					;Jump if ESC key pressed (return index page)
+	je main
+	cmp ah, 0x13					;Jump if R key pressed (Restart the game)
+	je restart
 	ret
 	;cmp ah, 0x50					;Jump if down arrow pressed
 	;je move_down
@@ -910,6 +931,8 @@ section .data
 	HotKeysTitle db 'HOT KEYS', 0 		;Hot keys section title
 	LeftKey db 'Left: <-', 0 			;Hot key left
 	RightKey db 'Right: ->', 0 			;Hot key left
+	EscKey db 'Back: Esc', 0			;Hot Key Esc
+	RestartKey db 'Restart: R', 0		;Hot Key R
 	ScoreTitle db 'Score:', 0 			;Score Board
 	Score db '0000', 0					;Score
 	LevelTitle db 'Level:', 0			;Level Title
