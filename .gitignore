@@ -4,3 +4,4 @@ DeamonTests
 *.a
 *.so
 *.img
+*.bin
