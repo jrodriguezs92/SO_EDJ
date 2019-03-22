@@ -1,0 +1,7 @@
+WebServer-TC1/bin/*
+DeamonTests
+*.o
+*.a
+*.so
+*.img
+*.bin
