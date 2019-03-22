@@ -14,7 +14,19 @@ GNU/Linux Ubuntu 16.04.
 
 To install Docker instalar Docker Comunity Edition you can follow the instructions in: https://docs.docker.com/install/linux/docker-ce/ubuntu/
 
-## Instructions
+## Instructions for script use
+### Install
+1. Execute script "Install"
+```
+./scripts/Install.sh
+```
+### Uninstall
+1. Execute script "Uninstall"
+```
+./scripts/Uninstall.sh
+```
+
+## Instructions for manually install and uninstall
 Note that all the Docker commands begin with "sudo".  
 
 1. First, we need to build the Dockerfile included into the webserver folder:
