@@ -16,12 +16,12 @@ To install Docker instalar Docker Comunity Edition you can follow the instructio
 
 ## Instructions for script use
 ### Install
-1. Execute script "Install"
+1. Execute script "Install" with port number as a parameter:
 ```
-./scripts/Install.sh
+./scripts/Install.sh 8001
 ```
 ### Uninstall
-1. Execute script "Uninstall"
+1. Execute script "Uninstall":
 ```
 ./scripts/Uninstall.sh
 ```
