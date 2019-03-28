@@ -6,3 +6,4 @@ Bootloader-TC2/old
 *.so
 *.img
 *.bin
+.vscode
