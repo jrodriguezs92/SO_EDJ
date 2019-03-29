@@ -1,10 +1,10 @@
 # SO, Project 1
 Instituto Tecnológico de Costa Rica  
 Computer Engineering (CE).  
-Project 1: Principios de sistemas operativos.  
+Project 1: Operating System Principles.  
 2019, I Semester.  
 
-## Prerequisites
+## Requirements
 Is important to install Docker CE, 18.06.1-ce or later as recommended version.  
 
 ## Environment
@@ -12,9 +12,9 @@ GNU/Linux Ubuntu 16.04.
 
 ## Installing dependencies for Docker Comunity Edition.
 
-To install Docker instalar Docker Comunity Edition you can follow the instructions in: https://docs.docker.com/install/linux/docker-ce/ubuntu/
+To install Docker install Docker Comunity Edition you can follow the instructions in: https://docs.docker.com/install/linux/docker-ce/ubuntu/
 
-## Instructions for script use
+## Instructions for the scripts
 ### Install
 1. Execute script "Install" with port number as a parameter:
 ```

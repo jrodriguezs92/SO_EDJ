@@ -9,7 +9,7 @@
 		Programmer: Esteban Agüero Pérez (estape11)
 		Programming Language: C
 		Version: 1.0
-		Last Update: 28/02/2019
+		Last Update: 28/03/2019
 
 					Operating Systems Principles
 					Professor. Diego Vargas
@@ -31,6 +31,7 @@
 #include <errno.h>
 #include <time.h>
 #include <ctype.h>
+#include <ph7.h>
 
 #define MAXLEN 80
 #define CONEXMAX 1000
@@ -58,7 +59,7 @@ int customLog;
 char logFileTmp[MAXLEN];
 char portTmp[MAXLEN];
 char rootTmp[MAXLEN];
-
+FILE* file;
 // function definitions
 
 void startServer(char *);
@@ -69,5 +70,8 @@ void handleSignal(int);
 void daemonize();
 void printHelp(void);
 char* getTime(void);
-char * trim (char * );
+void fatalError(const char*);
+static int outputPHP(const void*, unsigned int, void*);
+int isPHPRequest(char*);
+
 /*server.h*/

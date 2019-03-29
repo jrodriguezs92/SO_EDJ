@@ -176,6 +176,7 @@ int main(int argc, char* argv[]){
 		fclose(logStream);
 	}
 
+
 	// write system log and close it
 	syslog(LOG_INFO, "Stopped %s", appName);
 	closelog();
