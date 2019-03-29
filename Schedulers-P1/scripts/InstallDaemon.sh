@@ -15,6 +15,9 @@
 
 echo "> Installing WebServer Daemon"
 
+# Starts the syslog
+service rsyslog start
+
 # Copy "WebServer" executable in /usr/bin/
 cp /usr/src/ws/bin/WebServer /usr/bin/
 

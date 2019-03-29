@@ -16,6 +16,9 @@ RUN apt-get update
 # Install build-essentia
 RUN apt-get -y install build-essential
 
+# Install syslog
+RUN apt-get -y install rsyslog
+
 # Compile the app
 RUN make all
 
