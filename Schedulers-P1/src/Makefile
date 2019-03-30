@@ -15,7 +15,8 @@ APP=WebServer
 CC=gcc
 LIBS=../lib
 INCLUDE=../include
-LINKERFLAGS=-lserver
+# flags for the server and the php interpreter
+LINKERFLAGS=-lserver -lph7
 OUT=../bin
 OPTNS=-Wall
 
