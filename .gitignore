@@ -5,3 +5,4 @@ DeamonTests
 *.so
 *.img
 *.bin
+.vscode
