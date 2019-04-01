@@ -14,13 +14,14 @@
 #************************************************************
 
 echo "> Uninstalling WebServer Daemon"
-sudo systemctl stop webserver.service
-sudo systemctl disable webserver.service
-sudo rm -f /usr/bin/WebServer
-sudo rm -f /etc/systemd/system/webserver.service
-sudo rm -rf /etc/webserver/
-sudo rm -f /etc/webserver/webserver.conf
-sudo rm -f /var/log/webserver.log
-sudo systemctl daemon-reload
-sudo systemctl reset-failed
+systemctl stop webserver.service
+systemctl disable webserver.service
+rm /etc/systemd/system/webserver.service
+rm -f /usr/bin/WebServer
+#sudo rm -f /usr/lib/systemd/system/webserver.service
+rm -rf /etc/webserver/
+rm -f /etc/webserver/webserver.conf
+rm -f /var/log/webserver.log
+systemctl daemon-reload
+systemctl reset-failed
 echo "> Completed"

@@ -10,16 +10,16 @@
 echo -e '\e[33m> Stoping Docker Container \e[39m'
 
 # Stop the container
-sudo docker stop webserver_fifo
+sudo docker stop webserver_forked
 
 echo -e '\e[33m> Removing Docker Container \e[39m'
 
 # Remove the container
-sudo docker rm webserver_fifo
+sudo docker rm webserver_forked
 
 echo -e '\e[33m> Removing Docker Image \e[39m'
 
 # Remove the image
-sudo docker rmi webserver_fifo
+sudo docker rmi webserver_forked
     
 echo -e '\e[33m> successfully completed! \e[39m'

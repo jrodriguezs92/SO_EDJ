@@ -17,7 +17,7 @@ then
     # Go to the root directory of the web server.
     cd ..
     # Build image from Dockerfile.
-    sudo docker build --tag=webserver_fifo .
+    sudo docker build --tag=webserver_forked .
 
     echo -e '\e[33m> Executing Docker container \e[39m'
 
@@ -27,12 +27,12 @@ then
     # with friendly name "webserver", 
     # and with a defined volume.
     # REFERENCE: https://hub.docker.com/r/jrei/systemd-ubuntu
-    sudo docker run -d -p "$1":8001 --privileged --name webserver_fifo -v /sys/fs/cgroup:/sys/fs/cgroup:ro webserver_fifo
+    sudo docker run -d -p "$1":8003 --privileged --name webserver_forked -v /sys/fs/cgroup:/sys/fs/cgroup:ro webserver_forked
     
     echo -e '\e[33m> Installing and running Daemon inside the container \e[39m'
     
     # Execute command inside the container in detached mode, to install Daemon and run it.
-    sudo docker exec -d webserver_fifo ./scripts/InstallDaemon.sh
+    sudo docker exec -d webserver_forked ./scripts/InstallDaemon.sh
     
     echo -e '\e[33m> successfully completed! \e[39m'
 
