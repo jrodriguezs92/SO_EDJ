@@ -51,20 +51,25 @@ int main(int argc, char *argv[]){
 	// Creates the N threads
 	for (t = 0; t < n_threads; t++)	{
 		rc = pthread_create(&threads[t], NULL, sendRequest, (void *) t);
-		if (rc) {
+		if (rc<0) {
 			perror("pthread_create()");
 			exit(-1);
 
 		}
 	}
 
-	// Detached the created threads
+	// Join the created threads
 	for (t = 0; t < n_threads; t++)	{
-		pthread_detach(threads[t]);
+		pthread_t id = threads[t];
+		while (1) {
+		    if (pthread_join(id, NULL) >= 0) {
+				break;
+		    }
+		}
 
 	}
 
-	pthread_exit(NULL);
+	printf("> Execution complete\n");
 	return 0;
 }
 

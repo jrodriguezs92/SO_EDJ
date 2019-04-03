@@ -24,7 +24,7 @@
 */
 void *sendRequest(void* thread_id){
 	long id = (long) thread_id; // ID of the thread
-	printf("> Executing thread %ld\n", id );
+	printf("> Executing thread %ld\n", (id+1) );
 	// Variables for the connection
 	int socket_fd, n;
 	struct sockaddr_in serv_addr;

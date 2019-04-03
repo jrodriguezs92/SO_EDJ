@@ -25,7 +25,7 @@
 #include <unistd.h>
 
 // Threads Library
-#include <pthread.h>
+#include <mypthread.h>
 
 #define BUFFER 8196999
 
