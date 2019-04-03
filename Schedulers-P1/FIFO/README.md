@@ -14,7 +14,7 @@ GNU/Linux Ubuntu 16.04.
 
 To install Docker install Docker Comunity Edition you can follow the instructions in: https://docs.docker.com/install/linux/docker-ce/ubuntu/
 
-## Instructions for script use
+## Instructions for the scripts
 ### Install
 1. Execute script "Install" with port number as a parameter:
 ```
