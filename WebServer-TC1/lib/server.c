@@ -162,7 +162,7 @@ void requestResponse(int n) {
 }
 
 /** 
-  *This function trims the value found in parseConfig
+  *This function trims the value found in readConfFile
  */
 char * trimValue (char * line){
   //Initialize start, end pointers 

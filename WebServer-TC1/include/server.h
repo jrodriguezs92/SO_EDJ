@@ -70,5 +70,4 @@ void daemonize();
 void printHelp(void);
 char* getTime(void);
 char * trim (char * );
-//void parseConfig ();
 /*server.h*/

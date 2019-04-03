@@ -1,7 +1,9 @@
 WebServer-TC1/bin/*
 DeamonTests
+Bootloader-TC2/old
 *.o
 *.a
 *.so
 *.img
 *.bin
+.vscode
