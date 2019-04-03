@@ -1,3 +1,20 @@
+/*
+*******************************************************************
+
+				Instituto Tecnológico de Costa Rica
+					Computer Engineering
+
+		Programmer: Esteban Agüero Pérez (estape11)
+		Programming Language: C
+		Version: 1.0
+		Last Update: 02/04/2019
+
+					Operating Systems Principles
+					Professor. Diego Vargas
+
+*******************************************************************
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 
