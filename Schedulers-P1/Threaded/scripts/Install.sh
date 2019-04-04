@@ -14,7 +14,7 @@ echo -e '\e[33m> Building Docker Image \e[39m'
 # Go to the root directory of the web server.
 cd ..
 # Build image from Dockerfile.
-sudo docker build --tag=webserver_forked .
+sudo docker build --tag=webserver_threaded .
 
 echo -e '\e[33m> Executing Docker container \e[39m'
 
@@ -24,11 +24,11 @@ echo -e '\e[33m> Executing Docker container \e[39m'
 # with friendly name "webserver", 
 # and with a defined volume.
 # REFERENCE: https://hub.docker.com/r/jrei/systemd-ubuntu
-sudo docker run -d -p 8003:8003 --privileged --name webserver_forked -v /sys/fs/cgroup:/sys/fs/cgroup:ro webserver_forked
+sudo docker run -d -p 8005:8005 --privileged --name webserver_threaded -v /sys/fs/cgroup:/sys/fs/cgroup:ro webserver_threaded
 
 echo -e '\e[33m> Installing and running Daemon inside the container \e[39m'
 
 # Execute command inside the container in detached mode, to install Daemon and run it.
-sudo docker exec -d webserver_forked ./scripts/InstallDaemon.sh
+sudo docker exec -d webserver_threaded ./scripts/InstallDaemon.sh
 
 echo -e '\e[33m> successfully completed! \e[39m'
