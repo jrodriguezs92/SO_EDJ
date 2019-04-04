@@ -12,14 +12,14 @@
 #
 #************************************************************
 
-APP=main
+APP=mainTest
 CC=gcc
 LIBS=../lib
 INCLUDE=../include
 # Flags for linker
 # Here you need to define wich thread library you want to use (-lpthread or -mypthread)
 # * See also the header (<pthread.h> or <mypthread.h>)
-LINKERFLAGS=-lmypthread
+LINKERFLAGS=-lmypthread 
 OUT=../bin
 OPTNS=-Wall
 
