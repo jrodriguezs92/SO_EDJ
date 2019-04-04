@@ -54,6 +54,9 @@ void startServer(char* port) {
 
 		}
 
+		int flags = fcntl(sockfd, F_GETFL);
+		fcntl(sockfd, F_SETFL, flags | O_NONBLOCK);
+
 		// sets the socket addres
 		if (bind(sockfd, p->ai_addr, p->ai_addrlen) == 0) { 
 			break;

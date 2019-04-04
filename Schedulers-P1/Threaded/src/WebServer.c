@@ -100,8 +100,8 @@ int main(int argc, char* argv[]){
 	syslog(LOG_INFO, "Started %s", appName);
 
 	// Daemon will handle two signals
-	signal(SIGINT, handleSignal);
-	signal(SIGHUP, handleSignal);
+	//signal(SIGINT, handleSignal);
+	//signal(SIGHUP, handleSignal);
 
 	// reads configuration from config file
 	readConfFile(0);
@@ -146,6 +146,7 @@ int main(int argc, char* argv[]){
 
 	// this global variable can be changed in function handling signal
 	running = 1;
+	pthread_t threadRequest;
 
 	while (running == 1) {
 
@@ -154,8 +155,8 @@ int main(int argc, char* argv[]){
 		clients[slot] = accept (sockfd, (struct sockaddr *) &clienteAddr, &addrLen);
 
 		if (clients[slot]<0){
-			fprintf(logStream,"%s > accept() error\n", getTime());
-			fflush(logStream);
+			//fprintf(logStream,"%s > accept() error\n", getTime());
+			//fflush(logStream);
 
 		}
 
@@ -163,9 +164,10 @@ int main(int argc, char* argv[]){
 			//Agregar threaded 
 			struct args *SLOT = (struct args *)malloc(sizeof(struct args));
 			SLOT->sslot=slot;
-			pthread_t threadRequest;
-			pthread_create(&threadRequest, NULL, &requestResponse, (void *)SLOT);
-			pthread_join(threadRequest, NULL);
+			
+			pthread_create(&threadRequest, NULL, requestResponse, (void *)SLOT);
+			
+			//pthread_join(threadRequest, NULL);
 
 			//requestResponse(slot); // serve one request at the time
 
