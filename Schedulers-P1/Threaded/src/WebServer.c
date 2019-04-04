@@ -165,7 +165,7 @@ int main(int argc, char* argv[]){
 			SLOT->sslot=slot;
 			pthread_t threadRequest;
 			pthread_create(&threadRequest, NULL, &requestResponse, (void *)SLOT);
-			pthread_join(threadRequest, NULL);
+			//pthread_join(threadRequest, NULL);
 
 			//requestResponse(slot); // serve one request at the time
 
