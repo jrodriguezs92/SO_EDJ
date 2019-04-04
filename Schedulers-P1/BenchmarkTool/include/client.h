@@ -25,9 +25,9 @@
 #include <unistd.h>
 
 // Threads Library
-#include <mypthread.h>
+#include <pthread.h>
 
-#define BUFFER 8196999
+#define BUFFER 1024
 
 int n_cycles, port;
 char *host, *file;

@@ -146,7 +146,8 @@ void *requestResponse(void * input){
 				fflush(logStream);
 
 				if ( (fd=open(path, O_RDONLY))!=-1 ) { // file found
-					if(isPHPRequest(reqline[1])){ // if php
+					if(0){ // disabled due to malfunction
+					//if(isPHPRequest(reqline[1])){ // if php
 						close(fd); // its only used to test if the file exists
 						ph7 *pEngine; /* PH7 engine */
 						ph7_vm *pVm;  /* Compiled PHP program */
