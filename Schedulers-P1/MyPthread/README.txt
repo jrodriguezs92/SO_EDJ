@@ -6,7 +6,7 @@
 
 	Programmer: Esteban Agüero Pérez (estape11)
 
-	Last update: 03/04/2019
+	Last update: 04/04/2019
 
 	Operating Systems Principles
 	Professor. Diego Vargas
@@ -17,4 +17,4 @@
 > To compile 
 	$ make all
 > To run
-	$ ./bin/main
+	$ ./bin/mainTest

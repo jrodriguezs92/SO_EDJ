@@ -14,5 +14,5 @@ COPY . /usr/src/ws
 # Compile the app
 RUN make all
 
-# Make port 8001 available
+# Make port 8005 available
 EXPOSE 8005

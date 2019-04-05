@@ -22,7 +22,7 @@ static QUEUE* ready; // threads awaiting CPU
 static QUEUE* completed;
 static TCB* running; // current thread
 static bool initialized;
-static int sched = RR;
+static int sched = RR; // round robin by default
 
 // Preemptive related prototypes
 static void blockSIGPROF(void);

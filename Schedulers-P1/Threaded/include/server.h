@@ -34,7 +34,7 @@
 #include <time.h>
 #include <ctype.h>
 #include <ph7.h>
-#include <pthread.h>
+#include <mypthread.h>
 
 #define MAXLEN 80
 #define CONEXMAX 1000
