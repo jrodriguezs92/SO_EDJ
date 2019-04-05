@@ -39,19 +39,20 @@ void *sendRequest(void* args){
 			perror("socket()");
 	  		exit(1);
 
-		}		
+		}
+
 		server = gethostbyname(host);
 		
 		if (server == NULL) {
-				printf("gethostbyname()\n");
-				exit(1);
+			printf("gethostbyname()\n");
+			exit(1);
 
 		}
 			
 		bzero((char *) &serv_addr, sizeof(serv_addr));
-			serv_addr.sin_family = AF_INET;
-			bcopy((char *) server->h_addr, (char *) &serv_addr.sin_addr.s_addr, server->h_length);
-			serv_addr.sin_port = htons(port);
+		serv_addr.sin_family = AF_INET;
+		bcopy((char *) server->h_addr, (char *) &serv_addr.sin_addr.s_addr, server->h_length);
+		serv_addr.sin_port = htons(port);
 		
 		// Tries to make the connection
 		if (connect(socket_fd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
@@ -77,14 +78,15 @@ void *sendRequest(void* args){
 		int sizeRecv, totalSize=0;
 
 		while((sizeRecv=read(socket_fd, buffer, BUFFER)) > 0){ // to complete the download
-			memset(buffer,0, BUFFER);
 			totalSize+= sizeRecv;
 			
 		}
 		printf("> Total received = %d\n",totalSize);
+		close(socket_fd);
 	}
 
 	pthread_exit(NULL);
+	return 0;
 }
 
 /*client.c*/
