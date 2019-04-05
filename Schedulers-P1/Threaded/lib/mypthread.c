@@ -7,7 +7,7 @@
 		Programmer: Esteban Agüero Pérez (estape11)
 		Programming Language: C
 		Version: 1.0
-		Last Update: 04/04/2019
+		Last Update: 05/04/2019
 
 					Operating Systems Principles
 					Professor. Diego Vargas
@@ -77,28 +77,18 @@ static bool initFirstContext(void){
  *	block to include that stack.
  */
 static bool setStackTCB(TCB* thread){
-	// Get the stack size
-
-	struct rlimit limit;
-
-	if (getrlimit(RLIMIT_STACK, &limit) == -1) {
-		return false;
-
-	}
-
 	// Allocate memory
 	void *stack;
 
-	if ((stack = malloc(limit.rlim_cur)) == NULL) {
+	if ((stack = malloc(STACK_SIZE)) == NULL) {
 		return false;
 
 	}
 
 	// Update the thread control block
-	thread->context.uc_stack.ss_flags = 0; // new stack
-	thread->context.uc_stack.ss_size = limit.rlim_cur;
+	thread->context.uc_stack.ss_size = STACK_SIZE;
 	thread->context.uc_stack.ss_sp = stack;
-	thread->has_dynamic_stack = true;
+	thread->has_dynamic_stack = false; // fixed stack
 
 	return true;
 }
@@ -180,7 +170,7 @@ static void scheduleHandler(int signum, siginfo_t *nfo, void *context){
 }
 
 /*
- *	Every 100 µs of execution (thread) a SIGPROF signal is emitted
+ *	Every 10000 µs of execution (thread) a SIGPROF signal is emitted
  *	This is like the quantum
  */
 static bool signalTimer(void){
@@ -202,7 +192,7 @@ static bool signalTimer(void){
 	}
 
 	const struct itimerval timer = {
-		{ 0, 100 }, // 100 µs
+		{ 0, 10000 }, // 10000 µs
 		{ 0, 1 }  // arms the timer as soon as possible
 	};
 

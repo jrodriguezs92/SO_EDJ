@@ -11,7 +11,7 @@
 
 		Programming Language: C
 		Version: 1.0
-		Last Update: 03/04/2019
+		Last Update: 05/04/2019
 
 					Operating Systems Principles
 					Professor. Diego Vargas
@@ -40,9 +40,9 @@
 #define CONEXMAX 1000
 #define BYTES 1024
 #define MSGLEN 9999
+#define MAX_QUEUE 1000000
 
-// global variables
-
+// Global variables
 int running;
 int delay;
 int pidFd;
@@ -63,8 +63,9 @@ char logFileTmp[MAXLEN];
 char portTmp[MAXLEN];
 char rootTmp[MAXLEN];
 FILE* file;
-// function definitions
 
+
+// Server prototypes
 void startServer(char *);
 void *requestResponse(void *);
 int readConfFile(int);
