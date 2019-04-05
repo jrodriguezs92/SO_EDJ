@@ -36,6 +36,7 @@
 int n_cycles, port;
 char *host, *file;
 char initialTime[NUMBER_OF_STRING][MAX_STRING_SIZE], finalTime[NUMBER_OF_STRING][MAX_STRING_SIZE];
+float initTime[NUMBER_OF_STRING], finTime[NUMBER_OF_STRING], responseTime[NUMBER_OF_STRING];
 
 void *sendRequest(void*);
 

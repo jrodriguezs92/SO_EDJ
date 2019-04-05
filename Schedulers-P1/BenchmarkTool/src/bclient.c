@@ -28,11 +28,11 @@ void printHelp(){
 	printf("\t <N-cycles> the times that each thread going to repeat the requests\n");
 }
 
-int createCSV(int port, int threads, int cycles, char * reqTimeI, char * reqTimeF, char * typeFile){
+int createCSV(int port, int threads, int cycles, char * reqTimeI, char * reqTimeF, float rTime ,char * typeFile, int average){
 
 	char * webserverType;
 	int reqNumber;
-	float responseTime;
+	double averageCalc;
 
 	FILE * results;
 	results = fopen("exeReport.csv","a");
@@ -57,9 +57,23 @@ int createCSV(int port, int threads, int cycles, char * reqTimeI, char * reqTime
 		webserverType="Not define";
 
 	reqNumber=threads*cycles;
-	responseTime = reqTimeF - reqTimeI;
 
-	fprintf(results, "\n%s,%d,%s,%s,%s,NULL,%f,NULL\n",webserverType,reqNumber,reqTimeI,reqTimeF,typeFile,responseTime);
+	double timeTaken = ((double)rTime)/CLOCKS_PER_SEC;
+
+	if (average==1)
+	{
+		double sum;
+		for (int i = 0; i < threads; ++i)
+		{
+			double timeTaken = ((double)responseTime[i])/CLOCKS_PER_SEC;
+			sum += timeTaken; 
+		}
+		averageCalc= sum/threads;
+	}
+	else {
+		averageCalc = 0;
+	}
+	fprintf(results, "\n%s,%d,%s,%s,%s,NULL,%f,%f\n",webserverType,reqNumber,reqTimeI,reqTimeF,typeFile,timeTaken,averageCalc);
 
 	fclose(results);
 	return 0;
@@ -71,6 +85,11 @@ int main(int argc, char *argv[]){
 	//time
 	struct tm *newtime;
     time_t ltime;
+    float mainResponseTime;
+    clock_t start, end, startMain, endMain;
+    startMain=clock();
+
+
 	if (argc != 6)	{  // If the total arguments are not provided, erro
 		printHelp();
 		return -1;
@@ -97,8 +116,9 @@ int main(int argc, char *argv[]){
 	    newtime = localtime(&ltime);
 
 		strcpy(initialTime[t], asctime(newtime));
-
-		//printf("Starts at %s", initialTime[t]);
+		
+		start = clock();
+		initTime[t]=start;
 
 		rc = pthread_create(&threads[t], NULL, sendRequest, (void *) t);
 		if (rc<0) {
@@ -121,19 +141,26 @@ int main(int argc, char *argv[]){
 	    newtime = localtime(&ltime);
 
 		strcpy(finalTime[t], asctime(newtime));
+		
+		end = clock();
+		finTime[t]=end;
 
-		//printf("Ends at %s", finalTime[t]);
 	}
 	if(threads!=NULL){
 		free(threads);
 	}
 	for (int i = 0; i < n_threads; ++i)
 	{
-		createCSV(port, n_threads, n_cycles, initialTime[i], finalTime[i], file);
+		responseTime[i]=finTime[i]-initTime[i];
+		createCSV(port, n_threads, n_cycles, initialTime[i], finalTime[i], responseTime[i], file, 0);
 	}
 	
 	printf("> Execution complete\n");
+	endMain=clock();
+	mainResponseTime = endMain - startMain;
+	createCSV(port, n_threads, n_cycles,initialTime[0],finalTime[n_threads-1],mainResponseTime,file, 1);
 	return 0;
+
 }
 
 /*bclient.c*/
