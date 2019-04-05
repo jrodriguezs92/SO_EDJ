@@ -1,0 +1,15 @@
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 13:53:04 2019
+,Fri Apr  5 13:55:19 2019
+,file.txt,NULL,-10000000.000000,NULL
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 13:53:04 2019
+,Fri Apr  5 13:55:19 2019
+,file.txt,NULL,-10000000.000000,NULL
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 13:53:04 2019
+,Fri Apr  5 13:55:19 2019
+,file.txt,NULL,-10000000.000000,NULL

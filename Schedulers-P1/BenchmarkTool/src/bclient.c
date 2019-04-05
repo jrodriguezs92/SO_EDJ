@@ -28,9 +28,49 @@ void printHelp(){
 	printf("\t <N-cycles> the times that each thread going to repeat the requests\n");
 }
 
+int createCSV(int port, int threads, int cycles, char * reqTimeI, char * reqTimeF, char * typeFile){
+
+	char * webserverType;
+	int reqNumber;
+	float responseTime;
+
+	FILE * results;
+	results = fopen("exeReport.csv","a");
+
+	fprintf(results,"\nWeb Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time");
+	if (port==8001){
+		webserverType = "Threaded";
+	}
+	else if (port==8002){
+		webserverType = "Forked";
+	}
+	else if (port==8003){
+		webserverType = "FIFO";
+	}
+	else if (port==8003){
+		webserverType = "Prethreaded";
+	}
+	else if (port==8002){
+		webserverType = "Preforked";
+	}
+	else
+		webserverType="Not define";
+
+	reqNumber=threads*cycles;
+	responseTime = reqTimeF - reqTimeI;
+
+	fprintf(results, "\n%s,%d,%s,%s,%s,NULL,%f,NULL\n",webserverType,reqNumber,reqTimeI,reqTimeF,typeFile,responseTime);
+
+	fclose(results);
+	return 0;
+}
+
 int main(int argc, char *argv[]){
 	// Parsing of the arguments
 	int n_threads;
+	//time
+	struct tm *newtime;
+    time_t ltime;
 	if (argc != 6)	{  // If the total arguments are not provided, erro
 		printHelp();
 		return -1;
@@ -50,6 +90,16 @@ int main(int argc, char *argv[]){
 
 	// Creates the N threads
 	for (t = 0; t < n_threads; t++)	{
+		
+	    /* Get the time in seconds */
+	    time(&ltime);
+		/* Convert it to the structure tm */
+	    newtime = localtime(&ltime);
+
+		strcpy(initialTime[t], asctime(newtime));
+
+		//printf("Starts at %s", initialTime[t]);
+
 		rc = pthread_create(&threads[t], NULL, sendRequest, (void *) t);
 		if (rc<0) {
 			perror("pthread_create()");
@@ -63,11 +113,25 @@ int main(int argc, char *argv[]){
 	for (t = 0; t < n_threads; t++)	{
 		pthread_t id = threads[t];
 		pthread_join(id, NULL);
+		
 
+	    /* Get the time in seconds */
+	    time(&ltime);
+		/* Convert it to the structure tm */
+	    newtime = localtime(&ltime);
+
+		strcpy(finalTime[t], asctime(newtime));
+
+		//printf("Ends at %s", finalTime[t]);
 	}
 	if(threads!=NULL){
 		free(threads);
 	}
+	for (int i = 0; i < n_threads; ++i)
+	{
+		createCSV(port, n_threads, n_cycles, initialTime[i], finalTime[i], file);
+	}
+	
 	printf("> Execution complete\n");
 	return 0;
 }
