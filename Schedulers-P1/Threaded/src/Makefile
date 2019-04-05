@@ -19,7 +19,7 @@ INCLUDE=../include
 # Flags for linker
 # Here you need to define wich thread library you want to use (-lpthread or -mypthread)
 # * See also the header (<pthread.h> or <mypthread.h>)
-LINKERFLAGS=-lserver -lph7 -lpthread
+LINKERFLAGS=-lserver -lph7 -lmypthread
 OUT=../bin
 OPTNS=-Wall
 

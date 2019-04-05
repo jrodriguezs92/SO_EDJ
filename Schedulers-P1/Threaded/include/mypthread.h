@@ -30,6 +30,7 @@
 #define RT 2
 #define RR 3
 
+#define STACK_SIZE 16384
 
 // Threads prototypes
 int pthread_create(pthread_t*, void*, void *(*start_routine) (void *), void *arg); // mypthread_create

@@ -100,8 +100,10 @@ int main(int argc, char* argv[]){
 	syslog(LOG_INFO, "Started %s", appName);
 
 	// Daemon will handle two signals
-	//signal(SIGINT, handleSignal);
-	//signal(SIGHUP, handleSignal);
+	signal(SIGINT, handleSignal);
+	signal(SIGHUP, handleSignal);
+
+	sigaction(SIGPIPE, &(struct sigaction){SIG_IGN}, NULL); // to ignore the downloads cancels
 
 	// reads configuration from config file
 	readConfFile(0);
@@ -144,8 +146,6 @@ int main(int argc, char* argv[]){
 
 	startServer(port);
 
-	signal(SIGPIPE, SIG_IGN);
-
 	// this global variable can be changed in function handling signal
 	running = 1;
 	pthread_t threadRequest;
@@ -154,32 +154,15 @@ int main(int argc, char* argv[]){
 
 		addrLen = sizeof(clienteAddr);
 		// system call to create new socket connection
-		clients[slot] = accept (sockfd, (struct sockaddr *) &clienteAddr, &addrLen);
+		int newSock = accept (sockfd, (struct sockaddr *) &clienteAddr, &addrLen);
+		fcntl(newSock, F_SETFL, O_NONBLOCK); // to make the socket 
 
-		if (clients[slot]<0){
-			//fprintf(logStream,"%s > accept() error\n", getTime());
-			//fflush(logStream);
-
-		}
-
-		else {
-			//Agregar threaded 
+		if(newSock>0){
 			struct args *SLOT = (struct args *)malloc(sizeof(struct args));
-			SLOT->sslot=slot;
-			
+			SLOT->sslot=newSock;
 			pthread_create(&threadRequest, NULL, requestResponse, (void *)SLOT);
-			
-			//pthread_join(threadRequest, NULL);
-
-			//requestResponse(slot); // serve one request at the time
 
 		}
-
-		while (clients[slot]!=-1) {
-			slot = (slot+1)%CONEXMAX; 
-
-		}
-
 	}
 
 	// server

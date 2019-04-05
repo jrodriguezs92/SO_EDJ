@@ -90,11 +90,10 @@ void startServer(char* port) {
 /**
  * this funtion response a client request
  */
-//void requestResponse(int n) {
 void *requestResponse(void * input){
-	int n = ((struct args*)input)->sslot;
+	int socket = ((struct args*)input)->sslot;
 
-	fprintf(logStream,"%s > ** Start communication with %i **\n", getTime(), n);
+	fprintf(logStream,"%s > ** Start communication with %i **\n", getTime(), socket);
 	fflush(logStream);
 
 	char* reqline[3];
@@ -105,33 +104,18 @@ void *requestResponse(void * input){
 	int rcvd, fd, bytesLeidos;
 	memset( (void*) message, (int)'\0', MSGLEN );
 
-	// 5s timeout
-	struct timeval tv = {5, 0};
-	setsockopt(clients[n], SOL_SOCKET, SO_RCVTIMEO, (struct timeval *)&tv, sizeof(struct timeval));
+	while( (rcvd=recv(socket, message, MSGLEN, 0)) <= 0 ){} // waits request from client
 
-	rcvd=recv(clients[n], message, MSGLEN, 0);
-
-	if (rcvd<0) {    // receive an error
-		fprintf(logStream,"%s > recv() error\n", getTime());
-		fflush(logStream);
-
-	}
-
-	else if (rcvd==0) {    // socket closed
-		fprintf(logStream,"%s > Client disconnected.\n", getTime());
-		fflush(logStream);
-
-	}
-
-	else if((strcmp(message, "\n")) != 0){    // message received
+	if((strcmp(message, "\n")) != 0){    // message received
 		fprintf(logStream,"%s > Message received: \n\n%s", getTime(), message);
+		fflush(logStream);
 		reqline[0] = strtok (message, " \t\n");
 
 		if ( strncmp(reqline[0], "GET\0", 4)==0 ){
 			reqline[1] = strtok (NULL, " \t");
 			reqline[2] = strtok (NULL, " \t\n");
 			if ( strncmp( reqline[2], "HTTP/1.1", 8)!=0 )	{
-				write(clients[n], "HTTP/1.1 400 Bad Request\n", 25);
+				write(socket, "HTTP/1.1 400 Bad Request\n", 25);
 
 			}
 
@@ -146,8 +130,7 @@ void *requestResponse(void * input){
 				fflush(logStream);
 
 				if ( (fd=open(path, O_RDONLY))!=-1 ) { // file found
-					if(0){ // disabled due to malfunction
-					//if(isPHPRequest(reqline[1])){ // if php
+					if(isPHPRequest(reqline[1])){ // if php
 						close(fd); // its only used to test if the file exists
 						ph7 *pEngine; /* PH7 engine */
 						ph7_vm *pVm;  /* Compiled PHP program */
@@ -242,28 +225,27 @@ void *requestResponse(void * input){
 						fclose(file);
 
 						if ( (fd=open(path, O_RDONLY))!=-1 ) { // file found
-							send(clients[n], "HTTP/1.1 200 OK\n\n", 17, 0);
+							send(socket, "HTTP/1.1 200 OK\n\n", 17, 0);
 
 							while ( (bytesLeidos=read(fd, data_to_send, BYTES))>0 ) {
-								write (clients[n], data_to_send, bytesLeidos);
+								write (socket, data_to_send, bytesLeidos);
 							}
 						} else { // file not found
-							write(clients[n], "HTTP/1.1 404 Not Found\n", 23);
+							write(socket, "HTTP/1.1 404 Not Found\n", 23);
 
 						}
 						
 					} else{
-						send(clients[n], "HTTP/1.1 200 OK\n\n", 17, 0);
-
+						send(socket, "HTTP/1.1 200 OK\n\n", 17, 0);
 						while ( (bytesLeidos=read(fd, data_to_send, BYTES))>0 ) {
-							write (clients[n], data_to_send, bytesLeidos);
+							write (socket, data_to_send, bytesLeidos);
 
 						}
 					}
 
 				}
 				else { // file not found
-					write(clients[n], "HTTP/1.1 404 Not Found\n", 23);
+					write(socket, "HTTP/1.1 404 Not Found\n", 23);
 
 				}
 			}
@@ -271,18 +253,12 @@ void *requestResponse(void * input){
 	}
 
 	// closing socket
-	close(clients[n]);
+	close(socket);
 	close(fd);
-	//close(fd);
-	//if(fdPHP!=NULL){
-	//	fclose(fdPHP);
-	//}
-	//if(path!=NULL){
-	//	free(path);
-	//}
-	clients[n]=-1;
-	fprintf(logStream,"%s > ** End communication with %i **\n", getTime(), n);
+	fprintf(logStream,"%s > ** End communication with %i **\n", getTime(), socket);
 	fflush(logStream);
+	pthread_exit(NULL);
+	return 0;
 }
 
 /** 
@@ -577,6 +553,8 @@ void handleSignal(int sig){
 		fprintf(logStream, "%s > Debug: received SIGCHLD signal\n", getTime());
 		fflush(logStream);
 
+	} else if(sig == SIGPIPE) {
+		signal(SIGPIPE, SIG_DFL);
 	}
 }
 
