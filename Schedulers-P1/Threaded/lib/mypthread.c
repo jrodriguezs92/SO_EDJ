@@ -180,7 +180,7 @@ static void scheduleHandler(int signum, siginfo_t *nfo, void *context){
 }
 
 /*
- *	Every 10000 µs of execution (thread) a SIGPROF signal is emitted
+ *	Every 100 µs of execution (thread) a SIGPROF signal is emitted
  *	This is like the quantum
  */
 static bool signalTimer(void){

@@ -22,8 +22,8 @@
 /*
 * Handles of send to the server the requests
 */
-void *sendRequest(void* thread_id){
-	long id = (long) thread_id; // ID of the thread
+void *sendRequest(void* args){
+	long id = (long) args; // ID of the thread
 	printf("> Executing thread %ld\n", (id+1) );
 	// Variables for the connection
 	int socket_fd, n;
@@ -63,7 +63,9 @@ void *sendRequest(void* thread_id){
 		// HTML Header
 		strcpy(buffer, "GET /");
 		strcat(buffer, file);		
-		strcat(buffer, " HTTP/1.1");
+		strcat(buffer, " HTTP/1.1\r\nHost: ");
+		strcat(buffer, host);
+		strcat(buffer, "\r\n\r\n");
 		
 		// Writes to the server
 		if ( (n = write(socket_fd, buffer, BUFFER)) < 0)	{
@@ -72,14 +74,14 @@ void *sendRequest(void* thread_id){
 
 		}
 		
-		bzero(buffer,BUFFER);
-		
-		// Reads from the server
-		if ( (n = read(socket_fd, buffer, BUFFER)) < 0) {
-			perror("read()");
-	  		exit(1);
+		int sizeRecv, totalSize=0;
 
+		while((sizeRecv=read(socket_fd, buffer, BUFFER)) > 0){ // to complete the download
+			memset(buffer,0, BUFFER);
+			totalSize+= sizeRecv;
+			
 		}
+		printf("> Total received = %d\n",totalSize);
 	}
 
 	pthread_exit(NULL);

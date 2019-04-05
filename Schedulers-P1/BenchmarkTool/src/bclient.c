@@ -61,14 +61,12 @@ int main(int argc, char *argv[]){
 	// Join the created threads
 	for (t = 0; t < n_threads; t++)	{
 		pthread_t id = threads[t];
-		while (1) {
-		    if (pthread_join(id, NULL) >= 0) {
-				break;
-		    }
-		}
+		pthread_join(id, NULL);
 
 	}
-
+	if(threads!=NULL){
+		free(threads);
+	}
 	printf("> Execution complete\n");
 	return 0;
 }
