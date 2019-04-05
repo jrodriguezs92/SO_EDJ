@@ -11,7 +11,7 @@
 
 		Programming Language: C
 		Version: 1.0
-		Last Update: 03/04/2019
+		Last Update: 05/04/2019
 
 					Operating Systems Principles
 					Professor. Diego Vargas
@@ -55,7 +55,7 @@ void startServer(char* port) {
 		}
 
 		int flags = fcntl(sockfd, F_GETFL);
-		fcntl(sockfd, F_SETFL, flags | O_NONBLOCK);
+		fcntl(sockfd, F_SETFL, flags | O_NONBLOCK); // to make it non-blocking
 
 		// sets the socket addres
 		if (bind(sockfd, p->ai_addr, p->ai_addrlen) == 0) { 
@@ -68,7 +68,7 @@ void startServer(char* port) {
 		}
 
 	}
-	if (p==NULL) { // case connection can be done
+	if (p==NULL) { // case connection cannot be done
 		fprintf(logStream,"%s > socket() or bind()\n", getTime());
 		fflush(logStream);
 		exit(1);
@@ -78,7 +78,7 @@ void startServer(char* port) {
 	freeaddrinfo(res); // release mem to avoit memory leaks
 
 	// listening new connections
-	if ( listen (sockfd, 1000000) != 0 ) {
+	if ( listen (sockfd, MAX_QUEUE) != 0 ) {
 		fprintf(logStream,"%s > listen() error\n", getTime());
 		fflush(logStream);
 		exit(1);
@@ -90,6 +90,7 @@ void startServer(char* port) {
 /**
  * this funtion response a client request
  */
+//void requestResponse(int n) {
 void *requestResponse(void * input){
 	int socket = ((struct args*)input)->sslot;
 
@@ -106,7 +107,7 @@ void *requestResponse(void * input){
 
 	while( (rcvd=recv(socket, message, MSGLEN, 0)) <= 0 ){} // waits request from client
 
-	if((strcmp(message, "\n")) != 0){    // message received
+	if( (strcmp(message, "\n")) != 0){    // message received
 		fprintf(logStream,"%s > Message received: \n\n%s", getTime(), message);
 		fflush(logStream);
 		reqline[0] = strtok (message, " \t\n");
@@ -226,10 +227,10 @@ void *requestResponse(void * input){
 
 						if ( (fd=open(path, O_RDONLY))!=-1 ) { // file found
 							send(socket, "HTTP/1.1 200 OK\n\n", 17, 0);
-
 							while ( (bytesLeidos=read(fd, data_to_send, BYTES))>0 ) {
 								write (socket, data_to_send, bytesLeidos);
 							}
+
 						} else { // file not found
 							write(socket, "HTTP/1.1 404 Not Found\n", 23);
 
@@ -238,8 +239,8 @@ void *requestResponse(void * input){
 					} else{
 						send(socket, "HTTP/1.1 200 OK\n\n", 17, 0);
 						while ( (bytesLeidos=read(fd, data_to_send, BYTES))>0 ) {
-							write (socket, data_to_send, bytesLeidos);
-
+							// spin to ensure the data was wrote correctly
+							while( write(socket, data_to_send, bytesLeidos)== -1){}
 						}
 					}
 
@@ -255,9 +256,12 @@ void *requestResponse(void * input){
 	// closing socket
 	close(socket);
 	close(fd);
+	// release memory
+	if(data_to_send!=NULL) free(data_to_send);
+	if(message!=NULL) free(message);
+	if(path!=NULL) free(path);
 	fprintf(logStream,"%s > ** End communication with %i **\n", getTime(), socket);
 	fflush(logStream);
-	pthread_exit(NULL);
 	return 0;
 }
 

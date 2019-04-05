@@ -7,7 +7,7 @@
 		Programmer: Esteban Agüero Pérez (estape11)
 		Programming Language: C
 		Version: 1.0
-		Last Update: 04/04/2019
+		Last Update: 05/04/2019
 
 					Operating Systems Principles
 					Professor. Diego Vargas
@@ -88,7 +88,7 @@ static bool setStackTCB(TCB* thread){
 	// Update the thread control block
 	thread->context.uc_stack.ss_size = STACK_SIZE;
 	thread->context.uc_stack.ss_sp = stack;
-	thread->has_dynamic_stack = false;
+	thread->has_dynamic_stack = false; // fixed stack
 
 	return true;
 }

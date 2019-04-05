@@ -24,7 +24,7 @@ void* func1(void* args){
 		i+=1;
 		//yield();
 		printf("Func1 Value - %d\n", i);
-		if(i==10000){
+		if(i==1234){
 			return i;
 		}
 	}
@@ -37,7 +37,7 @@ void* func2(void* args){
 		i+=2;
 		//yield();
 		printf("Func2 Value - %d\n", i);
-		if(i==1000000){
+		if(i==100000){
 			return i;
 		}
 	}
@@ -50,16 +50,17 @@ void* func3(void* args){
 		i+=3;
 		//yield();
 		printf("Func3 Value - %d\n", i);
-		if(i==3000){
+		if(i==12){
 			return i;
 		}
+		
 	}
 }
 
 int main(){
 	pthread_t* threads = malloc(sizeof(pthread_t)*3);
 	pthread_create(&threads[0],NULL,func1,NULL);
-	pthread_create(&threads[1],NULL,func1,NULL);
+	pthread_create(&threads[1],NULL,func2,NULL);
 	pthread_create(&threads[2],NULL,func3,NULL);
 
 	int* results = malloc(sizeof(int)*3);

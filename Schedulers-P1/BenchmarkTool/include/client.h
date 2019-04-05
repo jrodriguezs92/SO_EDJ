@@ -23,9 +23,10 @@
 #include <netinet/in.h>
 #include <string.h>
 #include <unistd.h>
+#include <fcntl.h>
 
 // Threads Library
-#include <pthread.h>
+#include <mypthread.h>
 
 #define BUFFER 1024
 

@@ -99,11 +99,10 @@ int main(int argc, char* argv[]){
 	openlog(argv[0], LOG_PID|LOG_CONS, LOG_DAEMON);
 	syslog(LOG_INFO, "Started %s", appName);
 
-	// Daemon will handle two signals
+	// Daemon will handle two signals plus one
 	signal(SIGINT, handleSignal);
 	signal(SIGHUP, handleSignal);
-
-	sigaction(SIGPIPE, &(struct sigaction){SIG_IGN}, NULL); // to ignore the downloads cancels
+	sigaction(SIGPIPE, &(struct sigaction){SIG_IGN}, NULL);
 
 	// reads configuration from config file
 	readConfFile(0);
@@ -149,13 +148,14 @@ int main(int argc, char* argv[]){
 	// this global variable can be changed in function handling signal
 	running = 1;
 	pthread_t threadRequest;
+	int newSock;
 
 	while (running == 1) {
 
 		addrLen = sizeof(clienteAddr);
 		// system call to create new socket connection
-		int newSock = accept (sockfd, (struct sockaddr *) &clienteAddr, &addrLen);
-		fcntl(newSock, F_SETFL, O_NONBLOCK); // to make the socket 
+		newSock = accept (sockfd, (struct sockaddr *) &clienteAddr, &addrLen);
+		fcntl(newSock, F_SETFL, O_NONBLOCK); // non-blocking socket
 
 		if(newSock>0){
 			struct args *SLOT = (struct args *)malloc(sizeof(struct args));
