@@ -144,6 +144,8 @@ int main(int argc, char* argv[]){
 
 	startServer(port);
 
+	signal(SIGPIPE, SIG_IGN);
+
 	// this global variable can be changed in function handling signal
 	running = 1;
 	pthread_t threadRequest;
