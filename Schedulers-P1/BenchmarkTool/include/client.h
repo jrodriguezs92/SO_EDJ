@@ -32,6 +32,7 @@
 #define BUFFER 1024
 #define NUMBER_OF_STRING 1000
 #define MAX_STRING_SIZE 10000
+#define MAX_FILENAME_SIZE 256
 
 int n_cycles, port;
 char *host, *file;

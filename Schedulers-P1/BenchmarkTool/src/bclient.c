@@ -48,6 +48,23 @@ long int findSize(char file_name[]) {
 
 	return res; 
 } 
+
+/*Get extension*/
+char *getExt(char *str) {
+    char *result;
+    char *last;
+    if ((last = strrchr(str, '.')) != NULL) {
+        if ((*last == '.') && (last == str))
+            return "";
+        else {
+            result = (char*) malloc(MAX_FILENAME_SIZE);
+            snprintf(result, sizeof result, "%s", last + 1);
+            return result;
+        }
+    } else {
+        return ""; // Empty/NULL string
+    }
+}
 /*Create the file CSV*/
 int createCSV(int port, int threads, int cycles, char * reqTimeI, char * reqTimeF, float rTime ,char * typeFile, int fileSize, int average){
 
@@ -80,7 +97,9 @@ int createCSV(int port, int threads, int cycles, char * reqTimeI, char * reqTime
 	else
 		webserverType="Not define";
 
+	/*Request number*/
 	reqNumber=threads*cycles;
+
 
    /* get the first token*/
    tokenIni = strtok(reqTimeI, s);
@@ -88,6 +107,7 @@ int createCSV(int port, int threads, int cycles, char * reqTimeI, char * reqTime
 
 	double timeTaken = ((double)rTime)/CLOCKS_PER_SEC;
 
+	/*Calculate average*/
 	if (average==1)
 	{
 		double sum;
@@ -116,6 +136,7 @@ int main(int argc, char *argv[]){
     float mainResponseTime;
     clock_t start, end, startMain, endMain;
     startMain=clock();
+    char * fileExt;
 
 	if (argc != 6)	{  // If the total arguments are not provided, erro
 		printHelp();
@@ -139,6 +160,9 @@ int main(int argc, char *argv[]){
 	strcpy(completPath, filePath); 
 	strcat(completPath, file);
 	long int size = findSize(completPath);
+
+	/*File extension*/
+	fileExt = getExt(file);
 
 	pthread_t *threads = malloc(sizeof(pthread_t) * n_threads);
 	int rc;
@@ -189,14 +213,14 @@ int main(int argc, char *argv[]){
 	for (int i = 0; i < n_threads; ++i)
 	{
 		responseTime[i]=finTime[i]-initTime[i];
-		createCSV(port, n_threads, n_cycles, initialTime[i], finalTime[i], responseTime[i], file, size,0);
+		createCSV(port, n_threads, n_cycles, initialTime[i], finalTime[i], responseTime[i], fileExt, size,0);
 	}
 	
 
 	printf("> Execution complete\n");
 	endMain=clock();
 	mainResponseTime = endMain - startMain;
-	createCSV(port, n_threads, n_cycles,initialTime[0],finalTime[n_threads-1],mainResponseTime,file, size,1);
+	createCSV(port, n_threads, n_cycles,initialTime[0],finalTime[n_threads-1],mainResponseTime,fileExt, size,1);
 	return 0;
 
 }
