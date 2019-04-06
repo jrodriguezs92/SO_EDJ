@@ -28,7 +28,28 @@ void printHelp(){
 	printf("\t <N-cycles> the times that each thread going to repeat the requests\n");
 }
 
-int createCSV(int port, int threads, int cycles, char * reqTimeI, char * reqTimeF, float rTime ,char * typeFile, int average){
+long int findSize(char file_name[]) { 
+	// opening the file in read mode 
+	FILE* fp = fopen(file_name, "r"); 
+
+	// checking if the file exist or not 
+	if (fp == NULL) { 
+		printf("File Not Found!\n"); 
+		return -1; 
+	} 
+
+	fseek(fp, 0L, SEEK_END); 
+
+	// calculating the size of the file 
+	long int res = ftell(fp); 
+
+	// closing the file 
+	fclose(fp); 
+
+	return res; 
+} 
+/*Create the file CSV*/
+int createCSV(int port, int threads, int cycles, char * reqTimeI, char * reqTimeF, float rTime ,char * typeFile, int fileSize, int average){
 
 	char * webserverType;
 	int reqNumber;
@@ -73,7 +94,7 @@ int createCSV(int port, int threads, int cycles, char * reqTimeI, char * reqTime
 	else {
 		averageCalc = 0;
 	}
-	fprintf(results, "\n%s,%d,%s,%s,%s,NULL,%f,%f\n",webserverType,reqNumber,reqTimeI,reqTimeF,typeFile,timeTaken,averageCalc);
+	fprintf(results, "\n%s,%d,%s,%s,%s,%d,%f,%f\n",webserverType,reqNumber,reqTimeI,reqTimeF,typeFile,fileSize,timeTaken,averageCalc);
 
 	fclose(results);
 	return 0;
@@ -89,7 +110,6 @@ int main(int argc, char *argv[]){
     clock_t start, end, startMain, endMain;
     startMain=clock();
 
-
 	if (argc != 6)	{  // If the total arguments are not provided, erro
 		printHelp();
 		return -1;
@@ -102,6 +122,16 @@ int main(int argc, char *argv[]){
 	file = argv[3];            // file to be transferred
 	n_threads = atoi(argv[4]); // number of threads to run
 	n_cycles = atoi(argv[5]);  // times to repeat the requests
+
+	/*File size*/
+	int fileLen = strlen(file);
+	//char* filePath="/usr/src/ws/bin/res";
+	char* filePath="/home/daniha/res/";
+	char* completPath;
+	completPath = malloc(strlen(filePath)+1+fileLen); // make space for the new string 
+	strcpy(completPath, filePath); 
+	strcat(completPath, file);
+	long int size = findSize(completPath);
 
 	pthread_t *threads = malloc(sizeof(pthread_t) * n_threads);
 	int rc;
@@ -152,13 +182,14 @@ int main(int argc, char *argv[]){
 	for (int i = 0; i < n_threads; ++i)
 	{
 		responseTime[i]=finTime[i]-initTime[i];
-		createCSV(port, n_threads, n_cycles, initialTime[i], finalTime[i], responseTime[i], file, 0);
+		createCSV(port, n_threads, n_cycles, initialTime[i], finalTime[i], responseTime[i], file, size,0);
 	}
 	
+
 	printf("> Execution complete\n");
 	endMain=clock();
 	mainResponseTime = endMain - startMain;
-	createCSV(port, n_threads, n_cycles,initialTime[0],finalTime[n_threads-1],mainResponseTime,file, 1);
+	createCSV(port, n_threads, n_cycles,initialTime[0],finalTime[n_threads-1],mainResponseTime,file, size,1);
 	return 0;
 
 }

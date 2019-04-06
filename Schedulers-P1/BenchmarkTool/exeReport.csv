@@ -254,3 +254,203 @@ Web Server Type,Request number,Initial request time,Final request time, File typ
 Threaded,12,Fri Apr  5 16:32:13 2019
 ,Fri Apr  5 16:32:14 2019
 ,image.png,NULL,0.008103,0.007895
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 18:42:11 2019
+,Fri Apr  5 18:42:12 2019
+,image.png,NULL,0.007856,0.000000
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 18:42:11 2019
+,Fri Apr  5 18:42:12 2019
+,image.png,NULL,0.007858,0.000000
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 18:42:11 2019
+,Fri Apr  5 18:42:12 2019
+,image.png,NULL,0.007859,0.000000
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 18:43:49 2019
+,Fri Apr  5 18:43:50 2019
+,image.png,NULL,0.008909,0.000000
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 18:43:49 2019
+,Fri Apr  5 18:43:50 2019
+,image.png,NULL,0.008908,0.000000
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 18:43:49 2019
+,Fri Apr  5 18:43:50 2019
+,image.png,NULL,0.008903,0.000000
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 19:09:44 2019
+,Fri Apr  5 19:09:45 2019
+,image.png,0,0.009497,0.000000
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 19:09:44 2019
+,Fri Apr  5 19:09:45 2019
+,image.png,0,0.009493,0.000000
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 19:09:44 2019
+,Fri Apr  5 19:09:45 2019
+,image.png,0,0.009492,0.000000
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 19:09:44 2019
+,Fri Apr  5 19:09:45 2019
+,image.png,4294967295,0.009763,0.009494
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 19:10:08 2019
+,Fri Apr  5 19:10:09 2019
+,img.png,0,0.009399,0.000000
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 19:10:08 2019
+,Fri Apr  5 19:10:09 2019
+,img.png,0,0.009400,0.000000
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 19:10:08 2019
+,Fri Apr  5 19:10:09 2019
+,img.png,0,0.009401,0.000000
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 19:10:08 2019
+,Fri Apr  5 19:10:09 2019
+,img.png,19242,0.009606,0.009400
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,4,Fri Apr  5 19:17:08 2019
+,Fri Apr  5 19:19:15 2019
+,file.txt,0,19.056832,0.000000
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,4,Fri Apr  5 19:17:08 2019
+,Fri Apr  5 19:19:16 2019
+,file.txt,0,19.166536,0.000000
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,4,Fri Apr  5 19:17:08 2019
+,Fri Apr  5 19:19:16 2019
+,file.txt,3221225472,19.166976,19.111684
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 19:24:06 2019
+,Fri Apr  5 19:24:07 2019
+,img.png,0,0.007986,0.000000
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 19:24:06 2019
+,Fri Apr  5 19:24:07 2019
+,img.png,0,0.007982,0.000000
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 19:24:06 2019
+,Fri Apr  5 19:24:07 2019
+,img.png,0,0.007979,0.000000
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 19:25:01 2019
+,Fri Apr  5 19:25:02 2019
+,img.png,0,0.007989,0.000000
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 19:25:01 2019
+,Fri Apr  5 19:25:02 2019
+,img.png,0,0.007987,0.000000
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 19:25:01 2019
+,Fri Apr  5 19:25:02 2019
+,img.png,0,0.007988,0.000000
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 19:25:01 2019
+,Fri Apr  5 19:25:02 2019
+,img.png,19242,0.008214,0.007988
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 19:26:32 2019
+,Fri Apr  5 19:26:32 2019
+,img.png,19242,0.008794,0.000000
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 19:26:32 2019
+,Fri Apr  5 19:26:32 2019
+,img.png,19242,0.008792,0.000000
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 19:26:32 2019
+,Fri Apr  5 19:26:32 2019
+,img.png,19242,0.008791,0.000000
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 19:26:32 2019
+,Fri Apr  5 19:26:32 2019
+,img.png,19242,0.008989,0.008792
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 19:27:18 2019
+,Fri Apr  5 19:27:18 2019
+,img.png,19242,0.008408,0.000000
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 19:27:18 2019
+,Fri Apr  5 19:27:18 2019
+,img.png,19242,0.008399,0.000000
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 19:27:18 2019
+,Fri Apr  5 19:27:18 2019
+,img.png,19242,0.008395,0.000000
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 19:27:18 2019
+,Fri Apr  5 19:27:18 2019
+,img.png,19242,0.008644,0.008401
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 19:28:23 2019
+,Fri Apr  5 19:28:24 2019
+,img.png,19242,0.010922,0.000000
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 19:28:23 2019
+,Fri Apr  5 19:28:24 2019
+,img.png,19242,0.010914,0.000000
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 19:28:23 2019
+,Fri Apr  5 19:28:24 2019
+,img.png,19242,0.010910,0.000000
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 19:28:23 2019
+,Fri Apr  5 19:28:24 2019
+,img.png,19242,0.011152,0.010915
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 19:29:53 2019
+,Fri Apr  5 19:29:53 2019
+,img.png,19242,0.010597,0.000000
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 19:29:53 2019
+,Fri Apr  5 19:29:53 2019
+,img.png,19242,0.010588,0.000000
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 19:29:53 2019
+,Fri Apr  5 19:29:53 2019
+,img.png,19242,0.010582,0.000000
+
+Web Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time
+Threaded,12,Fri Apr  5 19:29:53 2019
+,Fri Apr  5 19:29:53 2019
+,img.png,19242,0.010829,0.010589
