@@ -18,13 +18,19 @@ To install Docker install Docker Comunity Edition you can follow the instruction
 ### Install
 1. Execute script "Install" with port number as a parameter:
 ```
-./scripts/Install.sh 8001
+./scripts/Install.sh
 ```
 ### Uninstall
 1. Execute script "Uninstall":
 ```
 ./scripts/Uninstall.sh
 ```
+##  Instruccions for execution
+If the container is successfully executed and is running, we enter to the container with:
+```
+sudo docker exec -it webserver_x bash
+```
+Where x is the version you want it to run (fifo, forked, threaded)
 
 ## Instructions for manually install and uninstall
 Note that all the Docker commands begin with "sudo".  
@@ -51,7 +57,7 @@ sudo docker ps -a
 ```
 6. If the container is successfully executed and is running, we enter to the container with:
 ```
-sudo docker exec -it webserver bash
+sudo docker exec -it webserver_x bash
 ```
 7. Next, we need to install the web server application, we use the current commands for Linux without any "sudo" instruction:
 ```
