@@ -7,6 +7,7 @@
 					Computer Engineering
 
 		Programmer: Esteban Agüero Pérez (estape11)
+					Daniela Hernandez A (DaniHdez)
 		Programming Language: C
 		Version: 1.0
 		Last Update: 02/04/2019
@@ -78,7 +79,7 @@ int createCSV(int port, int threads, int cycles, char * reqTimeI, char * reqTime
 	FILE * results;
 	results = fopen("exeReport.csv","a");
 
-	fprintf(results,"\nWeb Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time, Average time");
+	//fprintf(results,"\nWeb Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time, Average time");
 	if (port==8001){
 		webserverType = "Threaded";
 	}
@@ -117,11 +118,17 @@ int createCSV(int port, int threads, int cycles, char * reqTimeI, char * reqTime
 			sum += timeTaken; 
 		}
 		averageCalc= sum/threads;
+		fprintf(results, "\nComplete execution" );
+		fprintf(results,"\nWeb Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time, Average time");
+		fprintf(results, "\n%s,%d,%s,%s,%s,%d,%f,%f\n",webserverType,reqNumber,tokenIni,tokenFin,typeFile,fileSize,timeTaken,averageCalc);
 	}
 	else {
 		averageCalc = 0;
+		fprintf(results, "\nThread execution" );
+		fprintf(results,"\nWeb Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time");
+		fprintf(results, "\n%s,%d,%s,%s,%s,%d,%f,%f\n",webserverType,reqNumber,tokenIni,tokenFin,typeFile,fileSize,timeTaken);
 	}
-	fprintf(results, "\n%s,%d,%s,%s,%s,%d,%f,%f\n",webserverType,reqNumber,tokenIni,tokenFin,typeFile,fileSize,timeTaken,averageCalc);
+	//fprintf(results, "\n%s,%d,%s,%s,%s,%d,%f,%f\n",webserverType,reqNumber,tokenIni,tokenFin,typeFile,fileSize,timeTaken,averageCalc);
 
 	fclose(results);
 	return 0;
