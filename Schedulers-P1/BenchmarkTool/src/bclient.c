@@ -54,11 +54,14 @@ int createCSV(int port, int threads, int cycles, char * reqTimeI, char * reqTime
 	char * webserverType;
 	int reqNumber;
 	double averageCalc;
+	const char s[2] = "\n";
+   	char *tokenIni;
+   	char *tokenFin;
 
 	FILE * results;
 	results = fopen("exeReport.csv","a");
 
-	fprintf(results,"\nWeb Server Type,Request number,Initial request time,Final request time, File type, File size, Response time, Average time");
+	fprintf(results,"\nWeb Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time, Average time");
 	if (port==8001){
 		webserverType = "Threaded";
 	}
@@ -79,6 +82,10 @@ int createCSV(int port, int threads, int cycles, char * reqTimeI, char * reqTime
 
 	reqNumber=threads*cycles;
 
+   /* get the first token*/
+   tokenIni = strtok(reqTimeI, s);
+   tokenFin = strtok(reqTimeF,s);
+
 	double timeTaken = ((double)rTime)/CLOCKS_PER_SEC;
 
 	if (average==1)
@@ -94,7 +101,7 @@ int createCSV(int port, int threads, int cycles, char * reqTimeI, char * reqTime
 	else {
 		averageCalc = 0;
 	}
-	fprintf(results, "\n%s,%d,%s,%s,%s,%d,%f,%f\n",webserverType,reqNumber,reqTimeI,reqTimeF,typeFile,fileSize,timeTaken,averageCalc);
+	fprintf(results, "\n%s,%d,%s,%s,%s,%d,%f,%f\n",webserverType,reqNumber,tokenIni,tokenFin,typeFile,fileSize,timeTaken,averageCalc);
 
 	fclose(results);
 	return 0;
@@ -125,8 +132,8 @@ int main(int argc, char *argv[]){
 
 	/*File size*/
 	int fileLen = strlen(file);
-	//char* filePath="/usr/src/ws/bin/res";
-	char* filePath="/home/daniha/res/";
+	char* filePath="/usr/src/ws/bin/res";
+	//char* filePath="/home/daniha/res/";
 	char* completPath;
 	completPath = malloc(strlen(filePath)+1+fileLen); // make space for the new string 
 	strcpy(completPath, filePath); 
