@@ -16,26 +16,20 @@ To install Docker install Docker Comunity Edition you can follow the instruction
 
 ## Instructions for the scripts
 ### Install
-1. Execute script "Install" with port number as a parameter:
+1. Execute script "Install" that is located in the root of the project directory:
 ```
-./scripts/Install.sh
+./Install.sh
 ```
 ### Uninstall
-1. Execute script "Uninstall":
+1. Execute script "Uninstall" that is located in the root of the project directory:
 ```
-./scripts/Uninstall.sh
+./Uninstall.sh
 ```
-##  Instruccions for execution
-If the container is successfully executed and is running, we enter to the container with:
-```
-sudo docker exec -it webserver_x bash
-```
-Where x is the version you want it to run (fifo, forked, threaded)
 
 ## Instructions for manually install and uninstall
 Note that all the Docker commands begin with "sudo".  
 
-1. First, we need to build the Dockerfile included into the webserver folder:
+1. First, we need to build each Dockerfile included into each server folder, with a representative '--tag' as option (be sure you use a different tag for each build server):
 ```
 sudo docker build --tag=webserver .
 ```
@@ -43,7 +37,7 @@ sudo docker build --tag=webserver .
 ```
 sudo docker images
 ```
-3. Create and execute the Docker container:
+1. Create and execute the Docker container, with a representative '--name' as option (be sure you use a different name for each run container) and the image tag as a parameter. Also, you need to map the port to be used with '-p' option, each container have a different port exposed (FIFO->8001, FORKED->8003, THREADED->8005, PREFORKED->8007, PRETHREADED->8009). The form is 'LocalPort:ContainerPort':
 ```
 sudo docker run -d -p 8001:8001 --privileged --name webserver -v /sys/fs/cgroup:/sys/fs/cgroup:ro webserver
 ```
@@ -57,7 +51,7 @@ sudo docker ps -a
 ```
 6. If the container is successfully executed and is running, we enter to the container with:
 ```
-sudo docker exec -it webserver_x bash
+sudo docker exec -it webserver bash
 ```
 7. Next, we need to install the web server application, we use the current commands for Linux without any "sudo" instruction:
 ```
