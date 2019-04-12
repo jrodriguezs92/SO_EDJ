@@ -55,7 +55,6 @@ int main(int argc, char* argv[]){
 	strcpy(dirRoot, "/home/user/res");
 	strcpy(port,"10101"); // port=10101
 	
-	int slot=0;
 	clients = (int*)malloc(CONEXMAX * sizeof(int));
 
 	// server
@@ -99,10 +98,10 @@ int main(int argc, char* argv[]){
 	openlog(argv[0], LOG_PID|LOG_CONS, LOG_DAEMON);
 	syslog(LOG_INFO, "Started %s", appName);
 
-	// Daemon will handle two signals plus one
+	// Daemon will handle two signals
 	signal(SIGINT, handleSignal);
 	signal(SIGHUP, handleSignal);
-	sigaction(SIGPIPE, &(struct sigaction){SIG_IGN}, NULL);
+	signal(SIGPIPE, SIG_IGN);
 
 	// reads configuration from config file
 	readConfFile(0);
