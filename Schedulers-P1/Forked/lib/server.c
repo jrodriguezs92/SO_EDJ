@@ -1,5 +1,25 @@
+/*
+*******************************************************************
+
+				Instituto Tecnológico de Costa Rica
+					Computer Engineering
+
+		Programmer: Esteban Agüero Pérez (estape11)
+					Jeremy Rodriguez (jrodriguezs92)
+
+		Programming Language: C
+		Version: 1.0
+		Last Update: 12/04/2019
+
+					Operating Systems Principles
+					Professor. Diego Vargas
+
+*******************************************************************
+*/
 
 #include <server.h>
+
+static int outputPHP(const void *, unsigned int, void *);
 
 //start server
 void startServer(char *port)
@@ -113,13 +133,13 @@ void respond(int n)
 						lSize = ftell( fdTemp );       // to know the file size
 						rewind( fdTemp );             // Now point to beginning 
 
-						char* speech = calloc( 1, lSize+1 );
-						if( speech )
+						char* phpFileData = calloc( 1, lSize+1 );
+						if( phpFileData )
 						{
-						    if( fread( speech , lSize, 1 , fdTemp) != 1)
+						    if( fread( phpFileData , lSize, 1 , fdTemp) != 1)
 						    {
 						      fclose(fdTemp) ;
-						      free(speech); 
+						      free(phpFileData); 
 						      //exit(1);
 						    }
 						}
@@ -130,7 +150,7 @@ void respond(int n)
 						/* Compile the PHP test program defined above */
 						rc = ph7_compile_v2(
 							pEngine,  /* PH7 engine */
-							speech, /* PHP test program */
+							phpFileData, /* PHP test program */
 							-1        /* Compute input length automatically*/, 
 							&pVm,     /* OUT: Compiled PHP program */
 							0         /* IN: Compile flags */
@@ -179,7 +199,7 @@ void respond(int n)
 						*/
 						ph7_vm_release(pVm);
 						ph7_release(pEngine);
-						free(speech); // Don't forget to free the allocated memory !
+						free(phpFileData); // Don't forget to free the allocated memory !
 						
 						fclose(file);
 
@@ -480,7 +500,6 @@ void handleSignal(int sig){
 		// unlock and close lockfile
 		if (pidFd != -1) {
 			lockf(pidFd, F_ULOCK, 0);
-			close(pidFd);
 
 		}
 		// try to delete lockfile
@@ -507,9 +526,7 @@ void handleSignal(int sig){
 		readConfFile(1);
 
 	} else if (sig == SIGCHLD) {
-		fprintf(logStream, "%s > Debug: received SIGCHLD signal\n", getTime());
-		fflush(logStream);
-
+		wait(NULL); 
 	}
 }
 
