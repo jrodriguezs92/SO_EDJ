@@ -34,7 +34,7 @@ long int findSize(char file_name[]) {
 
 	// checking if the file exist or not 
 	if (fp == NULL) { 
-		printf("File Not Found!\n"); 
+		//printf("File Not Found!\n"); 
 		return -1; 
 	} 
 
