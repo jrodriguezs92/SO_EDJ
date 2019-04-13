@@ -7,7 +7,7 @@
 		Programmer: Esteban Agüero Pérez (estape11)
 		Programming Language: C
 		Version: 1.0
-		Last Update: 28/02/2019
+		Last Update: 12/04/2019
 
 		Inputs: Port and/ or root directory
 		Restrictions: Numeric Value / String
@@ -100,6 +100,7 @@ int main(int argc, char* argv[]){
 	// Daemon will handle two signals
 	signal(SIGINT, handleSignal);
 	signal(SIGHUP, handleSignal);
+	signal(SIGPIPE, SIG_IGN);
 
 	// reads configuration from config file
 	readConfFile(0);
@@ -159,11 +160,6 @@ int main(int argc, char* argv[]){
 
 		else {
 			requestResponse(slot); // serve one request at the time
-
-		}
-
-		while (clients[slot]!=-1) {
-			slot = (slot+1)%CONEXMAX; 
 
 		}
 

@@ -28,7 +28,7 @@ lib$(LIB_SERVER).a:$(LIB_SERVER).o
 		$(AR) rcs lib$(LIB_SERVER).a $(LIB_SERVER).o
 
 $(LIB_PHP).o:$(LIB_PHP).c
-		$(CC) $(OPTNS) -c $(LIB_PHP).c -o $(LIB_PHP).o -I$(INCLUDE)
+		$(CC) -c $(LIB_PHP).c -o $(LIB_PHP).o -I$(INCLUDE)
 
 # Make the library for the php interpreter
 lib$(LIB_PHP).a:$(LIB_PHP).o

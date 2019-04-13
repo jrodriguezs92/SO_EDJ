@@ -1,3 +1,25 @@
+/*
+*******************************************************************
+
+				Instituto Tecnológico de Costa Rica
+					Computer Engineering
+
+		Programmer: Esteban Agüero Pérez (estape11)
+					Jeremy Rodriguez (jrodriguezs92)
+
+		Programming Language: C
+		Version: 1.0
+		Last Update: 03/04/2019
+
+		Inputs: Port and/ or root directory
+		Restrictions: Numeric Value / String
+
+					Operating Systems Principles
+					Professor. Diego Vargas
+
+*******************************************************************
+*/
+
 #include <server.h>
 
 int main(int argc, char* argv[])
@@ -76,6 +98,8 @@ int main(int argc, char* argv[])
 	// Daemon will handle two signals
 	signal(SIGINT, handleSignal);
 	signal(SIGHUP, handleSignal);
+	signal(SIGPIPE, SIG_IGN);
+	signal(SIGCHLD, handleSignal);
 
 	// reads configuration from config file
 	readConfFile(0);
@@ -152,7 +176,6 @@ int main(int argc, char* argv[])
 	if (confFileName != NULL) free(confFileName);
 	if (logFileName != NULL) free(logFileName);
 	if (pidFileName != NULL) free(pidFileName);
-	if (clients != NULL) free(clients);
 	if (port != NULL) free(port);
 	if (dirRoot != NULL) free(dirRoot);
 

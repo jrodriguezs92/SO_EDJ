@@ -21,6 +21,8 @@
 
 #include <server.h>
 
+static int outputPHP(const void*, unsigned int, void*);
+
 /**
  * this function starts the server @ port
  */

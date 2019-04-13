@@ -9,7 +9,7 @@
 		Programmer: Esteban Agüero Pérez (estape11)
 		Programming Language: C
 		Version: 1.0
-		Last Update: 28/03/2019
+		Last Update: 12/04/2019
 
 					Operating Systems Principles
 					Professor. Diego Vargas
@@ -71,7 +71,6 @@ void daemonize();
 void printHelp(void);
 char* getTime(void);
 void fatalError(const char*);
-static int outputPHP(const void*, unsigned int, void*);
 int isPHPRequest(char*);
 
 /*server.h*/

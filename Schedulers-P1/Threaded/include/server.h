@@ -75,7 +75,6 @@ void daemonize();
 void printHelp(void);
 char* getTime(void);
 void fatalError(const char*);
-static int outputPHP(const void*, unsigned int, void*);
 int isPHPRequest(char*);
 struct args {int sslot; };
 
