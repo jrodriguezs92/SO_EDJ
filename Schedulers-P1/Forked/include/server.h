@@ -1,3 +1,22 @@
+/*
+*******************************************************************
+
+				Instituto Tecnológico de Costa Rica
+					Computer Engineering
+
+		Programmer: Esteban Agüero Pérez (estape11)
+					Jeremy Rodriguez (jrodriguezs92)
+
+		Programming Language: C
+		Version: 1.0
+		Last Update: 12/04/2019
+
+					Operating Systems Principles
+					Professor. Diego Vargas
+
+*******************************************************************
+*/
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -15,6 +34,7 @@
 #include <time.h>
 #include <ctype.h>
 #include <ph7.h>
+#include <sys/wait.h>
 
 #define CONNMAX 1000
 #define BYTES 1024
@@ -50,5 +70,4 @@ void fatalError(const char *);
 void handleSignal(int);
 void daemonize();
 void printHelp(void);
-static int outputPHP(const void *, unsigned int, void *);
 int isPHPRequest(char *);

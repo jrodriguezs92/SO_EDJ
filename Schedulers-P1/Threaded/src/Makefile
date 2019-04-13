@@ -38,7 +38,7 @@ $(APP):$(APP).o setup
 		$(CC) -o $(OUT)/$(APP) $(APP).o -L$(LIBS) $(LINKERFLAGS)
 
 clean:
-		rm -rf  $(OUT)
+		rm -rf  $(OUT)/$(APP)
 		rm -f *.o 
 		rm -f *.so
 		rm -f *.a

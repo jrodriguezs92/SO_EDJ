@@ -21,7 +21,7 @@ INCLUDE=../include
 # * See also the header (<pthread.h> or <mypthread.h>)
 LINKERFLAGS=-lmypthread 
 OUT=../bin
-OPTNS=-Wall
+OPTNS=-w
 
 all: $(APP) setup
 
