@@ -20,7 +20,7 @@ rm /etc/systemd/system/webserver.service
 rm -f /usr/bin/WebServer
 #sudo rm -f /usr/lib/systemd/system/webserver.service
 rm -rf /etc/webserver/
-rm -f /etc/webserver/webserver.conf
+rm -f /etc/webserver/config.conf
 rm -f /var/log/webserver.log
 systemctl daemon-reload
 systemctl reset-failed
