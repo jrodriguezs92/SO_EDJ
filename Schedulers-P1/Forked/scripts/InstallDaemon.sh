@@ -28,7 +28,7 @@ cp /usr/src/ws/scripts/webserver.service /etc/systemd/system/
 mkdir -p /etc/webserver/
 
 # Copy config file in /etc/webserver/
-cp /usr/src/ws/scripts/webserver.conf /etc/webserver/
+cp /usr/src/ws/scripts/config.conf /etc/webserver/
 
 # Reload Daemon system
 systemctl daemon-reload
