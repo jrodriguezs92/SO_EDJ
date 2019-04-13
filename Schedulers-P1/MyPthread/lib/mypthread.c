@@ -23,7 +23,7 @@ static QUEUE* completed;
 static QUEUE* new;
 static TCB* running; // current thread
 static bool initialized;
-static int sched = SRR; // round robin by default
+static int sched = SRR; // selfish round robin by default
 
 // Preemptive related prototypes
 static void blockSIGPROF(void);

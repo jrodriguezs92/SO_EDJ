@@ -98,10 +98,17 @@ int main(int argc, char* argv[]){
 	openlog(argv[0], LOG_PID|LOG_CONS, LOG_DAEMON);
 	syslog(LOG_INFO, "Started %s", appName);
 
+<<<<<<< HEAD
 	// Daemon will handle two signals
 	signal(SIGINT, handleSignal);
 	signal(SIGHUP, handleSignal);
 	signal(SIGPIPE, SIG_IGN);
+=======
+	// Daemon will handle two signals plus one
+	signal(SIGINT, handleSignal);
+	signal(SIGHUP, handleSignal);
+	sigaction(SIGPIPE, &(struct sigaction){SIG_IGN}, NULL);
+>>>>>>> aa5de01d94fc24963cec1265cdd75bb07a6e245a
 
 	// reads configuration from config file
 	readConfFile(0);

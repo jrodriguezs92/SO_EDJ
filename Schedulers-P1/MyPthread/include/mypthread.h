@@ -35,7 +35,6 @@
 #define PA 2
 #define PB 1
 #define MAX_PRIORITY 1000
-
 #define STACK_SIZE 16384
 
 // Threads prototypes
