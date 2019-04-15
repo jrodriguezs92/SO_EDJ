@@ -156,7 +156,9 @@ void *requestResponse(void * input){
 
 						fseek( fdTemp , 0L , SEEK_END); //use the function instead
 						lSize = ftell( fdTemp );       // to know the file size
-						pthread_setpriority(lSize);
+						#ifdef MYPTHREAD
+							pthread_setpriority(lSize);
+						#endif
 						rewind( fdTemp );             // Now point to beginning 
 
 						char* speech = calloc( 1, lSize+1 );
@@ -241,15 +243,17 @@ void *requestResponse(void * input){
 						}
 						
 					} else{
-						// Get file size to obtain priority (for LOTTERY schedule)
-						size_t currentPos = lseek(fd, (size_t)0, SEEK_CUR);
-						off_t fsize;
-						fsize = lseek(fd, 0, SEEK_END);
-						long size = (long) fsize;
 
-						pthread_setpriority(size);
+						#ifdef MYPTHREAD
+							// Get file size to obtain priority (for LOTTERY schedule)
+							size_t currentPos = lseek(fd, (size_t)0, SEEK_CUR);
+							off_t fsize;
+							fsize = lseek(fd, 0, SEEK_END);
+							long size = (long) fsize;
+							pthread_setpriority(size);
 
-						lseek(fd, currentPos, SEEK_SET);
+							lseek(fd, currentPos, SEEK_SET);
+						#endif
 
 						send(socket, "HTTP/1.1 200 OK\n\n", 17, 0);
 						while ( (bytesLeidos=read(fd, data_to_send, BYTES))>0 ) {
