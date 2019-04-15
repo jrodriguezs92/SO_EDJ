@@ -222,11 +222,11 @@ static void scheduleHandler(int signum, siginfo_t *nfo, void *context){
 	else if(sched == LOTTERY) {
 		int winner = lotteryDraw();
 
-		int id_winner = getByIndex(tickets,winner);
+		int idWinner = getByIndex(tickets,winner);
 
-		TCB* next_to_run = getByID(ready,id_winner);
+		TCB* nextToRun = getByID(ready,idWinner);
 
-		running = next_to_run;
+		running = nextToRun;
 	}
 
 	// Manually leave the signal handler
@@ -436,9 +436,9 @@ void pthread_exit(void *result){
 		removeByID(ready, running->id);
 
 		int winner = lotteryDraw();
-		int id_winner = getByIndex(tickets,winner);
-		TCB* next_to_run = getByID(ready,id_winner);
-		running = next_to_run;
+		int idWinner = getByIndex(tickets,winner);
+		TCB* nextToRun = getByID(ready,idWinner);
+		running = nextToRun;
 	}
 	else {
 		if ((running = dequeueTCB(ready)) == NULL) {
@@ -513,7 +513,7 @@ void pthread_setsched(int schedAlgoritm){
  * Set the real priority for thread and set the lottery tickets
  * (for LOTTERY schedule)
  */
-void pthread_setpriority(unsigned long fSize){
+void pthread_setpriority(long fSize){
 
 	if (sched != LOTTERY){return;}
 
@@ -556,8 +556,8 @@ void pthread_setpriority(unsigned long fSize){
  * Make lottery draw to obtain the TCB's id winner
  */
 static int lotteryDraw(void){
-	size_t LIST_size = tickets->size;
-	int top_bound = (int) LIST_size;
+	size_t LISTSize = tickets->size;
+	int topBound = (int) LISTSize;
 
 	// Get random pos (winner ticket)
 	struct timespec ts;
@@ -565,7 +565,7 @@ static int lotteryDraw(void){
 
 	/* using nano-seconds instead of seconds */
 	srand((time_t)ts.tv_nsec);
-	int win = rand()%top_bound;
+	int win = rand()%topBound;
 
 	return win;
 }

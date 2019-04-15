@@ -134,13 +134,6 @@ void *requestResponse(void * input){
 
 				if ( (fd=open(path, O_RDONLY))!=-1 ) { // file found
 
-					// Get file size to obtain priority (for LOTTERY schedule)
-					// off_t fsize;
-					// fsize = lseek(fd, 0, SEEK_END);
-					// unsigned long size = (unsigned long) fsize;
-
-					// pthread_setpriority(size);
-
 					if(isPHPRequest(reqline[1])){ // if php
 						close(fd); // its only used to test if the file exists
 						ph7 *pEngine; /* PH7 engine */
@@ -163,6 +156,7 @@ void *requestResponse(void * input){
 
 						fseek( fdTemp , 0L , SEEK_END); //use the function instead
 						lSize = ftell( fdTemp );       // to know the file size
+						pthread_setpriority(lSize);
 						rewind( fdTemp );             // Now point to beginning 
 
 						char* speech = calloc( 1, lSize+1 );
@@ -247,6 +241,16 @@ void *requestResponse(void * input){
 						}
 						
 					} else{
+						// Get file size to obtain priority (for LOTTERY schedule)
+						size_t currentPos = lseek(fd, (size_t)0, SEEK_CUR);
+						off_t fsize;
+						fsize = lseek(fd, 0, SEEK_END);
+						long size = (long) fsize;
+
+						pthread_setpriority(size);
+
+						lseek(fd, currentPos, SEEK_SET);
+
 						send(socket, "HTTP/1.1 200 OK\n\n", 17, 0);
 						while ( (bytesLeidos=read(fd, data_to_send, BYTES))>0 ) {
 							// spin to ensure the data was wrote correctly
