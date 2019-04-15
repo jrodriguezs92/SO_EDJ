@@ -24,12 +24,18 @@
 #include <stdbool.h>
 #include <signal.h>
 #include <structs.h>
+#include <time.h>
 
+#define MYPTHREAD
 #define SRR 0
 #define LOTTERY 1
 #define RT 2
 #define RR 3
 
+// For Selfish Round Robin scheduling
+#define PA 2
+#define PB 1
+#define MAX_PRIORITY 1000
 #define STACK_SIZE 16384
 
 // Threads prototypes
@@ -43,4 +49,5 @@ int pthread_mutex_destroy(pthread_mutex_t* mutex);// mymutex_destroy
 int pthread_mutex_lock(pthread_mutex_t* mutex);// mymutex_lock
 int pthread_mutex_unlock(pthread_mutex_t* mutex);// mymutex_unlock
 int pthread_mutex_trylock(pthread_mutex_t* mutex);// mymutex_trylock
-// mythread_setsched
+void pthread_setsched(int);
+void pthread_setpriority(long);

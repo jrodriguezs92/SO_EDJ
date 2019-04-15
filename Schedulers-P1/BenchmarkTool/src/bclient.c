@@ -151,6 +151,11 @@ int main(int argc, char *argv[]){
 
 	}
 
+	// defines the scheduler/ if no mypthread no problem
+#ifdef MYPTHREAD
+	pthread_setsched(RR);
+#endif
+
     // Set the values to the corresponding arguments
 	host = argv[1];            // ip of the server
 	port = atoi(argv[2]);      // port of the server

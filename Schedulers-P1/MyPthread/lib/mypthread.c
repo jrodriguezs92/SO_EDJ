@@ -22,8 +22,10 @@ static QUEUE* ready; // threads awaiting CPU / Will be the accepted queue for SR
 static QUEUE* completed;
 static QUEUE* new;
 static TCB* running; // current thread
+static LIST* tickets; // for LOTTERY algorithm
 static bool initialized;
-static int sched = SRR; // selfish round robin by default
+static int sched = LOTTERY; // selfish round robin by default
+static int acceptedPriority; // max priority on accepted queue
 
 // Preemptive related prototypes
 static void blockSIGPROF(void);
@@ -31,6 +33,7 @@ static void unblockSIGPROF(void);
 static void scheduleHandler(int signum, siginfo_t *nfo, void *context);
 static bool signalTimer(void);
 static bool updatePriorities(void);
+static int lotteryDraw(void);
 
 // Threads related prototypes
 static bool initQueues(void);
@@ -45,12 +48,15 @@ static bool initQueues(void){
 	if ((ready = newQUEUE()) == NULL) {
 		return false;
 	}
-
 	if ((completed = newQUEUE()) == NULL) {
 		destroyQUEUE(ready);
 		return false;
 	}
 	if ((new = newQUEUE()) == NULL) {
+		return false;
+	}
+
+	if ((tickets = newLIST()) == NULL) {
 		return false;
 	}
 
@@ -73,6 +79,16 @@ static bool initFirstContext(void){
 	}
 	block->priority = 1;
 	running = block;
+	acceptedPriority = 1; // initialize the accepted priority
+
+	if (sched == LOTTERY){
+		if (enqueueTCB(ready, running) != 0) {
+			perror("enqueueTCB()");
+			abort();
+		}
+		pthread_setpriority(786432001);
+	}
+
 	return true;
 }
 
@@ -162,7 +178,9 @@ static void scheduleHandler(int signum, siginfo_t *nfo, void *context){
 			abort();
 
 		}
-	} else if(sched == SRR) {
+	} 
+	// Selfish Round Robin
+	else if(sched == SRR) {
 		if(updatePriorities()){
 			TCB* newAccepted;
 			if ((newAccepted = dequeueTCB(new)) == NULL) {
@@ -201,7 +219,24 @@ static void scheduleHandler(int signum, siginfo_t *nfo, void *context){
 
 			}
 		}
+	}
+	// Lottery
+	else if(sched == LOTTERY) {
+		int winner = lotteryDraw();
 
+		int idWinner;
+		if ((idWinner = getByIndex(tickets,winner)) == -1){
+			perror("dequeueTCB()");
+			abort();
+		}
+
+		TCB* nextToRun;
+		if ((nextToRun = getByID(ready,idWinner)) == NULL){
+			perror("dequeueTCB()");
+			abort();
+		}
+
+		running = nextToRun;
 	}
 
 	// Manually leave the signal handler
@@ -260,38 +295,33 @@ static bool signalTimer(void){
  */
 static bool updatePriorities(void){
 	struct NODE* cursor;
-	bool temp =false;
-	if(new->size==0 && ready->size==0){
-		running->priority = 0; // case the main thread is the only one running (avoid starvation)
+	bool temp = false;
+
+	if( new->size == 0 && ready->size == 0 ){
+		running->priority = 1; // case the main thread is the only one running (avoid starvation)
 		return temp;
 
 	}
 
-	if(new->size!=0){
+	if(new->size != 0){
 		// Iterate on the the new queue
 		for(cursor = new->head ; cursor != NULL ; cursor = cursor->next){
 			cursor->thread->priority += PA;
 
 		}
 
-		running->priority += PB; // priority+=b, only if there is a thread in the new queue
+		acceptedPriority += PB; // priority+=b, ONLY if there is a thread in the new queue
 
-		if(new->head->thread->priority >= running->priority){
-			running->priority = new->head->thread->priority;
+		if(acceptedPriority > MAX_PRIORITY){
+			acceptedPriority = 1; // resets the priority
+		}
+
+		if(new->head->thread->priority >= acceptedPriority){
 			temp = true;
 		}
 
 	}
 
-	if(ready->size!=0){
-		// Iterate on the the ready/accepted queue
-		for(cursor = ready->head ; cursor != NULL ; cursor = cursor->next){
-			// All the priorities in ready are the same
-			cursor->thread->priority = running->priority;
-			
-		}
-
-	}
 	return temp;
 }
 
@@ -361,9 +391,17 @@ int pthread_create(pthread_t* thread, void* attr, void *(*start_routine) (void *
 			return -1;
 
 		}
+	} else if(sched == LOTTERY){
+		// Enqueue the newly created stack
+		if (enqueueTCB(ready, newThread) != 0) {
+			destroyTCB(newThread);
+			return -1;
+
+		}
+		addTicket(tickets,newThread->id);
 	}
 
-	blockSIGPROF(); // unblocks the sigprof
+	unblockSIGPROF(); // unblocks the sigprof
 	*thread = newThread->id; // sets the id
 	return 0; // returns the succes
 }
@@ -375,7 +413,6 @@ int pthread_create(pthread_t* thread, void* attr, void *(*start_routine) (void *
 void pthread_exit(void *result){
 	if (running == NULL) {
 		exit(EXIT_SUCCESS);
-
 	}
 
 	blockSIGPROF(); // blocks the sigprof
@@ -384,12 +421,26 @@ void pthread_exit(void *result){
 
 	if (enqueueTCB(completed, running) != 0) {
 		abort();
-
 	}
 
-	if ((running = dequeueTCB(ready)) == NULL) {
-		exit(EXIT_SUCCESS);
+	if (sched == LOTTERY){
+		// Remove corresponding tickets
+		int result = removeTicket(tickets,running->id);
+		while (result != 0) {
+			result = removeTicket(tickets, running->id);
+		}
 
+		removeByID(ready, running->id);
+
+		int winner = lotteryDraw();
+		int idWinner = getByIndex(tickets,winner);
+		TCB* nextToRun = getByID(ready,idWinner);
+		running = nextToRun;
+	}
+	else {
+		if ((running = dequeueTCB(ready)) == NULL) {
+			exit(EXIT_SUCCESS);
+		}
 	}
 
 	setcontext(&running->context);  // also unblocks SIGPROF
@@ -453,4 +504,64 @@ int pthread_yield(void){
 void pthread_setsched(int schedAlgoritm){
 	sched = schedAlgoritm;
 
+}
+
+/**
+ * Set the real priority for thread and set the lottery tickets
+ * (for LOTTERY schedule)
+ */
+void pthread_setpriority(long fSize){
+
+	if (sched != LOTTERY){return;}
+
+	int priority;
+	
+	// Set priority according to the requested file size
+	if (fSize>=0 && fSize<262144000){
+		priority = 1;
+	}
+	else if (fSize>=262144001 && fSize<524288000){
+		priority = 2;
+	}
+	else if (fSize>=524288001 && fSize<786432000){
+		priority = 3;
+	}
+	else if (fSize>=786432001 && fSize<1073741824){
+		priority = 4;
+	}
+	else if (fSize>=1073741825 && fSize<1572864000){
+		priority = 5;
+	}
+	else if (fSize>=1572864001){
+		priority = 6;
+	}
+
+	// Update the lottery tickets
+	int tmp=1;
+	while(tmp<=priority){
+
+		if (addTicket(tickets,running->id) != 0){
+			perror("enqueueTCB()");
+			abort();
+		}
+
+		tmp++;
+	}
+}
+
+/**
+ * Make lottery draw to obtain the TCB's id winner
+ */
+static int lotteryDraw(void){
+	size_t LISTSize = tickets->size;
+	int topBound = ((int) LISTSize);
+
+	// Get random pos (winner ticket)
+	struct timespec ts;
+	clock_gettime(CLOCK_MONOTONIC, &ts);
+
+	/* using nano-seconds instead of seconds */
+	srand((time_t)ts.tv_nsec);
+	int win = rand()%topBound;
+	return win;
 }
