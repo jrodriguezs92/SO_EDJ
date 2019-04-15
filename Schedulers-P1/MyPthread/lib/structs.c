@@ -210,7 +210,7 @@ TCB* getByID(QUEUE* queue, int id){
 	while (cur != NULL) {
 		if (cur->thread->id == id) {
 			TCB *retval = cur->thread;
-			free(cur);
+			//free(cur);
 			return retval;
 		}
 		cur = cur->next;
@@ -224,21 +224,24 @@ TCB* getByID(QUEUE* queue, int id){
  */
 int getByIndex(LIST* list, int index){
 	if (list->head == NULL) {
-		return 0;
+		return -1;
 	}
 
 	struct TICKET *cur = list->head;
 
 	int tmpIndex = 0;
 
-	while (tmpIndex < index) {
+	while (tmpIndex <= index) {
+
+		if (tmpIndex == index){
+			int retval = cur->id;
+			return retval;
+		}
+
 		cur  = cur->next;
 		tmpIndex++;
 	}
-
-	int retval = cur->id;
-	free(cur);
-	return retval;
+	return -1;
 }
 
 /**

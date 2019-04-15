@@ -220,10 +220,7 @@ static void scheduleHandler(int signum, siginfo_t *nfo, void *context){
 	}
 	// Lottery
 	else if(sched == LOTTERY) {
-		printf("--------------- scheduleHandler --------------- \n");
 		int winner = lotteryDraw();
-
-		printf("winner = %d \n", winner);
 
 		int idWinner;
 		if ((idWinner = getByIndex(tickets,winner)) == -1){
@@ -236,8 +233,6 @@ static void scheduleHandler(int signum, siginfo_t *nfo, void *context){
 			perror("dequeueTCB()");
 			abort();
 		}
-
-		printf("nextToRun = %d \n",nextToRun->id);
 
 		running = nextToRun;
 	}
@@ -531,8 +526,6 @@ void pthread_setpriority(long fSize){
 
 	if (sched != LOTTERY){return;}
 
-	printf("---->> serPriority \n");
-
 	int priority;
 	
 	// Set priority according to the requested file size
@@ -572,10 +565,8 @@ void pthread_setpriority(long fSize){
  * Make lottery draw to obtain the TCB's id winner
  */
 static int lotteryDraw(void){
-	printf("entrando a lotteryDraw \n");
 	size_t LISTSize = tickets->size;
 	int topBound = ((int) LISTSize);
-	printf("topBound =  %d \n", topBound);
 
 	// Get random pos (winner ticket)
 	struct timespec ts;
@@ -584,6 +575,5 @@ static int lotteryDraw(void){
 	/* using nano-seconds instead of seconds */
 	srand((time_t)ts.tv_nsec);
 	int win = rand()%topBound;
-	printf("saliendo de lotteryDraw \n");
 	return win;
 }

@@ -2,17 +2,10 @@
 Instituto Tecnológico de Costa Rica  
 Computer Engineering (CE).  
 Project 1: Operating System Principles.  
-2019, I Semester.  
-
-## Requirements
-Is important to install Docker CE, 18.06.1-ce or later as recommended version.  
+2019, I Semester.    
 
 ## Environment
 GNU/Linux Ubuntu 16.04.
-
-## Installing dependencies for Docker Comunity Edition.
-
-To install Docker install Docker Comunity Edition you can follow the instructions in: https://docs.docker.com/install/linux/docker-ce/ubuntu/
 
 ## Instructions for the scripts
 ### Install
@@ -20,19 +13,29 @@ To install Docker install Docker Comunity Edition you can follow the instruction
 ```
 ./Install.sh
 ```
+This will: install Docker Community Edition in the system, install the five docker containers, run all the containers and install and run the server daemon inside each container.
 ### Uninstall
 1. Execute script "Uninstall" that is located in the root of the project directory:
 ```
 ./Uninstall.sh
 ```
+This will: stop and remove each of the five docker container and remove each of the five main docker image.
 ##  Instruccions for execution
 If the container is successfully executed and is running, we enter to the container with:
 ```
 sudo docker exec -it webserver_x bash
 ```
-Where x is the version you want it to run (fifo, forked, threaded)
+Where x is the version you want it to run (fifo, forked, threaded ...).
+
+The resource folder for each web server is in the path: "/usr/src/ws/bin/res" inside each container. Everything you want to request from the server need to be in this folder.
+
+To generate file file.ext of X bytes "dd if=/dev/zero of=file.ext bs=1 count=0 seek=X".
+
+Where, the "X" in "seek" argument means the file size. E.g.: ...seek=2G or ...seek=100M.
 
 ## Instructions for manually install and uninstall
+The "Install.sh" and "Uninstall.sh" scripts already take care of the end-to-end process, but this section explain the manually process in case you want to learn about the low level functionality.
+
 Note that all the Docker commands begin with "sudo".  
 
 1. First, we need to build each Dockerfile included into each server folder, with a representative '--tag' as option (be sure you use a different tag for each build server):
@@ -105,11 +108,11 @@ sudo docker images
 
 ## Autor
 * Jeremy Rodríguez Solórzano  
-201209131  
 jrodriguezs0292@gmail.com
+* Esteban Agüero Pérez  
+estape11@gmail.com
+* Daniela Hernández Alvarado  
+dannyha07@gmail.com
 
 ## Version
 1.0.0
-
-## References
-https://docs.docker.com/get-started/

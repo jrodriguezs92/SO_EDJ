@@ -50,4 +50,4 @@ int pthread_mutex_lock(pthread_mutex_t* mutex);// mymutex_lock
 int pthread_mutex_unlock(pthread_mutex_t* mutex);// mymutex_unlock
 int pthread_mutex_trylock(pthread_mutex_t* mutex);// mymutex_trylock
 void pthread_setsched(int);
-void pthread_setpriority(unsigned long);
+void pthread_setpriority(long);

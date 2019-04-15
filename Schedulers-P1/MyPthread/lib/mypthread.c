@@ -18,13 +18,13 @@
 #include <mypthread.h>
 
 // Global variables
-static QUEUE* ready; // threads awaiting CPU
+static QUEUE* ready; // threads awaiting CPU / Will be the accepted queue for SRR
 static QUEUE* completed;
 static QUEUE* new;
 static TCB* running; // current thread
 static LIST* tickets; // for LOTTERY algorithm
 static bool initialized;
-static int sched = LOTTERY; // round robin by default
+static int sched = LOTTERY; // selfish round robin by default
 
 // Preemptive related prototypes
 static void blockSIGPROF(void);
@@ -77,7 +77,6 @@ static bool initFirstContext(void){
 		return false;
 	}
 	block->priority = 1;
-
 	running = block;
 
 	if (sched == LOTTERY){
@@ -85,7 +84,7 @@ static bool initFirstContext(void){
 			perror("enqueueTCB()");
 			abort();
 		}
-		pthread_setpriority(1572864001);
+		pthread_setpriority(786432001);
 	}
 
 	return true;
@@ -223,11 +222,19 @@ static void scheduleHandler(int signum, siginfo_t *nfo, void *context){
 	else if(sched == LOTTERY) {
 		int winner = lotteryDraw();
 
-		int id_winner = getByIndex(tickets,winner);
+		int idWinner;
+		if ((idWinner = getByIndex(tickets,winner)) == -1){
+			perror("dequeueTCB()");
+			abort();
+		}
 
-		TCB* next_to_run = getByID(ready,id_winner);
+		TCB* nextToRun;
+		if ((nextToRun = getByID(ready,idWinner)) == NULL){
+			perror("dequeueTCB()");
+			abort();
+		}
 
-		running = next_to_run;
+		running = nextToRun;
 	}
 
 	// Manually leave the signal handler
@@ -375,7 +382,6 @@ int pthread_create(pthread_t* thread, void* attr, void *(*start_routine) (void *
 	newThread->start_routine = start_routine;
 	newThread->argument = arg;
 	newThread->priority = 0;
-
 	if(sched == RR){
 		// Enqueue the newly created stack
 		if (enqueueTCB(ready, newThread) != 0) {
@@ -393,6 +399,14 @@ int pthread_create(pthread_t* thread, void* attr, void *(*start_routine) (void *
 	} else if(sched == LOTTERY){
 		// Enqueue the newly created stack
 		if (enqueueTCB(ready, newThread) != 0) {
+			destroyTCB(newThread);
+			return -1;
+
+		}
+		addTicket(tickets,newThread->id);
+	} else if(sched == SRR){
+		// Enqueue the newly created stack
+		if (enqueueTCB(new, newThread) != 0) {
 			destroyTCB(newThread);
 			return -1;
 
@@ -431,9 +445,9 @@ void pthread_exit(void *result){
 		removeByID(ready, running->id);
 
 		int winner = lotteryDraw();
-		int id_winner = getByIndex(tickets,winner);
-		TCB* next_to_run = getByID(ready,id_winner);
-		running = next_to_run;
+		int idWinner = getByIndex(tickets,winner);
+		TCB* nextToRun = getByID(ready,idWinner);
+		running = nextToRun;
 	}
 	else {
 		if ((running = dequeueTCB(ready)) == NULL) {
@@ -508,7 +522,7 @@ void pthread_setsched(int schedAlgoritm){
  * Set the real priority for thread and set the lottery tickets
  * (for LOTTERY schedule)
  */
-void pthread_setpriority(unsigned long fSize){
+void pthread_setpriority(long fSize){
 
 	if (sched != LOTTERY){return;}
 
@@ -519,19 +533,19 @@ void pthread_setpriority(unsigned long fSize){
 		priority = 1;
 	}
 	else if (fSize>=262144001 && fSize<524288000){
-		priority = 3;
+		priority = 2;
 	}
 	else if (fSize>=524288001 && fSize<786432000){
-		priority = 5;
+		priority = 3;
 	}
 	else if (fSize>=786432001 && fSize<1073741824){
-		priority = 7;
+		priority = 4;
 	}
 	else if (fSize>=1073741825 && fSize<1572864000){
-		priority = 9;
+		priority = 5;
 	}
 	else if (fSize>=1572864001){
-		priority = 11;
+		priority = 6;
 	}
 
 	// Update the lottery tickets
@@ -551,8 +565,8 @@ void pthread_setpriority(unsigned long fSize){
  * Make lottery draw to obtain the TCB's id winner
  */
 static int lotteryDraw(void){
-	size_t LIST_size = tickets->size;
-	int top_bound = (int) LIST_size;
+	size_t LISTSize = tickets->size;
+	int topBound = ((int) LISTSize);
 
 	// Get random pos (winner ticket)
 	struct timespec ts;
@@ -560,7 +574,6 @@ static int lotteryDraw(void){
 
 	/* using nano-seconds instead of seconds */
 	srand((time_t)ts.tv_nsec);
-	int win = rand()%top_bound;
-
+	int win = rand()%topBound;
 	return win;
 }
