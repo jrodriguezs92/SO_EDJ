@@ -133,6 +133,14 @@ void *requestResponse(void * input){
 				fflush(logStream);
 
 				if ( (fd=open(path, O_RDONLY))!=-1 ) { // file found
+
+					// Get file size to obtain priority (for LOTTERY schedule)
+					// off_t fsize;
+					// fsize = lseek(fd, 0, SEEK_END);
+					// unsigned long size = (unsigned long) fsize;
+
+					// pthread_setpriority(size);
+
 					if(isPHPRequest(reqline[1])){ // if php
 						close(fd); // its only used to test if the file exists
 						ph7 *pEngine; /* PH7 engine */

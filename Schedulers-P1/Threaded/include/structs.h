@@ -29,6 +29,7 @@ typedef struct {
 	void *(*start_routine) (void *); // function to be executed by the thread
 	void *argument; // argument of the function
 	void *return_value; // return of the function
+	long priority; // to keep the track of the priority
 } TCB;
 
 // Basic Data Structure to keep track of the TCBs
@@ -42,6 +43,17 @@ struct NODE {
 	struct NODE *next;
 };
 
+// Id's list for lottery tickets
+typedef struct {
+	struct TICKET *head;
+	size_t size;
+} LIST;
+
+struct TICKET {
+	int id;
+	struct TICKET *next;
+};
+
 // TCB related prototypes
 TCB* getNewTCB(void);
 void destroyTCB(TCB*);
@@ -53,3 +65,9 @@ size_t sizeQUEUE(const QUEUE*);
 int enqueueTCB(QUEUE*, TCB*);
 TCB* dequeueTCB(QUEUE*);
 TCB* removeByID(QUEUE*, int);
+TCB* getByID(QUEUE*, int);
+// TICKETS functions
+LIST* newLIST(void);
+int getByIndex(LIST*, int);
+int addTicket(LIST*, int);
+int removeTicket(LIST*, int);

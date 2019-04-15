@@ -62,6 +62,21 @@ QUEUE* newQUEUE(void){
 	return new;
 }
 
+/*	
+ *	Create a new initialized LIST on the heap. Returns a pointer
+ *	to the new block or NULL on error. 
+ */
+LIST* newLIST(void){
+	LIST* new;
+
+	if ((new = calloc(1, sizeof(LIST))) == NULL) {
+		return NULL;
+
+	}
+
+	return new;
+}
+
 
 /*
  *	Destroy queue, freeing all associated memory with it. It also
@@ -170,6 +185,7 @@ TCB* removeByID(QUEUE* queue, int id){
 
 			TCB *retval = cur->thread;
 			free(cur);
+			queue->size -= 1;
 			return retval;
 		}
 
@@ -179,4 +195,117 @@ TCB* removeByID(QUEUE* queue, int id){
 	}
 
 	return NULL;
+}
+
+/**
+ * Get TCB's id, without remove it from the QUEUE
+ */
+TCB* getByID(QUEUE* queue, int id){
+	if (queue->head == NULL) {
+		return NULL;
+	}
+
+	struct NODE *cur = queue->head;
+
+	while (cur != NULL) {
+		if (cur->thread->id == id) {
+			TCB *retval = cur->thread;
+			free(cur);
+			return retval;
+		}
+		cur = cur->next;
+	}
+
+	return NULL;
+}
+
+/**
+ * Get TCB's id by index, without remove it from the LIST
+ */
+int getByIndex(LIST* list, int index){
+	if (list->head == NULL) {
+		return 0;
+	}
+
+	struct TICKET *cur = list->head;
+
+	int tmpIndex = 0;
+
+	while (tmpIndex < index) {
+		cur  = cur->next;
+		tmpIndex++;
+	}
+
+	int retval = cur->id;
+	free(cur);
+	return retval;
+}
+
+/**
+ * Create new ticket due a TCB's id
+ */
+int addTicket(LIST* list, int id){
+
+	struct TICKET *new;
+
+	if ((new = malloc(sizeof(struct TICKET))) == NULL) {
+		return errno;
+
+	}
+
+	new->id = id;
+	new->next = NULL;
+
+	// Enqueue the new TICKET
+
+	if (list->head == NULL) {
+		list->head = new;
+
+	} else {
+		struct TICKET *parent = list->head;
+		while (parent->next != NULL) {
+			parent = parent->next;
+
+		}
+		parent->next = new;
+
+	}
+
+	list->size += 1;
+	return 0;
+}
+
+/**
+ * Remove a Ticket due an id
+ */
+int removeTicket(LIST* list, int id){
+	if (list->head == NULL) {
+		return 0;
+
+	}
+
+	struct TICKET *prev = NULL;
+	struct TICKET *cur = list->head;
+
+	while (cur != NULL) {
+		if (cur->id == id) {
+			if (prev == NULL) {
+				list->head = cur->next;
+
+			} else {
+				prev->next = cur->next;
+
+			}
+
+			int retval = cur->id;
+			free(cur);
+			list->size -= 1;
+			return retval;
+		}
+
+		prev = cur;
+		cur = cur->next;
+	}
+
+	return 0;
 }
