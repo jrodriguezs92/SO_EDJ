@@ -210,7 +210,6 @@ TCB* getByID(QUEUE* queue, int id){
 	while (cur != NULL) {
 		if (cur->thread->id == id) {
 			TCB *retval = cur->thread;
-			//free(cur);
 			return retval;
 		}
 		cur = cur->next;
