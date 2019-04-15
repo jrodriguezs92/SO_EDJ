@@ -202,15 +202,18 @@ TCB* removeByID(QUEUE* queue, int id){
  */
 TCB* getByID(QUEUE* queue, int id){
 	if (queue->head == NULL) {
+		printf("getByID - EMPTY: TCB = NULL \n");
 		return NULL;
 	}
 
 	struct NODE *cur = queue->head;
 
 	while (cur != NULL) {
+		printf("getByID: TCB->id = %d \n", cur->thread->id);
 		if (cur->thread->id == id) {
 			TCB *retval = cur->thread;
-			free(cur);
+			printf("getByID - returning: id = %d \n", retval->id);
+			//free(cur);
 			return retval;
 		}
 		cur = cur->next;
@@ -224,21 +227,29 @@ TCB* getByID(QUEUE* queue, int id){
  */
 int getByIndex(LIST* list, int index){
 	if (list->head == NULL) {
-		return 0;
+		printf("getByIndex - EMPTY: cur id = %d \n",-1);
+		return -1;
 	}
 
 	struct TICKET *cur = list->head;
 
 	int tmpIndex = 0;
 
-	while (tmpIndex < index) {
+	while (tmpIndex <= index) {
+		printf("getByIndex: cur id = %d \n",cur->id);
+
+		if (tmpIndex == index){
+			int retval = cur->id;
+			//free(cur);
+			printf("getByIndex - returning: id = %d \n",retval);
+			return retval;
+		}
+
 		cur  = cur->next;
 		tmpIndex++;
 	}
-
-	int retval = cur->id;
-	free(cur);
-	return retval;
+	printf("getByIndex - ERROR: id = %d \n",-1);
+	return -1;
 }
 
 /**

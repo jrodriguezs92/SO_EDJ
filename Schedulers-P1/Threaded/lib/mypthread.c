@@ -24,7 +24,7 @@ static QUEUE* new;
 static TCB* running; // current thread
 static LIST* tickets; // for LOTTERY algorithm
 static bool initialized;
-static int sched = SRR; // selfish round robin by default
+static int sched = LOTTERY; // selfish round robin by default
 
 // Preemptive related prototypes
 static void blockSIGPROF(void);
@@ -84,7 +84,7 @@ static bool initFirstContext(void){
 			perror("enqueueTCB()");
 			abort();
 		}
-		pthread_setpriority(1572864001);
+		pthread_setpriority(786432001);
 	}
 
 	return true;
@@ -220,11 +220,24 @@ static void scheduleHandler(int signum, siginfo_t *nfo, void *context){
 	}
 	// Lottery
 	else if(sched == LOTTERY) {
+		printf("--------------- scheduleHandler --------------- \n");
 		int winner = lotteryDraw();
 
-		int idWinner = getByIndex(tickets,winner);
+		printf("winner = %d \n", winner);
 
-		TCB* nextToRun = getByID(ready,idWinner);
+		int idWinner;
+		if ((idWinner = getByIndex(tickets,winner)) == -1){
+			perror("dequeueTCB()");
+			abort();
+		}
+
+		TCB* nextToRun;
+		if ((nextToRun = getByID(ready,idWinner)) == NULL){
+			perror("dequeueTCB()");
+			abort();
+		}
+
+		printf("nextToRun = %d \n",nextToRun->id);
 
 		running = nextToRun;
 	}
@@ -395,6 +408,7 @@ int pthread_create(pthread_t* thread, void* attr, void *(*start_routine) (void *
 			return -1;
 
 		}
+		addTicket(tickets,newThread->id);
 	} else if(sched == SRR){
 		// Enqueue the newly created stack
 		if (enqueueTCB(new, newThread) != 0) {
@@ -517,6 +531,8 @@ void pthread_setpriority(long fSize){
 
 	if (sched != LOTTERY){return;}
 
+	printf("---->> serPriority \n");
+
 	int priority;
 	
 	// Set priority according to the requested file size
@@ -524,19 +540,19 @@ void pthread_setpriority(long fSize){
 		priority = 1;
 	}
 	else if (fSize>=262144001 && fSize<524288000){
-		priority = 3;
+		priority = 2;
 	}
 	else if (fSize>=524288001 && fSize<786432000){
-		priority = 5;
+		priority = 3;
 	}
 	else if (fSize>=786432001 && fSize<1073741824){
-		priority = 7;
+		priority = 4;
 	}
 	else if (fSize>=1073741825 && fSize<1572864000){
-		priority = 9;
+		priority = 5;
 	}
 	else if (fSize>=1572864001){
-		priority = 11;
+		priority = 6;
 	}
 
 	// Update the lottery tickets
@@ -556,8 +572,10 @@ void pthread_setpriority(long fSize){
  * Make lottery draw to obtain the TCB's id winner
  */
 static int lotteryDraw(void){
+	printf("entrando a lotteryDraw \n");
 	size_t LISTSize = tickets->size;
-	int topBound = (int) LISTSize;
+	int topBound = ((int) LISTSize);
+	printf("topBound =  %d \n", topBound);
 
 	// Get random pos (winner ticket)
 	struct timespec ts;
@@ -566,6 +584,6 @@ static int lotteryDraw(void){
 	/* using nano-seconds instead of seconds */
 	srand((time_t)ts.tv_nsec);
 	int win = rand()%topBound;
-
+	printf("saliendo de lotteryDraw \n");
 	return win;
 }
