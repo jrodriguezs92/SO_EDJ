@@ -24,7 +24,7 @@ static QUEUE* new;
 static TCB* running; // current thread
 static LIST* tickets; // for LOTTERY algorithm
 static bool initialized;
-static int sched = RR; // round robin by default
+static int sched = SRR; // selfish round robin by default
 
 // Preemptive related prototypes
 static void blockSIGPROF(void);
@@ -77,7 +77,6 @@ static bool initFirstContext(void){
 		return false;
 	}
 	block->priority = 1;
-
 	running = block;
 
 	if (sched == LOTTERY){
@@ -301,7 +300,9 @@ static bool updatePriorities(void){
 		}
 
 		running->priority += PB; // priority+=b, only if there is a thread in the new queue
-
+		if(running->priority > MAX_PRIORITY){
+			running->priority = 1; // resets the priority
+		}
 		if(new->head->thread->priority >= running->priority){
 			running->priority = new->head->thread->priority;
 			temp = true;
@@ -394,9 +395,16 @@ int pthread_create(pthread_t* thread, void* attr, void *(*start_routine) (void *
 			return -1;
 
 		}
+	} else if(sched == SRR){
+		// Enqueue the newly created stack
+		if (enqueueTCB(new, newThread) != 0) {
+			destroyTCB(newThread);
+			return -1;
+
+		}
 	}
 
-	blockSIGPROF(); // unblocks the sigprof
+	unblockSIGPROF(); // unblocks the sigprof
 	*thread = newThread->id; // sets the id
 	return 0; // returns the succes
 }

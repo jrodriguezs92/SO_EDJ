@@ -28,7 +28,7 @@ cp /usr/src/ws/scripts/webserver.service /etc/systemd/system/
 mkdir -p /etc/webserver/
 
 # Copy config file in /etc/webserver/
-cp /usr/src/ws/scripts/webserver.conf /etc/webserver/
+cp /usr/src/ws/scripts/config.conf /etc/webserver/
 
 # Reload Daemon system
 systemctl daemon-reload
@@ -38,4 +38,4 @@ systemctl start webserver.service
 
 echo "> Completed"
 echo "Stop daemon: systemctl stop webserver.service"
-echo "Status daemon: systemctl status webserver.service"
+echo "Status daemon: systemctl status webserver.service" 

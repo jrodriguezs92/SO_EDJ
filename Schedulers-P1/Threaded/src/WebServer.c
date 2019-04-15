@@ -102,7 +102,7 @@ int main(int argc, char* argv[]){
 	signal(SIGINT, handleSignal);
 	signal(SIGHUP, handleSignal);
 	signal(SIGPIPE, SIG_IGN);
-
+	
 	// reads configuration from config file
 	readConfFile(0);
 
