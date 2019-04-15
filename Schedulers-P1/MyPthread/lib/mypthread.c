@@ -404,13 +404,6 @@ int pthread_create(pthread_t* thread, void* attr, void *(*start_routine) (void *
 
 		}
 		addTicket(tickets,newThread->id);
-	} else if(sched == SRR){
-		// Enqueue the newly created stack
-		if (enqueueTCB(new, newThread) != 0) {
-			destroyTCB(newThread);
-			return -1;
-
-		}
 	}
 
 	unblockSIGPROF(); // unblocks the sigprof
