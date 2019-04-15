@@ -24,6 +24,7 @@
 #include <stdbool.h>
 #include <signal.h>
 #include <structs.h>
+#include <time.h>
 
 #define MYPTHREAD
 #define SRR 0
@@ -49,3 +50,4 @@ int pthread_mutex_lock(pthread_mutex_t* mutex);// mymutex_lock
 int pthread_mutex_unlock(pthread_mutex_t* mutex);// mymutex_unlock
 int pthread_mutex_trylock(pthread_mutex_t* mutex);// mymutex_trylock
 void pthread_setsched(int);
+void pthread_setpriority(long);

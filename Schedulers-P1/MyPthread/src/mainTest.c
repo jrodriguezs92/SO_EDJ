@@ -24,7 +24,7 @@ void* func1(void* args){
 		//yield();
 		//printf("Func1 Value - %d\n", i);
 		it++;
-		if(i==123400000){
+		if(i==1234000001){
 			printf("ITERACIONES = %d\n", it );
 			return i;
 		}
@@ -66,14 +66,17 @@ void* func3(void* args){
 	}
 }
 
-int main(){
-	clock_t start = clock();
-
-// defines the scheduler/ if no mypthread no problem
+int main(int argc, const char* argv[]){
+	int sch = SRR;
+	if(argc==2){
+		sch = atoi(argv[1]);
+	}
+	// defines the scheduler/ if no mypthread no problem
 #ifdef MYPTHREAD
-	pthread_setsched(SRR);
-	printf("Using algoritm %d\n", RR );
+	pthread_setsched(sch);
+	printf("> scheduler = %d\n", sch);
 #endif
+	clock_t start = clock();
 
 	pthread_t* threads = malloc(sizeof(pthread_t)*4);
 	pthread_create(&threads[0],NULL,func1,1);
@@ -91,9 +94,6 @@ int main(){
 		pthread_join(threads[i],&results[i]);
 		//sleep(1);
 	}
-
-
-
 	
 	pthread_join(threads[3],&results[3]);
 
