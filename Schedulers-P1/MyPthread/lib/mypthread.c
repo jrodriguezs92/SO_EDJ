@@ -18,7 +18,7 @@
 #include <mypthread.h>
 
 // Global variables
-static QUEUE* ready; // threads awaiting CPU / Will be the accepted queue for SRR
+static QUEUE* ready; // threads awaiting CPU
 static QUEUE* completed;
 static QUEUE* new;
 static TCB* running; // current thread
@@ -45,7 +45,6 @@ static bool initQueues(void){
 	if ((ready = newQUEUE()) == NULL) {
 		return false;
 	}
-
 	if ((completed = newQUEUE()) == NULL) {
 		destroyQUEUE(ready);
 		return false;
@@ -201,7 +200,6 @@ static void scheduleHandler(int signum, siginfo_t *nfo, void *context){
 
 			}
 		}
-
 	}
 
 	// Manually leave the signal handler
@@ -275,7 +273,9 @@ static bool updatePriorities(void){
 		}
 
 		running->priority += PB; // priority+=b, only if there is a thread in the new queue
-
+		if(running->priority > MAX_PRIORITY){
+			running->priority = 1; // resets the priority
+		}
 		if(new->head->thread->priority >= running->priority){
 			running->priority = new->head->thread->priority;
 			temp = true;
@@ -347,6 +347,7 @@ int pthread_create(pthread_t* thread, void* attr, void *(*start_routine) (void *
 	newThread->start_routine = start_routine;
 	newThread->argument = arg;
 	newThread->priority = 0;
+
 	if(sched == RR){
 		// Enqueue the newly created stack
 		if (enqueueTCB(ready, newThread) != 0) {
@@ -363,7 +364,7 @@ int pthread_create(pthread_t* thread, void* attr, void *(*start_routine) (void *
 		}
 	}
 
-	blockSIGPROF(); // unblocks the sigprof
+	unblockSIGPROF(); // unblocks the sigprof
 	*thread = newThread->id; // sets the id
 	return 0; // returns the succes
 }
