@@ -20,15 +20,17 @@
 // Global variables
 static QUEUE* ready; // threads awaiting CPU
 static QUEUE* completed;
+static QUEUE* new;
 static TCB* running; // current thread
 static bool initialized;
-static int sched = RR; // round robin by default
+static int sched = SRR; // selfish round robin by default
 
 // Preemptive related prototypes
 static void blockSIGPROF(void);
 static void unblockSIGPROF(void);
 static void scheduleHandler(int signum, siginfo_t *nfo, void *context);
 static bool signalTimer(void);
+static bool updatePriorities(void);
 
 // Threads related prototypes
 static bool initQueues(void);
@@ -43,9 +45,11 @@ static bool initQueues(void){
 	if ((ready = newQUEUE()) == NULL) {
 		return false;
 	}
-
 	if ((completed = newQUEUE()) == NULL) {
 		destroyQUEUE(ready);
+		return false;
+	}
+	if ((new = newQUEUE()) == NULL) {
 		return false;
 	}
 
@@ -66,7 +70,7 @@ static bool initFirstContext(void){
 		destroyTCB(block);
 		return false;
 	}
-
+	block->priority = 1;
 	running = block;
 	return true;
 }
@@ -157,6 +161,45 @@ static void scheduleHandler(int signum, siginfo_t *nfo, void *context){
 			abort();
 
 		}
+	} else if(sched == SRR) {
+		if(updatePriorities()){
+			TCB* newAccepted;
+			if ((newAccepted = dequeueTCB(new)) == NULL) {
+				perror("dequeueTCB()");
+				abort();
+
+			}
+
+			if (enqueueTCB(ready, newAccepted) != 0) {
+				perror("enqueueTCB()");
+				abort();
+
+			}
+
+			if (enqueueTCB(ready, running) != 0) {
+				perror("enqueueTCB()");
+				abort();
+
+			}
+			if ((running = dequeueTCB(ready)) == NULL) {
+				perror("dequeueTCB()");
+				abort();
+
+			}
+
+		} else{
+			if (enqueueTCB(ready, running) != 0) {
+				perror("enqueueTCB()");
+				abort();
+
+			}
+
+			if ((running = dequeueTCB(ready)) == NULL) {
+				perror("dequeueTCB()");
+				abort();
+
+			}
+		}
 	}
 
 	// Manually leave the signal handler
@@ -210,6 +253,49 @@ static bool signalTimer(void){
 }
 
 /*
+ *	Updates the priorities in general, returns if new priority (head)is 
+ *	equal to the running priority (move the head from new to ready/accepted)
+ */
+static bool updatePriorities(void){
+	struct NODE* cursor;
+	bool temp =false;
+	if(new->size==0 && ready->size==0){
+		running->priority = 0; // case the main thread is the only one running (avoid starvation)
+		return temp;
+
+	}
+
+	if(new->size!=0){
+		// Iterate on the the new queue
+		for(cursor = new->head ; cursor != NULL ; cursor = cursor->next){
+			cursor->thread->priority += PA;
+
+		}
+
+		running->priority += PB; // priority+=b, only if there is a thread in the new queue
+		if(running->priority > MAX_PRIORITY){
+			running->priority = 1; // resets the priority
+		}
+		if(new->head->thread->priority >= running->priority){
+			running->priority = new->head->thread->priority;
+			temp = true;
+		}
+
+	}
+
+	if(ready->size!=0){
+		// Iterate on the the ready/accepted queue
+		for(cursor = ready->head ; cursor != NULL ; cursor = cursor->next){
+			// All the priorities in ready are the same
+			cursor->thread->priority = running->priority;
+			
+		}
+
+	}
+	return temp;
+}
+
+/*
  *	Creates a thread
  */
 int pthread_create(pthread_t* thread, void* attr, void *(*start_routine) (void *), void *arg){
@@ -237,38 +323,49 @@ int pthread_create(pthread_t* thread, void* attr, void *(*start_routine) (void *
 	}
 
 	// Create a thread control block for the newly created thread.
-	TCB* new;
+	TCB* newThread;
 
-	if ((new = getNewTCB()) == NULL) {
+	if ((newThread = getNewTCB()) == NULL) {
 		return -1;
 
 	}
 
-	if (getcontext(&new->context) == -1) {
-		destroyTCB(new);
+	if (getcontext(&newThread->context) == -1) {
+		destroyTCB(newThread);
 		return -1;
 
 	}
 
-	if (! setStackTCB(new)) {
-		destroyTCB(new);
+	if (! setStackTCB(newThread)) {
+		destroyTCB(newThread);
 		return -1;
 
 	}
 
-	makecontext(&new->context, handleThreadFunction, 1, new->id);
+	makecontext(&newThread->context, handleThreadFunction, 1, newThread->id);
 
-	new->start_routine = start_routine;
-	new->argument = arg;
+	newThread->start_routine = start_routine;
+	newThread->argument = arg;
+	newThread->priority = 0;
 
-	// Enqueue the newly created stack
-	if (enqueueTCB(ready, new) != 0) {
-		destroyTCB(new);
-		return -1;
+	if(sched == RR){
+		// Enqueue the newly created stack
+		if (enqueueTCB(ready, newThread) != 0) {
+			destroyTCB(newThread);
+			return -1;
 
+		}
+	} else if(sched == SRR){
+		// Enqueue the newly created stack
+		if (enqueueTCB(new, newThread) != 0) {
+			destroyTCB(newThread);
+			return -1;
+
+		}
 	}
+
 	unblockSIGPROF(); // unblocks the sigprof
-	*thread = new->id; // sets the id
+	*thread = newThread->id; // sets the id
 	return 0; // returns the succes
 }
 
@@ -349,4 +446,12 @@ int pthread_yield(void){
 
 	swapcontext(stored, &(running->context));
 	return 0;
+}
+
+/**
+ *	Sets the scheduler algoritm
+ */
+void pthread_setsched(int schedAlgoritm){
+	sched = schedAlgoritm;
+
 }

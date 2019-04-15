@@ -77,7 +77,17 @@ static bool initFirstContext(void){
 		return false;
 	}
 	block->priority = 1;
+
 	running = block;
+
+	if (sched == LOTTERY){
+		if (enqueueTCB(ready, running) != 0) {
+			perror("enqueueTCB()");
+			abort();
+		}
+		pthread_setpriority(1572864001);
+	}
+
 	return true;
 }
 
@@ -415,6 +425,8 @@ void pthread_exit(void *result){
 			result = removeTicket(tickets, running->id);
 		}
 
+		removeByID(ready, running->id);
+
 		int winner = lotteryDraw();
 		int id_winner = getByIndex(tickets,winner);
 		TCB* next_to_run = getByID(ready,id_winner);
@@ -519,17 +531,9 @@ void pthread_setpriority(unsigned long fSize){
 		priority = 11;
 	}
 
-	//Get TCB pointer for add ticket
-	//TCB* ticket = getByID(ready,running->id);
-
 	// Update the lottery tickets
 	int tmp=1;
 	while(tmp<=priority){
-
-		/*if (enqueueTCB(ready,ticket) != 0) {
-			perror("enqueueTCB()");
-			abort();
-		}*/
 
 		if (addTicket(tickets,running->id) != 0){
 			perror("enqueueTCB()");

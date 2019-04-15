@@ -29,6 +29,7 @@ typedef struct {
 	void *(*start_routine) (void *); // function to be executed by the thread
 	void *argument; // argument of the function
 	void *return_value; // return of the function
+	long priority; // to keep the track of the priority
 } TCB;
 
 // Basic Data Structure to keep track of the TCBs
