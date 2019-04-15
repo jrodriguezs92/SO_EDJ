@@ -25,6 +25,7 @@ static TCB* running; // current thread
 static LIST* tickets; // for LOTTERY algorithm
 static bool initialized;
 static int sched = LOTTERY; // selfish round robin by default
+static int acceptedPriority; // max priority on accepted queue
 
 // Preemptive related prototypes
 static void blockSIGPROF(void);
@@ -78,6 +79,7 @@ static bool initFirstContext(void){
 	}
 	block->priority = 1;
 	running = block;
+	acceptedPriority = 1; // initialize the accepted priority
 
 	if (sched == LOTTERY){
 		if (enqueueTCB(ready, running) != 0) {
@@ -293,40 +295,33 @@ static bool signalTimer(void){
  */
 static bool updatePriorities(void){
 	struct NODE* cursor;
-	bool temp =false;
-	if(new->size==0 && ready->size==0){
-		running->priority = 0; // case the main thread is the only one running (avoid starvation)
+	bool temp = false;
+
+	if( new->size == 0 && ready->size == 0 ){
+		running->priority = 1; // case the main thread is the only one running (avoid starvation)
 		return temp;
 
 	}
 
-	if(new->size!=0){
+	if(new->size != 0){
 		// Iterate on the the new queue
 		for(cursor = new->head ; cursor != NULL ; cursor = cursor->next){
 			cursor->thread->priority += PA;
 
 		}
 
-		running->priority += PB; // priority+=b, only if there is a thread in the new queue
-		if(running->priority > MAX_PRIORITY){
-			running->priority = 1; // resets the priority
+		acceptedPriority += PB; // priority+=b, ONLY if there is a thread in the new queue
+
+		if(acceptedPriority > MAX_PRIORITY){
+			acceptedPriority = 1; // resets the priority
 		}
-		if(new->head->thread->priority >= running->priority){
-			running->priority = new->head->thread->priority;
+
+		if(new->head->thread->priority >= acceptedPriority){
 			temp = true;
 		}
 
 	}
 
-	if(ready->size!=0){
-		// Iterate on the the ready/accepted queue
-		for(cursor = ready->head ; cursor != NULL ; cursor = cursor->next){
-			// All the priorities in ready are the same
-			cursor->thread->priority = running->priority;
-			
-		}
-
-	}
 	return temp;
 }
 
@@ -404,13 +399,6 @@ int pthread_create(pthread_t* thread, void* attr, void *(*start_routine) (void *
 
 		}
 		addTicket(tickets,newThread->id);
-	} else if(sched == SRR){
-		// Enqueue the newly created stack
-		if (enqueueTCB(new, newThread) != 0) {
-			destroyTCB(newThread);
-			return -1;
-
-		}
 	}
 
 	unblockSIGPROF(); // unblocks the sigprof

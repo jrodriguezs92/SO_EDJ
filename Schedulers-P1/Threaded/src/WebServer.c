@@ -106,6 +106,11 @@ int main(int argc, char* argv[]){
 	// reads configuration from config file
 	readConfFile(0);
 
+	// scheduler as lottery
+#ifdef MYPTHREAD
+	pthread_setsched(LOTTERY);
+#endif
+
 	// try to open log file to this daemon
 	if (logFileName[0] != '\0') {
 		logStream = fopen(logFileName, "a+");
