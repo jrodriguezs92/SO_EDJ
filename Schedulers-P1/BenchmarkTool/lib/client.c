@@ -60,7 +60,7 @@ void *sendRequest(void* args){
 			exit(1);
 
 		}
-			
+		fcntl(socket_fd, F_SETFL, O_NONBLOCK); // non-blocking socket
 		// HTML Header
 		strcpy(buffer, "GET /");
 		strcat(buffer, file);		
@@ -77,11 +77,16 @@ void *sendRequest(void* args){
 		
 		int sizeRecv, totalSize=0;
 
-		while((sizeRecv=read(socket_fd, buffer, BUFFER)) > 0){ // to complete the download
-			totalSize+= sizeRecv;
+		while(true){ // to complete the download
+			while((sizeRecv=read(socket_fd, buffer, BUFFER)) == -1 ){	} // waits to reads someting
+			if(sizeRecv == 0 ){
+				break;
+			} else{
+				totalSize+= sizeRecv;
+			}
 			
 		}
-		printf("> Total received = %d\n",totalSize);
+		printf("> Total received (thread %d) = %d\n", (id+1), totalSize);
 		close(socket_fd);
 	}
 
