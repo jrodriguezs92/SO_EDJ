@@ -15,7 +15,9 @@
 #include <time.h>
 
 void* func1(void* args){
+	clock_t start = clock();
 	printf("THREAD %d\n", args);
+	pthread_setdeadline(1048576); // 1MB
 	int i=0;
 	int it=0;
 	while(1){
@@ -25,7 +27,10 @@ void* func1(void* args){
 		//printf("Func1 Value - %d\n", i);
 		it++;
 		if(i==1234000001){
-			printf("ITERACIONES = %d\n", it );
+			printf("ITERACIONES THREAD %d= %d\n",args, it );
+			clock_t end = clock();
+			double total = (double) (end-start)/CLOCKS_PER_SEC;
+			printf("> TIME FUNC1= %lfs\n", total );
 			return i;
 		}
 	}
@@ -42,7 +47,7 @@ void* func2(void* args){
 		//printf("Func2 Value - %d\n", i);
 		it++;
 		if(i==246800000){
-			printf("ITERACIONES = %d\n", it );
+			printf("ITERACIONES THREAD %d= %d\n",args, it );
 			return i;
 		}
 	}
@@ -59,7 +64,7 @@ void* func3(void* args){
 		//printf("Func3 Value - %d\n", i);
 		it++;
 		if(i==370200000){
-			printf("ITERACIONES = %d\n", it );
+			printf("ITERACIONES THREAD %d= %d\n",args, it );
 			return i;
 		}
 		

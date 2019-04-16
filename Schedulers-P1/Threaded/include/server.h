@@ -77,5 +77,5 @@ char* getTime(void);
 void fatalError(const char*);
 int isPHPRequest(char*);
 struct args {int sslot; };
-
+int isMultimedia(char*);
 /*server.h*/

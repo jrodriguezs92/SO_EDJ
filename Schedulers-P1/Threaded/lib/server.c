@@ -252,6 +252,11 @@ void *requestResponse(void * input){
 							long size = (long) fsize;
 							pthread_setpriority(size);
 
+							if(isMultimedia(reqline[1])){ // to improve multimedia transfer
+								pthread_setdeadline(size);
+
+							}
+
 							lseek(fd, currentPos, SEEK_SET);
 						#endif
 
@@ -730,6 +735,21 @@ int isPHPRequest(char* request){
 	char* p = NULL;
 	p = strstr(request, ".php");
 	if(p!=NULL){
+		temp=1;
+	}
+    return temp;
+}
+
+/**
+ *	Verify if a request is a multimedia file
+ */
+int isMultimedia(char* request){
+	int temp = 0;
+	char* p = NULL;
+	if((p = strstr(request, ".mp4")) != NULL 
+	|| (p = strstr(request, ".wmv")) != NULL 
+	|| (p = strstr(request, ".flv")) != NULL
+	|| (p = strstr(request, ".avi")) != NULL){
 		temp=1;
 	}
     return temp;

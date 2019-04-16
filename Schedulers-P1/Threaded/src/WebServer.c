@@ -108,7 +108,7 @@ int main(int argc, char* argv[]){
 
 	// scheduler as lottery
 #ifdef MYPTHREAD
-	pthread_setsched(LOTTERY);
+	pthread_setsched(RT);
 #endif
 
 	// try to open log file to this daemon

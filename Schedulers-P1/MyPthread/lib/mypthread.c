@@ -78,6 +78,8 @@ static bool initFirstContext(void){
 		return false;
 	}
 	block->priority = 1;
+	block->deadline = 1;
+	block->quantums = 1;
 	running = block;
 	acceptedPriority = 1; // initialize the accepted priority
 
@@ -167,16 +169,20 @@ static void scheduleHandler(int signum, siginfo_t *nfo, void *context){
 
 	// Round robin
 	if(sched == RR){
-		if (enqueueTCB(ready, running) != 0) {
-			perror("enqueueTCB()");
-			abort();
+		if(ready->size !=0){
+			if (enqueueTCB(ready, running) != 0) {
+				perror("enqueueTCB()");
+				abort();
 
-		}
+			}
 
-		if ((running = dequeueTCB(ready)) == NULL) {
-			perror("dequeueTCB()");
-			abort();
+			if ((running = dequeueTCB(ready)) == NULL) {
+				perror("dequeueTCB()");
+				abort();
 
+			}
+		} else{ // only one thread running
+			return;
 		}
 	} 
 	// Selfish Round Robin
@@ -237,6 +243,62 @@ static void scheduleHandler(int signum, siginfo_t *nfo, void *context){
 		}
 
 		running = nextToRun;
+	}
+	// Real-time
+	else if(sched == RT) {
+
+		if(ready->size != 0){
+
+			if(running->deadline > ready->head->thread->deadline){ // the running thread is more important
+				running->quantums--; // decrease the continuous executions number
+
+				if(running->quantums == 0){ // special time its over
+					int bonus = ready->size / 100; // bonus if many waiting threads
+
+					if(running->deadline > 1 && bonus != 0){
+						running->quantums = bonus;
+						return;
+						// no context change
+
+					} else{ // no bonus
+						running->quantums = running->deadline; // resets the quantums
+
+						if (enqueueTCB(ready, running) != 0) {
+							perror("enqueueTCB()");
+							abort();
+
+						}
+						// put to run the next thread in the queue
+						if ((running = dequeueTCB(ready)) == NULL) {
+							perror("dequeueTCB()");
+							abort();
+
+						}
+					}
+				} else{
+					return;
+				}
+				// else no context change
+
+			} else { // the next thread has more importance
+				running->quantums = running->deadline; // resets the quantums
+				if (enqueueTCB(ready, running) != 0) {
+					perror("enqueueTCB()");
+					abort();
+
+				}
+				// put to run the next thread in the queue
+				if ((running = dequeueTCB(ready)) == NULL) {
+					perror("dequeueTCB()");
+					abort();
+
+				}
+			}
+		} else{
+			return;
+		}
+		// else no context change / only the running thread is alive
+
 	}
 
 	// Manually leave the signal handler
@@ -377,6 +439,9 @@ int pthread_create(pthread_t* thread, void* attr, void *(*start_routine) (void *
 	newThread->start_routine = start_routine;
 	newThread->argument = arg;
 	newThread->priority = 0;
+	newThread->deadline = 1;
+	newThread->quantums = 1;
+
 	if(sched == RR){
 		// Enqueue the newly created stack
 		if (enqueueTCB(ready, newThread) != 0) {
@@ -399,6 +464,13 @@ int pthread_create(pthread_t* thread, void* attr, void *(*start_routine) (void *
 
 		}
 		addTicket(tickets,newThread->id);
+	} else if(sched == RT){
+		// Enqueue the newly created stack
+		if (enqueueTCB(ready, newThread) != 0) {
+			destroyTCB(newThread);
+			return -1;
+
+		}
 	}
 
 	unblockSIGPROF(); // unblocks the sigprof
@@ -547,6 +619,34 @@ void pthread_setpriority(long fSize){
 
 		tmp++;
 	}
+}
+
+void pthread_setdeadline(long fileSize){
+	if (sched == RT){
+		int deadline;
+		long normilizedSize = fileSize / 1048576; // fileSize/1MB
+
+		if (normilizedSize >= 100){
+			deadline = 2;
+
+		} else if(normilizedSize < 100 && normilizedSize >= 75){
+			deadline = 4;
+
+		} else if(normilizedSize < 70 && normilizedSize >=50){
+			deadline = 6;
+
+		} else if(normilizedSize < 50 && normilizedSize >=25){
+			deadline = 8;
+
+		} else if(normilizedSize < 25 && normilizedSize >= 0){
+			deadline = 10;
+
+		}
+
+		running->deadline = deadline;
+		running->quantums = deadline;
+	}
+
 }
 
 /**

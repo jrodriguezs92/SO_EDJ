@@ -30,6 +30,8 @@ typedef struct {
 	void *argument; // argument of the function
 	void *return_value; // return of the function
 	long priority; // to keep the track of the priority
+	int deadline; // to know how quickly needs to be serve
+	int quantums; // counter of how much quantums left
 } TCB;
 
 // Basic Data Structure to keep track of the TCBs

@@ -51,3 +51,4 @@ int pthread_mutex_unlock(pthread_mutex_t* mutex);// mymutex_unlock
 int pthread_mutex_trylock(pthread_mutex_t* mutex);// mymutex_trylock
 void pthread_setsched(int);
 void pthread_setpriority(long);
+void pthread_setdeadline(long);
