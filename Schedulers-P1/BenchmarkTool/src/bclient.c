@@ -29,27 +29,6 @@ void printHelp(){
 	printf("\t <N-cycles> the times that each thread going to repeat the requests\n");
 }
 
-long int findSize(char file_name[]) { 
-	// opening the file in read mode 
-	FILE* fp = fopen(file_name, "r"); 
-
-	// checking if the file exist or not 
-	if (fp == NULL) { 
-		//printf("File Not Found!\n"); 
-		return -1; 
-	} 
-
-	fseek(fp, 0L, SEEK_END); 
-
-	// calculating the size of the file 
-	long int res = ftell(fp); 
-
-	// closing the file 
-	fclose(fp); 
-
-	return res; 
-} 
-
 /*Get extension*/
 char *getExt(char *str) {
     char *result;
@@ -67,7 +46,7 @@ char *getExt(char *str) {
     }
 }
 /*Create the file CSV*/
-int createCSV(int port, int threads, int cycles, char * reqTimeI, char * reqTimeF, float rTime ,char * typeFile, int fileSize, int average){
+int createCSV(int port, int threads, int cycles, char * reqTimeI, char * reqTimeF, float rTime ,char * typeFile, int fileSize, int average, int first){
 
 	char * webserverType;
 	int reqNumber;
@@ -75,24 +54,35 @@ int createCSV(int port, int threads, int cycles, char * reqTimeI, char * reqTime
 	const char s[2] = "\n";
    	char *tokenIni;
    	char *tokenFin;
+   	char *fileName;
 
+   	if (first == 1){
+   		tempTime = malloc(strlen(reqTimeI)+1);
+   		strcpy(tempTime, reqTimeI);
+   	}
+
+   	fileName = malloc(strlen("ExeReport_")+strlen(tempTime)+strlen(".csv")+1);
+
+   	strcpy(fileName,"ExeReport_");
+   	strcat(fileName, tempTime);
+   	strcat(fileName,".csv");
+   	
 	FILE * results;
-	results = fopen("exeReport.csv","a");
+	results = fopen(fileName,"a");
 
-	//fprintf(results,"\nWeb Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time, Average time");
 	if (port==8001){
 		webserverType = "Threaded";
 	}
-	else if (port==8002){
+	else if (port==8003){
 		webserverType = "Forked";
 	}
-	else if (port==8003){
+	else if (port==8005){
 		webserverType = "FIFO";
 	}
-	else if (port==8003){
+	else if (port==8007){
 		webserverType = "Prethreaded";
 	}
-	else if (port==8002){
+	else if (port==8009){
 		webserverType = "Preforked";
 	}
 	else
@@ -128,8 +118,7 @@ int createCSV(int port, int threads, int cycles, char * reqTimeI, char * reqTime
 		fprintf(results,"\nWeb Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time");
 		fprintf(results, "\n%s,%d,%s,%s,%s,%d,%f,%f\n",webserverType,reqNumber,tokenIni,tokenFin,typeFile,fileSize,timeTaken);
 	}
-	//fprintf(results, "\n%s,%d,%s,%s,%s,%d,%f,%f\n",webserverType,reqNumber,tokenIni,tokenFin,typeFile,fileSize,timeTaken,averageCalc);
-
+	
 	fclose(results);
 	return 0;
 }
@@ -162,16 +151,6 @@ int main(int argc, char *argv[]){
 	file = argv[3];            // file to be transferred
 	n_threads = atoi(argv[4]); // number of threads to run
 	n_cycles = atoi(argv[5]);  // times to repeat the requests
-
-	/*File size*/
-	int fileLen = strlen(file);
-	char* filePath="/usr/src/ws/bin/res";
-	//char* filePath="/home/daniha/res/";
-	char* completPath;
-	completPath = malloc(strlen(filePath)+1+fileLen); // make space for the new string 
-	strcpy(completPath, filePath); 
-	strcat(completPath, file);
-	long int size = findSize(completPath);
 
 	/*File extension*/
 	fileExt = getExt(file);
@@ -225,14 +204,14 @@ int main(int argc, char *argv[]){
 	for (int i = 0; i < n_threads; ++i)
 	{
 		responseTime[i]=finTime[i]-initTime[i];
-		createCSV(port, n_threads, n_cycles, initialTime[i], finalTime[i], responseTime[i], fileExt, size,0);
+		createCSV(port, n_threads, n_cycles, initialTime[i], finalTime[i], responseTime[i], fileExt, size,0,1);
 	}
 	
 
 	printf("> Execution complete\n");
 	endMain=clock();
 	mainResponseTime = endMain - startMain;
-	createCSV(port, n_threads, n_cycles,initialTime[0],finalTime[n_threads-1],mainResponseTime,fileExt, size,1);
+	createCSV(port, n_threads, n_cycles,initialTime[0],finalTime[n_threads-1],mainResponseTime,fileExt, size,1,0);
 	return 0;
 
 }

@@ -31,6 +31,7 @@ void *sendRequest(void* args){
 	struct hostent *server;
 	char buffer[BUFFER];
 	int i;
+	size = 0;
 
 	// To do the N cycles requests
 	for (i = 0; i < n_cycles; i++) {		
@@ -83,6 +84,8 @@ void *sendRequest(void* args){
 				break;
 			} else{
 				totalSize+= sizeRecv;
+				if (size =! 0)
+					size = totalSize;
 			}
 			
 		}

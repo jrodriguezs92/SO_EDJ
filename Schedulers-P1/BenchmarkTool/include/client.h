@@ -30,8 +30,8 @@
 #define MAX_STRING_SIZE 10000
 #define MAX_FILENAME_SIZE 256
 
-int n_cycles, port;
-char *host, *file;
+int n_cycles, port, size;
+char *host, *file, *tempTime;
 char initialTime[NUMBER_OF_STRING][MAX_STRING_SIZE], finalTime[NUMBER_OF_STRING][MAX_STRING_SIZE];
 float initTime[NUMBER_OF_STRING], finTime[NUMBER_OF_STRING], responseTime[NUMBER_OF_STRING];
 
