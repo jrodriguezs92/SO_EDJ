@@ -20,7 +20,7 @@ This will: install Docker Community Edition in the system, install the five dock
 ./Uninstall.sh
 ```
 This will: stop and remove each of the five docker container and remove each of the five main docker image.
-##  Instruccions for execution
+##  Instructions for execution
 If the container is successfully executed and is running, we enter to the container with:
 ```
 sudo docker exec -it webserver_x bash
