@@ -71,13 +71,13 @@ int createCSV(int port, int threads, int cycles, char * reqTimeI, char * reqTime
 	results = fopen(fileName,"a");
 
 	if (port==8001){
-		webserverType = "Threaded";
+		webserverType = "FIFO";
 	}
 	else if (port==8003){
 		webserverType = "Forked";
 	}
 	else if (port==8005){
-		webserverType = "FIFO";
+		webserverType = "Threaded";
 	}
 	else if (port==8007){
 		webserverType = "Prethreaded";
