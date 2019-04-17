@@ -58,10 +58,12 @@ socklen_t addrLen;
 char* dirRoot;
 int* clients;
 char* port;
+char* scheduler;
 int customLog;
 char logFileTmp[MAXLEN];
 char portTmp[MAXLEN];
 char rootTmp[MAXLEN];
+char schedulerTmp[MAXLEN];
 FILE* file;
 
 

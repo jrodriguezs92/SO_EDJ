@@ -360,6 +360,10 @@ int readConfFile(int reload){
 	      strncpy (rootTmp, value, MAXLEN);
 	      ret += 1;
 	    }
+	    else if (strcmp(parameter, "SCH")==0){
+	    	strncpy (schedulerTmp, value, MAXLEN);
+	    	ret += 1;
+	    }
 	    //If config file contains more information 
 	    else{
 	      syslog(LOG_INFO, "%s/%s: Unknown name/value pair!\n", parameter, value);
@@ -367,10 +371,16 @@ int readConfFile(int reload){
 	      
 	    }
 	}
-	
-	//Validate if the 3 parameters were found
-	if(strcmp(logFileTmp,"")==0 && strcmp(portTmp,"")==0 && strcmp(rootTmp,"")==0){
+	scheduler = malloc(strlen(schedulerTmp)+1);
+	//Validate if the parameters were found
+	if(strcmp(logFileTmp,"")==0 && strcmp(portTmp,"")==0 && strcmp(rootTmp,"")==0 && strcmp(schedulerTmp,"")==0){
 		return EXIT_FAILURE;
+	}
+	else if(strcmp(logFileTmp,"")>0 && strcmp(portTmp,"")>0 && strcmp(rootTmp,"")>0 && strcmp(schedulerTmp,"")>0){
+		strcpy(logFileName, logFileTmp);
+	    strcpy(port, portTmp);
+	    strcpy(dirRoot, rootTmp);
+	    strcpy(scheduler, schedulerTmp);
 	}
 	else if(strcmp(logFileTmp,"")>0 && strcmp(portTmp,"")>0 && strcmp(rootTmp,"")>0){
 		strcpy(logFileName, logFileTmp);
@@ -379,30 +389,61 @@ int readConfFile(int reload){
 	}
 	else{
 		if(strcmp(logFileTmp,"")>0){
-			if (strcmp(portTmp,"")==0 && strcmp(rootTmp,"")==0){
+			if (strcmp(portTmp,"")==0 && strcmp(rootTmp,"")==0 && strcmp(schedulerTmp,"")==0){
 				strcpy(logFileName, logFileTmp);
 			}
-			else if (strcmp(portTmp,"")>0 && strcmp(rootTmp,"")==0){
+			else if (strcmp(portTmp,"")>0 && strcmp(schedulerTmp,"")>0){
+				strcpy(logFileName, logFileTmp);
+				strcpy(port, portTmp);
+				strcpy(scheduler, schedulerTmp);
+			}
+			else if (strcmp(rootTmp,"")>0 && strcmp(schedulerTmp,"")>0){
+				strcpy(logFileName, logFileTmp);
+				strcpy(dirRoot, rootTmp);
+				strcpy(scheduler, schedulerTmp);
+			}
+			else if (strcmp(portTmp,"")>0 && strcmp(rootTmp,"")==0 && strcmp(schedulerTmp,"")==0){
 				strcpy(logFileName, logFileTmp);
 	    		strcpy(port, portTmp);
 			}
-			else{
+			else if (strcmp(rootTmp,"")>0 && strcmp(portTmp,"")==0 && strcmp(schedulerTmp,"")==0){
 				strcpy(logFileName, logFileTmp);
 				strcpy(dirRoot, rootTmp);
 			}
+			else{
+				strcpy(logFileName, logFileTmp);
+				strcpy(scheduler, schedulerTmp);
+			}
 		}
 		else if(strcmp(portTmp,"")>0){
-			if (strcmp(rootTmp,"")==0){
+			if (strcmp(rootTmp,"")==0 && strcmp(schedulerTmp,"")==0){
 				strcpy(port, portTmp);
 			}
-			else{
+			else if(strcmp(rootTmp,"")>0 && strcmp(schedulerTmp,"")>0){
+				strcpy(port,portTmp);
+				strcpy(dirRoot, rootTmp);
+				strcpy(scheduler, schedulerTmp);
+			}
+			else if(strcmp(rootTmp,"")>0 && strcmp(schedulerTmp,"")==0){
 				strcpy(port, portTmp);
 				strcpy(dirRoot, rootTmp);
 			}
+			else{
+				strcpy(port,portTmp);
+				strcpy(scheduler, schedulerTmp);	
+			}
+		}
+		else if (strcmp(rootTmp,"")>0){
+			if(strcmp(schedulerTmp,"")==0){
+				strcpy(dirRoot, rootTmp);
+			}
+			else{
+				strcpy(dirRoot, rootTmp);
+				strcpy(scheduler, schedulerTmp);
+			}
 		}
 		else{
-			strcpy(dirRoot, rootTmp);
-
+			strcpy(scheduler, schedulerTmp);
 		}
 	}
 
@@ -466,54 +507,104 @@ int testConfFile(char *_confFileName){
 	      strncpy (rootTmp, value, MAXLEN);
 	      ret += 1;
 	    }
+	    else if (strcmp(parameter, "SCH")==0){
+	    	strncpy (schedulerTmp, value, MAXLEN);
+	    	ret += 1;
+	    }
 	    //If config file contains more information 
 	    else{
 	      printf ("WARNING: %s/%s: Unknown name/value pair!\n", parameter, value);
 	      ret += 1;
 	    }
 	}
-	
-	//Validate if the 3 parameters were found
-	if(strcmp(logFileTmp,"")==0 && strcmp(portTmp,"")==0 && strcmp(rootTmp,"")==0){
+	scheduler = malloc(strlen(schedulerTmp)+1);
+	//Validate if the parameters were found
+	if(strcmp(logFileTmp,"")==0 && strcmp(portTmp,"")==0 && strcmp(rootTmp,"")==0 && strcmp(schedulerTmp,"")==0){
 		return EXIT_FAILURE;
+	}
+	else if(strcmp(logFileTmp,"")>0 && strcmp(portTmp,"")>0 && strcmp(rootTmp,"")>0 && strcmp(schedulerTmp,"")>0){
+		strcpy(logFileName, logFileTmp);
+	    strcpy(port, portTmp);
+	    strcpy(dirRoot, rootTmp);
+	    strcpy(scheduler, schedulerTmp);
+	    printf("Found LOGFILE:%s, PORT:%s , ROOT:%s and SCH:%s\n",logFileTmp,port,dirRoot,schedulerTmp);
 	}
 	else if(strcmp(logFileTmp,"")>0 && strcmp(portTmp,"")>0 && strcmp(rootTmp,"")>0){
 		strcpy(logFileName, logFileTmp);
 	    strcpy(port, portTmp);
 	    strcpy(dirRoot, rootTmp);
-	    printf("Found LOGFILE:%s, PORT:%s y ROOT:%s\n",logFileTmp,port,dirRoot);
+	    printf("Found LOGFILE:%s, PORT:%s and ROOT:%s\n",logFileTmp,port,dirRoot);
 	}
 	else{
 		if(strcmp(logFileTmp,"")>0){
-			if (strcmp(portTmp,"")==0 && strcmp(rootTmp,"")==0){
+			if (strcmp(portTmp,"")==0 && strcmp(rootTmp,"")==0 && strcmp(schedulerTmp,"")==0){
 				strcpy(logFileName, logFileTmp);
 				printf("Just LOGFILE:%s found\n",logFileTmp);
 			}
-			else if (strcmp(portTmp,"")>0 && strcmp(rootTmp,"")==0){
+			else if (strcmp(portTmp,"")>0 && strcmp(schedulerTmp,"")>0){
+				strcpy(logFileName, logFileTmp);
+				strcpy(port, portTmp);
+				strcpy(scheduler, schedulerTmp);
+				printf("Found LOGFILE:%s, PORT:%s and SCH:%s\n", logFileTmp, port, scheduler);
+			}
+			else if (strcmp(rootTmp,"")>0 && strcmp(schedulerTmp,"")>0){
+				strcpy(logFileName, logFileTmp);
+				strcpy(dirRoot, rootTmp);
+				strcpy(scheduler, schedulerTmp);
+				printf("Found LOGFILE:%s, ROOT:%s and SCH:%s\n", logFileTmp, dirRoot, scheduler);
+			}
+			else if (strcmp(portTmp,"")>0 && strcmp(rootTmp,"")==0 && strcmp(schedulerTmp,"")==0){
 				strcpy(logFileName, logFileTmp);
 	    		strcpy(port, portTmp);
-				printf("Found LOGFILE:%s, PORT:%s\n",logFileTmp,port);
+				printf("Found LOGFILE:%s and PORT:%s\n",logFileTmp,port);
+			}
+			else if (strcmp(rootTmp,"")>0 && strcmp(portTmp,"")==0 && strcmp(schedulerTmp,"")==0){
+				strcpy(logFileName, logFileTmp);
+				strcpy(dirRoot, rootTmp);
+				printf("Found LOGFILE:%s and ROOT:%s\n",logFileTmp,dirRoot);
 			}
 			else{
 				strcpy(logFileName, logFileTmp);
-				strcpy(dirRoot, rootTmp);
-				printf("Found LOGFILE:%s y ROOT:%s\n",logFileTmp,dirRoot);
+				strcpy(scheduler, schedulerTmp);
+				printf("Found LOGFILE:%s and SCH:%s\n", logFileTmp, scheduler);
 			}
 		}
 		else if(strcmp(portTmp,"")>0){
-			if (strcmp(rootTmp,"")==0){
+			if (strcmp(rootTmp,"")==0 && strcmp(schedulerTmp,"")==0){
 				strcpy(port, portTmp);
 				printf("Just PORT:%s found\n",port);
 			}
-			else{
+			else if(strcmp(rootTmp,"")>0 && strcmp(schedulerTmp,"")>0){
+				strcpy(port,portTmp);
+				strcpy(dirRoot, rootTmp);
+				strcpy(scheduler, schedulerTmp);
+				printf("Found PORT:%s, ROOT:%s and SCH:%s\n",port, dirRoot, scheduler);
+			}
+			else if(strcmp(rootTmp,"")>0 && strcmp(schedulerTmp,"")==0){
 				strcpy(port, portTmp);
 				strcpy(dirRoot, rootTmp);
-				printf("Found PORT:%s y ROOT:%s\n",port,dirRoot);
+				printf("Found PORT:%s and ROOT:%s\n",port,dirRoot);
+			}
+			else{
+				strcpy(port,portTmp);
+				strcpy(scheduler, schedulerTmp);
+				printf("Found PORT:%s and SCH:%s\n",port, scheduler);	
+			}
+		}
+		else if (strcmp(rootTmp,"")>0){
+			if(strcmp(schedulerTmp,"")==0){
+				strcpy(dirRoot, rootTmp);
+				printf("Just ROOT:%s found\n",dirRoot);
+			}
+			else{
+				strcpy(dirRoot, rootTmp);
+				strcpy(scheduler, schedulerTmp);
+				printf("Found ROOT:%s and SCH:%s\n", dirRoot, scheduler);
 			}
 		}
 		else{
-			strcpy(dirRoot, rootTmp);
-			printf("Just ROOT:%s found\n",dirRoot);
+			strcpy(scheduler, schedulerTmp);
+			printf("Just SCH:%s found\n", scheduler);
 		}
 	}
 
