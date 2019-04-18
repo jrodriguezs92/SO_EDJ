@@ -310,6 +310,28 @@ char * trimValue (char * line){
 }
 
 /**
+  *This function validates the value of scheduler
+*/
+int validateSCH(char * schName){
+	if(strcmp(schName,"SRR")==0){
+		return 0;
+	}
+	else if(strcmp(schName, "LOTTERY")==0){
+		return 1;
+	}
+	else if(strcmp(schName, "RT")==0){
+		return 2;
+	}
+	else if(strcmp(schName, "RR")==0){
+		return 3;
+	}
+	else{
+		printf("WARNING: Using default SRR scheduler, invalid parameter found %s\n", schName);
+		return 0;
+	}
+}
+
+/**
  * this function read configuration from config file
  */
 int readConfFile(int reload){
@@ -391,6 +413,7 @@ int readConfFile(int reload){
 	    strcpy(port, portTmp);
 	    strcpy(dirRoot, rootTmp);
 	    strcpy(scheduler, schedulerTmp);
+	    schedulerID = validateSCH(scheduler);
 	}
 	else if(strcmp(logFileTmp,"")>0 && strcmp(portTmp,"")>0 && strcmp(rootTmp,"")>0){
 		strcpy(logFileName, logFileTmp);
@@ -406,11 +429,13 @@ int readConfFile(int reload){
 				strcpy(logFileName, logFileTmp);
 				strcpy(port, portTmp);
 				strcpy(scheduler, schedulerTmp);
+				schedulerID = validateSCH(scheduler);
 			}
 			else if (strcmp(rootTmp,"")>0 && strcmp(schedulerTmp,"")>0){
 				strcpy(logFileName, logFileTmp);
 				strcpy(dirRoot, rootTmp);
 				strcpy(scheduler, schedulerTmp);
+				schedulerID = validateSCH(scheduler);
 			}
 			else if (strcmp(portTmp,"")>0 && strcmp(rootTmp,"")==0 && strcmp(schedulerTmp,"")==0){
 				strcpy(logFileName, logFileTmp);
@@ -423,6 +448,7 @@ int readConfFile(int reload){
 			else{
 				strcpy(logFileName, logFileTmp);
 				strcpy(scheduler, schedulerTmp);
+				schedulerID = validateSCH(scheduler);
 			}
 		}
 		else if(strcmp(portTmp,"")>0){
@@ -433,6 +459,7 @@ int readConfFile(int reload){
 				strcpy(port,portTmp);
 				strcpy(dirRoot, rootTmp);
 				strcpy(scheduler, schedulerTmp);
+				schedulerID = validateSCH(scheduler);
 			}
 			else if(strcmp(rootTmp,"")>0 && strcmp(schedulerTmp,"")==0){
 				strcpy(port, portTmp);
@@ -440,7 +467,8 @@ int readConfFile(int reload){
 			}
 			else{
 				strcpy(port,portTmp);
-				strcpy(scheduler, schedulerTmp);	
+				strcpy(scheduler, schedulerTmp);
+				schedulerID = validateSCH(scheduler);	
 			}
 		}
 		else if (strcmp(rootTmp,"")>0){
@@ -450,10 +478,12 @@ int readConfFile(int reload){
 			else{
 				strcpy(dirRoot, rootTmp);
 				strcpy(scheduler, schedulerTmp);
+				schedulerID = validateSCH(scheduler);
 			}
 		}
 		else{
 			strcpy(scheduler, schedulerTmp);
+			schedulerID = validateSCH(scheduler);
 		}
 	}
 
@@ -537,7 +567,8 @@ int testConfFile(char *_confFileName){
 	    strcpy(port, portTmp);
 	    strcpy(dirRoot, rootTmp);
 	    strcpy(scheduler, schedulerTmp);
-	    printf("Found LOGFILE:%s, PORT:%s , ROOT:%s and SCH:%s\n",logFileTmp,port,dirRoot,schedulerTmp);
+	    schedulerID = validateSCH(scheduler);
+	    printf("Found LOGFILE:%s, PORT:%s , ROOT:%s and SCH:%s with code %d\n",logFileTmp,port,dirRoot,schedulerTmp, schedulerID);
 	}
 	else if(strcmp(logFileTmp,"")>0 && strcmp(portTmp,"")>0 && strcmp(rootTmp,"")>0){
 		strcpy(logFileName, logFileTmp);
@@ -555,13 +586,15 @@ int testConfFile(char *_confFileName){
 				strcpy(logFileName, logFileTmp);
 				strcpy(port, portTmp);
 				strcpy(scheduler, schedulerTmp);
-				printf("Found LOGFILE:%s, PORT:%s and SCH:%s\n", logFileTmp, port, scheduler);
+				schedulerID = validateSCH(scheduler);
+				printf("Found LOGFILE:%s, PORT:%s and SCH:%s with code %d\n", logFileTmp, port, scheduler, schedulerID);
 			}
 			else if (strcmp(rootTmp,"")>0 && strcmp(schedulerTmp,"")>0){
 				strcpy(logFileName, logFileTmp);
 				strcpy(dirRoot, rootTmp);
 				strcpy(scheduler, schedulerTmp);
-				printf("Found LOGFILE:%s, ROOT:%s and SCH:%s\n", logFileTmp, dirRoot, scheduler);
+				schedulerID = validateSCH(scheduler);
+				printf("Found LOGFILE:%s, ROOT:%s and SCH:%s with code %d\n", logFileTmp, dirRoot, scheduler, schedulerID);
 			}
 			else if (strcmp(portTmp,"")>0 && strcmp(rootTmp,"")==0 && strcmp(schedulerTmp,"")==0){
 				strcpy(logFileName, logFileTmp);
@@ -576,7 +609,8 @@ int testConfFile(char *_confFileName){
 			else{
 				strcpy(logFileName, logFileTmp);
 				strcpy(scheduler, schedulerTmp);
-				printf("Found LOGFILE:%s and SCH:%s\n", logFileTmp, scheduler);
+				schedulerID = validateSCH(scheduler);
+				printf("Found LOGFILE:%s and SCH:%s with code %d\n", logFileTmp, scheduler, schedulerID);
 			}
 		}
 		else if(strcmp(portTmp,"")>0){
@@ -588,7 +622,8 @@ int testConfFile(char *_confFileName){
 				strcpy(port,portTmp);
 				strcpy(dirRoot, rootTmp);
 				strcpy(scheduler, schedulerTmp);
-				printf("Found PORT:%s, ROOT:%s and SCH:%s\n",port, dirRoot, scheduler);
+				schedulerID = validateSCH(scheduler);
+				printf("Found PORT:%s, ROOT:%s and SCH:%s with code %d\n",port, dirRoot, scheduler, schedulerID);
 			}
 			else if(strcmp(rootTmp,"")>0 && strcmp(schedulerTmp,"")==0){
 				strcpy(port, portTmp);
@@ -598,7 +633,8 @@ int testConfFile(char *_confFileName){
 			else{
 				strcpy(port,portTmp);
 				strcpy(scheduler, schedulerTmp);
-				printf("Found PORT:%s and SCH:%s\n",port, scheduler);	
+				schedulerID = validateSCH(scheduler);
+				printf("Found PORT:%s and SCH:%s with code %d\n",port, scheduler, schedulerID);	
 			}
 		}
 		else if (strcmp(rootTmp,"")>0){
@@ -609,12 +645,14 @@ int testConfFile(char *_confFileName){
 			else{
 				strcpy(dirRoot, rootTmp);
 				strcpy(scheduler, schedulerTmp);
-				printf("Found ROOT:%s and SCH:%s\n", dirRoot, scheduler);
+				schedulerID = validateSCH(scheduler);
+				printf("Found ROOT:%s and SCH:%s with code %d\n", dirRoot, scheduler, schedulerID);
 			}
 		}
 		else{
 			strcpy(scheduler, schedulerTmp);
-			printf("Just SCH:%s found\n", scheduler);
+			schedulerID = validateSCH(scheduler);
+			printf("Just SCH:%s found with code %d\n", scheduler, schedulerID);
 		}
 	}
 
