@@ -5,6 +5,7 @@
 					Computer Engineering
 
 		Programmer: Esteban Agüero Pérez (estape11)
+					Daniela Hernández A (daniha)
 
 		Programming Language: C
 		Version: 1.0
@@ -63,9 +64,11 @@ char logFileTmp[MAXLEN];
 char portTmp[MAXLEN];
 char rootTmp[MAXLEN];
 char schedulerTmp[MAXLEN];
+char workersTmp[MAXLEN];
 char* logFileName;
 char* port;
 char* scheduler;
+int workersNumber;
 int schedulerID;
 char* pidFileName;
 int pidFd;

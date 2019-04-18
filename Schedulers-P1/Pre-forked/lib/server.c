@@ -5,6 +5,7 @@
 					Computer Engineering
 
 		Programmer: Esteban Agüero Pérez (estape11)
+					Daniela Hernández A (daniha)
 
 		Programming Language: C
 		Version: 1.0
@@ -264,28 +265,6 @@ char * trimValue (char * line){
 }
 
 /**
-  *This function validates the value of scheduler
-*/
-int validateSCH(char * schName){
-	if(strcmp(schName,"SRR")==0){
-		return 0;
-	}
-	else if(strcmp(schName, "LOTTERY")==0){
-		return 1;
-	}
-	else if(strcmp(schName, "RT")==0){
-		return 2;
-	}
-	else if(strcmp(schName, "RR")==0){
-		return 3;
-	}
-	else{
-		printf("WARNING: Using default SRR scheduler, invalid parameter found %s\n", schName);
-		return 0;
-	}
-}
-
-/**
  * this function read configuration from config file
  */
 int readConfFile(int reload){
@@ -344,8 +323,8 @@ int readConfFile(int reload){
 	      strncpy (rootTmp, value, MAXLEN);
 	      ret += 1;
 	    }
-	    else if (strcmp(parameter, "SCH")==0){
-	    	strncpy (schedulerTmp, value, MAXLEN);
+	    else if (strcmp(parameter, "WORKERS")==0){
+	    	strncpy (workersTmp, value, MAXLEN);
 	    	ret += 1;
 	    }
 	    //If config file contains more information 
@@ -355,17 +334,15 @@ int readConfFile(int reload){
 	      
 	    }
 	}
-	scheduler = malloc(strlen(schedulerTmp)+1);
 	//Validate if the parameters were found
-	if(strcmp(logFileTmp,"")==0 && strcmp(portTmp,"")==0 && strcmp(rootTmp,"")==0 && strcmp(schedulerTmp,"")==0){
+	if(strcmp(logFileTmp,"")==0 && strcmp(portTmp,"")==0 && strcmp(rootTmp,"")==0 && strcmp(workersTmp,"")==0){
 		return EXIT_FAILURE;
 	}
-	else if(strcmp(logFileTmp,"")>0 && strcmp(portTmp,"")>0 && strcmp(rootTmp,"")>0 && strcmp(schedulerTmp,"")>0){
+	else if(strcmp(logFileTmp,"")>0 && strcmp(portTmp,"")>0 && strcmp(rootTmp,"")>0 && strcmp(workersTmp,"")>0){
 		strcpy(logFileName, logFileTmp);
 	    strcpy(port, portTmp);
 	    strcpy(dirRoot, rootTmp);
-	    strcpy(scheduler, schedulerTmp);
-	    schedulerID = validateSCH(scheduler);
+	    workersNumber = atoi(workersTmp);
 	}
 	else if(strcmp(logFileTmp,"")>0 && strcmp(portTmp,"")>0 && strcmp(rootTmp,"")>0){
 		strcpy(logFileName, logFileTmp);
@@ -374,68 +351,61 @@ int readConfFile(int reload){
 	}
 	else{
 		if(strcmp(logFileTmp,"")>0){
-			if (strcmp(portTmp,"")==0 && strcmp(rootTmp,"")==0 && strcmp(schedulerTmp,"")==0){
+			if (strcmp(portTmp,"")==0 && strcmp(rootTmp,"")==0 && strcmp(workersTmp,"")==0){
 				strcpy(logFileName, logFileTmp);
 			}
-			else if (strcmp(portTmp,"")>0 && strcmp(schedulerTmp,"")>0){
+			else if (strcmp(portTmp,"")>0 && strcmp(workersTmp,"")>0){
 				strcpy(logFileName, logFileTmp);
 				strcpy(port, portTmp);
-				strcpy(scheduler, schedulerTmp);
-				schedulerID = validateSCH(scheduler);
+	    		workersNumber = atoi(workersTmp);
 			}
-			else if (strcmp(rootTmp,"")>0 && strcmp(schedulerTmp,"")>0){
+			else if (strcmp(rootTmp,"")>0 && strcmp(workersTmp,"")>0){
 				strcpy(logFileName, logFileTmp);
 				strcpy(dirRoot, rootTmp);
-				strcpy(scheduler, schedulerTmp);
-				schedulerID = validateSCH(scheduler);
+	    		workersNumber = atoi(workersTmp);
 			}
-			else if (strcmp(portTmp,"")>0 && strcmp(rootTmp,"")==0 && strcmp(schedulerTmp,"")==0){
+			else if (strcmp(portTmp,"")>0 && strcmp(rootTmp,"")==0 && strcmp(workersTmp,"")==0){
 				strcpy(logFileName, logFileTmp);
 	    		strcpy(port, portTmp);
 			}
-			else if (strcmp(rootTmp,"")>0 && strcmp(portTmp,"")==0 && strcmp(schedulerTmp,"")==0){
+			else if (strcmp(rootTmp,"")>0 && strcmp(portTmp,"")==0 && strcmp(workersTmp,"")==0){
 				strcpy(logFileName, logFileTmp);
 				strcpy(dirRoot, rootTmp);
 			}
 			else{
 				strcpy(logFileName, logFileTmp);
-				strcpy(scheduler, schedulerTmp);
-				schedulerID = validateSCH(scheduler);
+	    		workersNumber = atoi(workersTmp);
 			}
 		}
 		else if(strcmp(portTmp,"")>0){
-			if (strcmp(rootTmp,"")==0 && strcmp(schedulerTmp,"")==0){
+			if (strcmp(rootTmp,"")==0 && strcmp(workersTmp,"")==0){
 				strcpy(port, portTmp);
 			}
-			else if(strcmp(rootTmp,"")>0 && strcmp(schedulerTmp,"")>0){
+			else if(strcmp(rootTmp,"")>0 && strcmp(workersTmp,"")>0){
 				strcpy(port,portTmp);
 				strcpy(dirRoot, rootTmp);
-				strcpy(scheduler, schedulerTmp);
-				schedulerID = validateSCH(scheduler);
+	    		workersNumber = atoi(workersTmp);
 			}
-			else if(strcmp(rootTmp,"")>0 && strcmp(schedulerTmp,"")==0){
+			else if(strcmp(rootTmp,"")>0 && strcmp(workersTmp,"")==0){
 				strcpy(port, portTmp);
 				strcpy(dirRoot, rootTmp);
 			}
 			else{
 				strcpy(port,portTmp);
-				strcpy(scheduler, schedulerTmp);
-				schedulerID = validateSCH(scheduler);	
+	    		workersNumber = atoi(workersTmp);	
 			}
 		}
 		else if (strcmp(rootTmp,"")>0){
-			if(strcmp(schedulerTmp,"")==0){
+			if(strcmp(workersTmp,"")==0){
 				strcpy(dirRoot, rootTmp);
 			}
 			else{
 				strcpy(dirRoot, rootTmp);
-				strcpy(scheduler, schedulerTmp);
-				schedulerID = validateSCH(scheduler);
+	    		workersNumber = atoi(workersTmp);
 			}
 		}
 		else{
-			strcpy(scheduler, schedulerTmp);
-			schedulerID = validateSCH(scheduler);
+	    	workersNumber = atoi(workersTmp);
 		}
 	}
 
@@ -499,8 +469,8 @@ int testConfFile(char *_confFileName){
 	      strncpy (rootTmp, value, MAXLEN);
 	      ret += 1;
 	    }
-	    else if (strcmp(parameter, "SCH")==0){
-	    	strncpy (schedulerTmp, value, MAXLEN);
+	    else if (strcmp(parameter, "WORKERS")==0){
+	    	strncpy (workersTmp, value, MAXLEN);
 	    	ret += 1;
 	    }
 	    //If config file contains more information 
@@ -509,18 +479,16 @@ int testConfFile(char *_confFileName){
 	      ret += 1;
 	    }
 	}
-	scheduler = malloc(strlen(schedulerTmp)+1);
 	//Validate if the parameters were found
-	if(strcmp(logFileTmp,"")==0 && strcmp(portTmp,"")==0 && strcmp(rootTmp,"")==0 && strcmp(schedulerTmp,"")==0){
+	if(strcmp(logFileTmp,"")==0 && strcmp(portTmp,"")==0 && strcmp(rootTmp,"")==0 && strcmp(workersTmp,"")==0 && strcmp(workersTmp,"")==0){
 		return EXIT_FAILURE;
 	}
-	else if(strcmp(logFileTmp,"")>0 && strcmp(portTmp,"")>0 && strcmp(rootTmp,"")>0 && strcmp(schedulerTmp,"")>0){
+	else if(strcmp(logFileTmp,"")>0 && strcmp(portTmp,"")>0 && strcmp(rootTmp,"")>0 && strcmp(workersTmp,"")>0){
 		strcpy(logFileName, logFileTmp);
 	    strcpy(port, portTmp);
 	    strcpy(dirRoot, rootTmp);
-	    strcpy(scheduler, schedulerTmp);
-	    schedulerID = validateSCH(scheduler);
-	    printf("Found LOGFILE:%s, PORT:%s , ROOT:%s and SCH:%s with code %d\n",logFileTmp,port,dirRoot,schedulerTmp, schedulerID);
+	    workersNumber = atoi(workersTmp);
+	    printf("Found LOGFILE:%s, PORT:%s , ROOT:%s and WORKERS:%d\n",logFileTmp,port,dirRoot, workersNumber);
 	}
 	else if(strcmp(logFileTmp,"")>0 && strcmp(portTmp,"")>0 && strcmp(rootTmp,"")>0){
 		strcpy(logFileName, logFileTmp);
@@ -530,81 +498,74 @@ int testConfFile(char *_confFileName){
 	}
 	else{
 		if(strcmp(logFileTmp,"")>0){
-			if (strcmp(portTmp,"")==0 && strcmp(rootTmp,"")==0 && strcmp(schedulerTmp,"")==0){
+			if (strcmp(portTmp,"")==0 && strcmp(rootTmp,"")==0 && strcmp(workersTmp,"")==0){
 				strcpy(logFileName, logFileTmp);
 				printf("Just LOGFILE:%s found\n",logFileTmp);
 			}
-			else if (strcmp(portTmp,"")>0 && strcmp(schedulerTmp,"")>0){
+			else if (strcmp(portTmp,"")>0 && strcmp(workersTmp,"")>0){
 				strcpy(logFileName, logFileTmp);
 				strcpy(port, portTmp);
-				strcpy(scheduler, schedulerTmp);
-				schedulerID = validateSCH(scheduler);
-				printf("Found LOGFILE:%s, PORT:%s and SCH:%s with code %d\n", logFileTmp, port, scheduler, schedulerID);
+	    		workersNumber = atoi(workersTmp);
+				printf("Found LOGFILE:%s, PORT:%s and WORKERS:%d\n", logFileTmp, port, workersNumber);
 			}
-			else if (strcmp(rootTmp,"")>0 && strcmp(schedulerTmp,"")>0){
+			else if (strcmp(rootTmp,"")>0 && strcmp(workersTmp,"")>0){
 				strcpy(logFileName, logFileTmp);
 				strcpy(dirRoot, rootTmp);
-				strcpy(scheduler, schedulerTmp);
-				schedulerID = validateSCH(scheduler);
-				printf("Found LOGFILE:%s, ROOT:%s and SCH:%s with code %d\n", logFileTmp, dirRoot, scheduler, schedulerID);
+	    		workersNumber = atoi(workersTmp);
+				printf("Found LOGFILE:%s, ROOT:%s and WORKERS:%d\n", logFileTmp, dirRoot, workersNumber);
 			}
-			else if (strcmp(portTmp,"")>0 && strcmp(rootTmp,"")==0 && strcmp(schedulerTmp,"")==0){
+			else if (strcmp(portTmp,"")>0 && strcmp(rootTmp,"")==0 && strcmp(workersTmp,"")==0){
 				strcpy(logFileName, logFileTmp);
 	    		strcpy(port, portTmp);
 				printf("Found LOGFILE:%s and PORT:%s\n",logFileTmp,port);
 			}
-			else if (strcmp(rootTmp,"")>0 && strcmp(portTmp,"")==0 && strcmp(schedulerTmp,"")==0){
+			else if (strcmp(rootTmp,"")>0 && strcmp(portTmp,"")==0 && strcmp(workersTmp,"")==0){
 				strcpy(logFileName, logFileTmp);
 				strcpy(dirRoot, rootTmp);
 				printf("Found LOGFILE:%s and ROOT:%s\n",logFileTmp,dirRoot);
 			}
 			else{
 				strcpy(logFileName, logFileTmp);
-				strcpy(scheduler, schedulerTmp);
-				schedulerID = validateSCH(scheduler);
-				printf("Found LOGFILE:%s and SCH:%s with code %d\n", logFileTmp, scheduler, schedulerID);
+	    		workersNumber = atoi(workersTmp);
+				printf("Found LOGFILE:%s and WORKERS:%d\n", logFileTmp, workersNumber);
 			}
 		}
 		else if(strcmp(portTmp,"")>0){
-			if (strcmp(rootTmp,"")==0 && strcmp(schedulerTmp,"")==0){
+			if (strcmp(rootTmp,"")==0 && strcmp(workersTmp,"")==0){
 				strcpy(port, portTmp);
 				printf("Just PORT:%s found\n",port);
 			}
-			else if(strcmp(rootTmp,"")>0 && strcmp(schedulerTmp,"")>0){
+			else if(strcmp(rootTmp,"")>0 && strcmp(workersTmp,"")>0){
 				strcpy(port,portTmp);
 				strcpy(dirRoot, rootTmp);
-				strcpy(scheduler, schedulerTmp);
-				schedulerID = validateSCH(scheduler);
-				printf("Found PORT:%s, ROOT:%s and SCH:%s with code %d\n",port, dirRoot, scheduler, schedulerID);
+	    		workersNumber = atoi(workersTmp);
+				printf("Found PORT:%s, ROOT:%s and WORKERS:%d\n",port, dirRoot, workersNumber);
 			}
-			else if(strcmp(rootTmp,"")>0 && strcmp(schedulerTmp,"")==0){
+			else if(strcmp(rootTmp,"")>0 && strcmp(workersTmp,"")==0){
 				strcpy(port, portTmp);
 				strcpy(dirRoot, rootTmp);
 				printf("Found PORT:%s and ROOT:%s\n",port,dirRoot);
 			}
 			else{
 				strcpy(port,portTmp);
-				strcpy(scheduler, schedulerTmp);
-				schedulerID = validateSCH(scheduler);
-				printf("Found PORT:%s and SCH:%s with code %d\n",port, scheduler, schedulerID);	
+	    		workersNumber = atoi(workersTmp);
+				printf("Found PORT:%s and WORKERS:%d\n",port, workersNumber);	
 			}
 		}
 		else if (strcmp(rootTmp,"")>0){
-			if(strcmp(schedulerTmp,"")==0){
+			if(strcmp(workersTmp,"")==0){
 				strcpy(dirRoot, rootTmp);
 				printf("Just ROOT:%s found\n",dirRoot);
 			}
 			else{
 				strcpy(dirRoot, rootTmp);
-				strcpy(scheduler, schedulerTmp);
-				schedulerID = validateSCH(scheduler);
-				printf("Found ROOT:%s and SCH:%s with code %d\n", dirRoot, scheduler, schedulerID);
+	    		workersNumber = atoi(workersTmp);
+				printf("Found ROOT:%s and WORKERS:%d\n", dirRoot, workersNumber);
 			}
 		}
 		else{
-			strcpy(scheduler, schedulerTmp);
-			schedulerID = validateSCH(scheduler);
-			printf("Just SCH:%s found with code %d\n", scheduler, schedulerID);
+	    	workersNumber = atoi(workersTmp);
+			printf("Just WORKERS:%d\n", workersNumber);
 		}
 	}
 
