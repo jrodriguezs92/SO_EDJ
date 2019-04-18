@@ -61,10 +61,12 @@ char* port;
 char* scheduler;
 int schedulerID;
 int customLog;
+int workersNumber;
 char logFileTmp[MAXLEN];
 char portTmp[MAXLEN];
 char rootTmp[MAXLEN];
 char schedulerTmp[MAXLEN];
+char workersTmp[MAXLEN];
 FILE* file;
 
 

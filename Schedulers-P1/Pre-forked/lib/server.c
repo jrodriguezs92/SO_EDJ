@@ -5,7 +5,7 @@
 					Computer Engineering
 
 		Programmer: Esteban Agüero Pérez (estape11)
-					Daniela Hernández A (daniha)
+					Daniela Hernández A (DaniHdez)
 
 		Programming Language: C
 		Version: 1.0
