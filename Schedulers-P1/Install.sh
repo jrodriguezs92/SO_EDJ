@@ -124,3 +124,31 @@ echo -e '\e[33m> Installing and running Daemon inside the container \e[39m'
 sudo docker exec -d webserver_threaded ./scripts/InstallDaemon.sh
 
 echo -e '\e[33m> successfully completed! \e[39m'
+
+
+
+################# PRE-FORKED SERVER
+
+echo -e '\e[44m>>> INSTALLING PRE-FORKED SERVER \e[49m'
+
+echo -e '\e[33m> Building Docker Image \e[39m'
+
+# Build image from Dockerfile.
+sudo docker build --tag=webserver_preforked $SCRIPTPATH/Pre-forked/
+
+echo -e '\e[33m> Executing Docker container \e[39m'
+
+# Run Docker container: 
+# in detached mode,
+# in privileged mode (for the use of systemctl commands), 
+# with friendly name "webserver", 
+# and with a defined volume.
+# REFERENCE: https://hub.docker.com/r/jrei/systemd-ubuntu
+sudo docker run -d -p 8007:8007 --privileged --name webserver_preforked -v /sys/fs/cgroup:/sys/fs/cgroup:ro webserver_preforked
+
+echo -e '\e[33m> Installing and running Daemon inside the container \e[39m'
+
+# Execute command inside the container in detached mode, to install Daemon and run it.
+sudo docker exec -d webserver_preforked ./scripts/InstallDaemon.sh
+
+echo -e '\e[33m> Successfully completed! \e[39m'
