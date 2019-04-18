@@ -78,7 +78,6 @@ bool running;
 int startDaemonized;
 struct sockaddr_in clienteAddr;
 socklen_t addrlen;
-int workersAllowed;
 WCB* workers;
 
 // Instructions Prototypes

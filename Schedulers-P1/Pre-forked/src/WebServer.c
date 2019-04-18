@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
 	pidFileName = NULL;
 	pidFd = -1;
 	appName = NULL;
-	workersAllowed = 1; // default workers
+	workersNumber = 1; // default workers
 
 	// server
 	
@@ -133,8 +133,8 @@ int main(int argc, char* argv[]) {
 	bool foundWorker;
 
 	// Initialize the workers
-	workers = malloc(sizeof(WCB)*workersAllowed);
-	for (i=0; i<workersAllowed ; i++){
+	workers = malloc(sizeof(WCB)*workersNumber);
+	for (i=0; i<workersNumber ; i++){
 		workers[i] = malloc(sizeof(struct wcb)); // initialize the worker
 		workers[i]->busy = false;
 		workers[i]->socket = -1;
@@ -160,7 +160,7 @@ int main(int argc, char* argv[]) {
 		} else {
 			foundWorker = false;
 			while(!foundWorker){
-				for(i=0;i<workersAllowed;i++){
+				for(i=0;i<workersNumber;i++){
 					if(!workers[i]->busy){
 						workers[i]->socket = lastSocket;
 						workers[i]->busy = true;
@@ -189,7 +189,7 @@ int main(int argc, char* argv[]) {
 	if (pidFileName != NULL) free(pidFileName);
 	if (port != NULL) free(port);
 	if (dirRoot != NULL) free(dirRoot);
-	for(i=0;i<workersAllowed;i++){free(workers[i]);}
+	for(i=0;i<workersNumber;i++){free(workers[i]);}
 	free(workers);
 
 	return EXIT_SUCCESS;;
