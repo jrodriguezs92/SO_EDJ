@@ -316,8 +316,8 @@ int validateSCH(char * schName){
 		return 3;
 	}
 	else{
-		printf("WARNING: Using default RR scheduler, invalid parameter found %s\n", schName);
-		return -1;
+		printf("WARNING: Using default SRR scheduler, invalid parameter found %s\n", schName);
+		return 0;
 	}
 }
 
