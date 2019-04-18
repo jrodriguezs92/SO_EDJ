@@ -59,6 +59,7 @@ char* dirRoot;
 int* clients;
 char* port;
 char* scheduler;
+int schedulerID;
 int customLog;
 char logFileTmp[MAXLEN];
 char portTmp[MAXLEN];
