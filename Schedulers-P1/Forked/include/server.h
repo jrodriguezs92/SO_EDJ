@@ -53,6 +53,7 @@ char schedulerTmp[MAXLEN];
 char* logFileName;
 char* port;
 char* scheduler;
+int schedulerID;
 char* pidFileName;
 int pidFd;
 char* appName;
