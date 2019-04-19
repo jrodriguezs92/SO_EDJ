@@ -22,6 +22,9 @@
 
 #include <server.h>
 
+//pthread_mutex_t clifd_mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t clifd_cond = PTHREAD_COND_INITIALIZER;
+
 /**
  * main thread of the server
  */
@@ -47,6 +50,8 @@ int main(int argc, char* argv[]){
 	appName = NULL;
 
 	// server
+
+	pthread_mutex_init(&clifd_mutex, NULL);
 	
 	port = (char*)malloc(10 * sizeof(char));
 	dirRoot = (char*)malloc(50 * sizeof(char));
@@ -130,6 +135,19 @@ int main(int argc, char* argv[]){
 		syslog(LOG_INFO, "Default Log file loaded @ /var/log/syslog");
 	}
 
+	//void sig_int(int);
+
+	// Thread structure to handle pre-thread function
+	numOfThreads = 4; ///// THIS NEED TO BE DEFINED IN THE READCONFFILE FUCNTION
+	thr_ctl = calloc(numOfThreads, sizeof(THREAD));
+	if (!thr_ctl){
+		fprintf(logStream,"%s > Error allocating thread control structure \n", getTime());;
+		fflush(logStream);
+	} else {
+		fprintf(logStream,"%s > Thread control structure allocated for %d threads \n", getTime(), numOfThreads);
+		fflush(logStream);
+	}
+
 	// server
 
 	fprintf(logStream,"%s > Server started @ Port: %s | Root directory: %s \n",
@@ -149,25 +167,60 @@ int main(int argc, char* argv[]){
 
 	startServer(port);
 
-	// this global variable can be changed in function handling signal
-	running = 1;
-	pthread_t threadRequest;
+	// Pre-threading Procedure
+	for (int x = 0; x < numOfThreads; x++){
+		if((pthread_create(&thr_ctl[x].tid, NULL, requestResponse,(void *)&x)) != 0){
+			fprintf(logStream,"%s > Thread create error \n", getTime());
+			fflush(logStream);
+		}
+		// if ((pthread_detach(thr_ctl[x].tid)) != 0) {
+		// 	fprintf(logStream,"%s > Thread detach error \n", getTime());
+		// 	fflush(logStream);
+		// }
+	}
+
+	signal(SIGINT, sig_int);
+
+	iget = iput = 0;
 	int newSock;
 
-	while (running == 1) {
-
+	for(;;){
 		addrLen = sizeof(clienteAddr);
-		// system call to create new socket connection
 		newSock = accept (sockfd, (struct sockaddr *) &clienteAddr, &addrLen);
-		fcntl(newSock, F_SETFL, O_NONBLOCK); // non-blocking socket
-
-		if(newSock>0){
-			struct args *SLOT = (struct args *)malloc(sizeof(struct args));
-			SLOT->sslot=newSock;
-			pthread_create(&threadRequest, NULL, requestResponse, (void *)SLOT);
-
+		pthread_mutex_lock(&clifd_mutex);
+		clifd[iput] = newSock;
+		if (++iput == MAXNCLI){
+			iput = 0;
 		}
+		if (iput == iget){
+			fprintf(logStream,"%s > iput = iget = %d \n", getTime(), iput);
+			fflush(logStream);
+		}
+		pthread_cond_signal(&clifd_cond);
+		pthread_mutex_unlock(&clifd_mutex);
 	}
+
+	// this global variable can be changed in function handling signal
+	//running = 1;
+	//pthread_t threadRequest;
+	//int newSock;
+
+	// while (running == 1) {
+
+	// 	addrLen = sizeof(clienteAddr);
+	// 	// system call to create new socket connection
+	// 	pthread_mutex_lock(&mtx);
+	// 	newSock = accept (sockfd, (struct sockaddr *) &clienteAddr, &addrLen);
+	// 	//fcntl(newSock, F_SETFL, O_NONBLOCK); // non-blocking socket
+	// 	pthread_mutex_unlock(&mtx);	
+
+	// 	/* if(newSock>0){
+	// 		struct args *SLOT = (struct args *)malloc(sizeof(struct args));
+	// 		SLOT->sslot=newSock;
+	// 		pthread_create(&threadRequest, NULL, requestResponse, (void *)SLOT);
+
+	// 	} */
+	// }
 
 	// server
 	

@@ -25,6 +25,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/socket.h>
+#include <sys/resource.h>
 #include <netdb.h>
 #include <signal.h>
 #include <fcntl.h>
@@ -34,13 +35,17 @@
 #include <time.h>
 #include <ctype.h>
 #include <ph7.h>
-#include <mypthread.h>
+#include <pthread.h>
 
 #define MAXLEN 80
 #define CONEXMAX 1000
 #define BYTES 8
 #define MSGLEN 9999
 #define MAX_QUEUE 1000000
+
+#ifndef HAVE_GETRUSAGE_PROTO
+	int getrusage(int, struct rusage *);
+#endif
 
 // Global variables
 int running;
@@ -66,6 +71,20 @@ char portTmp[MAXLEN];
 char rootTmp[MAXLEN];
 char schedulerTmp[MAXLEN];
 FILE* file;
+int numOfThreads;
+//pthread_mutex_t mutexLock;
+
+// Tread structure to handle the pre-threaded function
+typedef struct{
+	pthread_t tid;
+	int t_count;
+}THREAD;
+THREAD *thr_ctl;
+
+#define MAXNCLI 32
+int clifd[MAXNCLI], iget, iput;
+pthread_mutex_t clifd_mutex;
+pthread_cond_t clifd_cond;
 
 
 // Server prototypes
@@ -81,4 +100,6 @@ void fatalError(const char*);
 int isPHPRequest(char*);
 struct args {int sslot; };
 int isMultimedia(char*);
+void sig_int(int);
+void pr_cpu_time(void);
 /*server.h*/
