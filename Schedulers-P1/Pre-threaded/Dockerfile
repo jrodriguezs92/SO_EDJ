@@ -15,4 +15,4 @@ COPY . /usr/src/ws
 RUN make all
 
 # Make port 8005 available
-EXPOSE 8005
+EXPOSE 8009
