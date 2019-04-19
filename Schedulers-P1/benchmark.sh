@@ -24,10 +24,10 @@ make all
 #./bclient <host> <port> <file> <nThreads> <nCycles>
 
 #******************FIFO Test*********************# 
-#Few requests lightweight file png type
+#Few requests lightweight file jpg type
 ./bin/bclient localhost 8001 img.jpg 10 2
 
-#1000 requests of lightweight file png type
+#1000 requests of lightweight file jpg type
 ./bin/bclient localhost 8001 img.jpg 100 10 
 
 #GIF type file
@@ -40,10 +40,10 @@ make all
 ./bin/bclient localhost 8001 404.html  20 2
 
 #******************Forked Test*********************# 
-#Few requests lightweight file png type
+#Few requests lightweight file jpg type
 ./bin/bclient localhost 8003 img.jpg 10 2
 
-#1000 requests of lightweight file png type
+#1000 requests of lightweight file jpg type
 ./bin/bclient localhost 8003 img.jpg 100 10 
 
 #GIF type file
@@ -56,10 +56,10 @@ make all
 ./bin/bclient localhost 8003 404.html  20 2
 
 #******************Threaded Test*********************# 
-#Few requests lightweight file png type
+#Few requests lightweight file jpg type
 ./bin/bclient localhost 8005 img.jpg 10 2
 
-#1000 requests of lightweight file png type
+#1000 requests of lightweight file jpg type
 ./bin/bclient localhost 8005 img.jpg 100 10 
 
 #GIF type file
@@ -72,10 +72,10 @@ make all
 ./bin/bclient localhost 8005 404.html  20 2
 
 #******************Prethreaded Test*********************# 
-#Few requests lightweight file png type
+#Few requests lightweight file jpg type
 ./bin/bclient localhost 8007 img.jpg 10 2
 
-#1000 requests of lightweight file png type
+#1000 requests of lightweight file jpg type
 ./bin/bclient localhost 8007 img.jpg 100 10 
 
 #GIF type file
@@ -88,11 +88,10 @@ make all
 ./bin/bclient localhost 8007 404.html  20 2
 
 #******************Preforked Test*********************# 
-#Few requests lightweight file png type
-#Few requests lightweight file png type
+#Few requests lightweight file jpg type
 ./bin/bclient localhost 8009 img.jpg 10 2
 
-#1000 requests of lightweight file png type
+#1000 requests of lightweight file jpg type
 ./bin/bclient localhost 8009 img.jpg 100 10 
 
 #GIF type file
