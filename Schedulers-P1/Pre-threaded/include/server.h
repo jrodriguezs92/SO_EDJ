@@ -95,5 +95,4 @@ void fatalError(const char*);
 int isPHPRequest(char*);
 struct args {int sslot; };
 int isMultimedia(char*);
-void sig_int(int);
 /*server.h*/
