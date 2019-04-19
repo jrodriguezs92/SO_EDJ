@@ -125,9 +125,17 @@ void *requestResponse(void * input){
 		int rcvd, fd, bytesLeidos;
 		memset( (void*) message, (int)'\0', MSGLEN );
 
-		while( (rcvd=recv(connfd, message, MSGLEN, 0)) <= 0 ){} // waits request from client
+		rcvd=recv(connfd, message, MSGLEN, 0); // waits request from client
 
-		if( (strcmp(message, "\n")) != 0){    // message received
+		if (rcvd<0) {    // receive error
+			fprintf(logStream,"%s > recv() error\n", getTime());
+			fflush(logStream);
+		}
+		else if (rcvd==0) {   // receive socket closed
+			fprintf(logStream,"%s > Client disconnected.\n", getTime());
+			fflush(logStream);
+		}
+		else if( (strcmp(message, "\n")) != 0){    // message received
 			fprintf(logStream,"%s > Message received: \n\n%s", getTime(), message);
 			fflush(logStream);
 			reqline[0] = strtok (message, " \t\n");
@@ -279,9 +287,16 @@ void *requestResponse(void * input){
 							#endif
 
 							send(connfd, "HTTP/1.1 200 OK\n\n", 17, 0);
+							/**
+							Esta es la forma para NON-BLOCKING sockets
 							while ( (bytesLeidos=read(fd, data_to_send, BYTES))>0 ) {
 								// spin to ensure the data was wrote correctly
 								while( write(connfd, data_to_send, bytesLeidos)== -1){}
+							}
+							**/
+							while ( (bytesLeidos=read(fd, data_to_send, BYTES))>0 ) {
+								//send(connfd, data_to_send, bytesLeidos, 0);
+								write(connfd, data_to_send, bytesLeidos);
 							}
 						}
 
