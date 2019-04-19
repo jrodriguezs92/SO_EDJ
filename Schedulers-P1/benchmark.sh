@@ -17,6 +17,8 @@ echo "> Running Benchmark"
 
 cd BenchmarkTool
 
+mkdir results
+
 make all
 #Formato de consulta
 #./bclient <host> <port> <file> <nThreads> <nCycles>
