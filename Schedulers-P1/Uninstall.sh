@@ -94,3 +94,24 @@ echo -e '\e[33m> Removing Docker Image \e[39m'
 sudo docker rmi webserver_preforked
     
 echo -e '\e[33m> successfully completed! \e[39m'
+
+################# PRE-THREADED SERVER
+
+echo -e '\e[44m>>> UNINSTALLING PRE-THREADED SERVER \e[49m'
+
+echo -e '\e[33m> Stoping Docker Container \e[39m'
+
+# Stop the container
+sudo docker stop webserver_prethreaded
+
+echo -e '\e[33m> Removing Docker Container \e[39m'
+
+# Remove the container
+sudo docker rm webserver_prethreaded
+
+echo -e '\e[33m> Removing Docker Image \e[39m'
+
+# Remove the image
+sudo docker rmi webserver_prethreaded
+    
+echo -e '\e[33m> successfully completed! \e[39m'

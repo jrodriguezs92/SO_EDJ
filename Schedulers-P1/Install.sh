@@ -157,7 +157,7 @@ echo -e '\e[33m> Successfully completed! \e[39m'
 
 ################# PRE-THREADED SERVER
 
-echo -e '\e[44m>>> INSTALLING PRE-FORKED SERVER \e[49m'
+echo -e '\e[44m>>> INSTALLING PRE-THREADED SERVER \e[49m'
 
 echo -e '\e[33m> Building Docker Image \e[39m'
 
