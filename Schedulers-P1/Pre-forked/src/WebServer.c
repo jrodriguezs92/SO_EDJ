@@ -116,8 +116,8 @@ int main(int argc, char* argv[]) {
 		syslog(LOG_INFO, "Default Log file loaded @ /var/log/syslog");
 	}
 
-	fprintf(logStream,"%s > Server started @ Port: %s | Root directory: %s \n",
-			getTime(), port, dirRoot);
+	fprintf(logStream,"%s > Server started @ Port: %s | Root directory: %s | Workers: %d\n",
+			getTime(), port, dirRoot, workersNumber);
 	fflush(logStream);
 
 	if (customLog==1){
