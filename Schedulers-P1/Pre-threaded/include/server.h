@@ -25,7 +25,6 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/socket.h>
-#include <sys/resource.h>
 #include <netdb.h>
 #include <signal.h>
 #include <fcntl.h>
@@ -42,10 +41,6 @@
 #define BYTES 8
 #define MSGLEN 9999
 #define MAX_QUEUE 1000000
-
-#ifndef HAVE_GETRUSAGE_PROTO
-	int getrusage(int, struct rusage *);
-#endif
 
 // Global variables
 int running;
@@ -73,8 +68,6 @@ char rootTmp[MAXLEN];
 char schedulerTmp[MAXLEN];
 char workersTmp[MAXLEN];
 FILE* file;
-int numOfThreads;
-//pthread_mutex_t mutexLock;
 
 // Tread structure to handle the pre-threaded function
 typedef struct{
@@ -103,5 +96,4 @@ int isPHPRequest(char*);
 struct args {int sslot; };
 int isMultimedia(char*);
 void sig_int(int);
-void pr_cpu_time(void);
 /*server.h*/

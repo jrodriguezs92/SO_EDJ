@@ -56,9 +56,6 @@ void startServer(char* port) {
 
 		}
 
-		//int flags = fcntl(sockfd, F_GETFL);
-		//fcntl(sockfd, F_SETFL, flags | O_NONBLOCK); // to make it non-blocking
-
 		// sets the socket addres
 		if (bind(sockfd, p->ai_addr, p->ai_addrlen) == 0) { 
 			break;
@@ -92,13 +89,11 @@ void startServer(char* port) {
 /**
  * this funtion response a client request
  */
-//void requestResponse(int n) {
 void *requestResponse(void * input){
 	addrLen = sizeof(clienteAddr);
 	int connfd;
 
 	for (;;){
-		//int socket = ((struct args*)input)->sslot;
 		// system call to create new socket connection
 		pthread_mutex_lock(&clifd_mutex);
 
@@ -115,14 +110,6 @@ void *requestResponse(void * input){
 		pthread_mutex_unlock(&clifd_mutex);
 		thr_ctl[*((int *)input)].t_count++;
 
-
-
-
-
-
-
-		//newSock = accept (sockfd, (struct sockaddr *) &clienteAddr, &addrLen);
-		//fcntl(newSock, F_SETFL, O_NONBLOCK); // non-blocking socket
 		pthread_mutex_unlock(&clifd_mutex);
 
 		thr_ctl[*((int *)input)].t_count++;
@@ -317,7 +304,6 @@ void *requestResponse(void * input){
 		fprintf(logStream,"%s > ** End communication with %i **\n", getTime(), connfd);
 		fflush(logStream);
 	}
-	//return 0;
 }
 
 /** 
@@ -1122,47 +1108,17 @@ int isMultimedia(char* request){
     return temp;
 }
 
+/**
+ * Handle INT signal
+ */
 void sig_int(int signo){
 	int i;
 
 	/* terminate all children */
-	for (i = 0; i < numOfThreads; i++)
+	for (i = 0; i < workersNumber; i++)
 		pthread_detach(thr_ctl[i].tid);
-		//kill(thr_ctl[i], SIGTERM);
 
-	//while (wait(NULL) > 0);     /* wait for all children */
-	
-	if (errno != ECHILD)
-		//err_sys("wait error");
-	
-	//pr_cpu_time();
 	exit(0);
 }
-
-// void pr_cpu_time(void){
-// 	double user, sys;
-// 	struct rusage myusage, childusage;
-
-// 	if (getrusage(RUSAGE_SELF, &myusage) < 0){
-// 		fprintf(logStream,"%s > getrusage error \n", getTime());
-// 		fflush(logStream);
-// 	}
-// 	if (getrusage(RUSAGE_CHILDREN, &childusage) < 0){
-// 		fprintf(logStream,"%s > getrusage error \n", getTime());
-// 		fflush(logStream);
-// 	}
-
-// 	user = (double) myusage.ru_utime.tv_sec +
-// 	myusage.ru_utime.tv_usec / 1000000.0;
-// 	user += (double) childusage.ru_utime.tv_sec +
-// 	childusage.ru_utime.tv_usec / 1000000.0;
-// 	sys = (double) myusage.ru_stime.tv_sec +
-// 	myusage.ru_stime.tv_usec / 1000000.0;
-// 	sys += (double) childusage.ru_stime.tv_sec +
-// 	childusage.ru_stime.tv_usec / 1000000.0;
-
-// 	fprintf(logStream,"%s > user time = %g, sys time = %g\n", getTime(), user, sys);
-// 	fflush(logStream);
-// }
 
 /*server.c*/

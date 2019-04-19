@@ -22,7 +22,6 @@
 
 #include <server.h>
 
-//pthread_mutex_t clifd_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t clifd_cond = PTHREAD_COND_INITIALIZER;
 
 /**
@@ -135,16 +134,13 @@ int main(int argc, char* argv[]){
 		syslog(LOG_INFO, "Default Log file loaded @ /var/log/syslog");
 	}
 
-	//void sig_int(int);
-
 	// Thread structure to handle pre-thread function
-	numOfThreads = 4; ///// THIS NEED TO BE DEFINED IN THE READCONFFILE FUCNTION
-	thr_ctl = calloc(numOfThreads, sizeof(THREAD));
+	thr_ctl = calloc(workersNumber, sizeof(THREAD));
 	if (!thr_ctl){
 		fprintf(logStream,"%s > Error allocating thread control structure \n", getTime());;
 		fflush(logStream);
 	} else {
-		fprintf(logStream,"%s > Thread control structure allocated for %d threads \n", getTime(), numOfThreads);
+		fprintf(logStream,"%s > Thread control structure allocated for %d threads \n", getTime(), workersNumber);
 		fflush(logStream);
 	}
 
@@ -168,15 +164,11 @@ int main(int argc, char* argv[]){
 	startServer(port);
 
 	// Pre-threading Procedure
-	for (int x = 0; x < numOfThreads; x++){
+	for (int x = 0; x < workersNumber; x++){
 		if((pthread_create(&thr_ctl[x].tid, NULL, requestResponse,(void *)&x)) != 0){
 			fprintf(logStream,"%s > Thread create error \n", getTime());
 			fflush(logStream);
 		}
-		// if ((pthread_detach(thr_ctl[x].tid)) != 0) {
-		// 	fprintf(logStream,"%s > Thread detach error \n", getTime());
-		// 	fflush(logStream);
-		// }
 	}
 
 	signal(SIGINT, sig_int);
@@ -199,30 +191,6 @@ int main(int argc, char* argv[]){
 		pthread_cond_signal(&clifd_cond);
 		pthread_mutex_unlock(&clifd_mutex);
 	}
-
-	// this global variable can be changed in function handling signal
-	//running = 1;
-	//pthread_t threadRequest;
-	//int newSock;
-
-	// while (running == 1) {
-
-	// 	addrLen = sizeof(clienteAddr);
-	// 	// system call to create new socket connection
-	// 	pthread_mutex_lock(&mtx);
-	// 	newSock = accept (sockfd, (struct sockaddr *) &clienteAddr, &addrLen);
-	// 	//fcntl(newSock, F_SETFL, O_NONBLOCK); // non-blocking socket
-	// 	pthread_mutex_unlock(&mtx);	
-
-	// 	/* if(newSock>0){
-	// 		struct args *SLOT = (struct args *)malloc(sizeof(struct args));
-	// 		SLOT->sslot=newSock;
-	// 		pthread_create(&threadRequest, NULL, requestResponse, (void *)SLOT);
-
-	// 	} */
-	// }
-
-	// server
 	
 	// close log file, when it is used.
 	if (logStream != stdout) {
