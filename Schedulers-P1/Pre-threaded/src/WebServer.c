@@ -207,6 +207,7 @@ int main(int argc, char* argv[]){
 	if (clients != NULL) free(clients);
 	if (port != NULL) free(port);
 	if (dirRoot != NULL) free(dirRoot);
+	if (thr_ctl != NULL) free(thr_ctl);
 
 
 	return EXIT_SUCCESS;
