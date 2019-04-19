@@ -41,11 +41,17 @@ void startServer(char *port)
 		exit(1);
 	}
 	// socket and bind
+	int on = 1;
 	for (p = res; p!=NULL; p=p->ai_next)
 	{
 		listenfd = socket (p->ai_family, p->ai_socktype, 0);
+		setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
 		if (listenfd == -1) continue;
 		if (bind(listenfd, p->ai_addr, p->ai_addrlen) == 0) break;
+		if (listen(listenfd, CONNMAX) < 0) {
+		    fprintf(logStream,"%s > listen() or bind()\n", getTime());
+		    fflush(logStream);
+		}
 	}
 	if (p==NULL)
 	{
@@ -177,7 +183,7 @@ static void respond(int socket) {
 							/* Exit */
 							fatalError("Compile error");
 						}
-						strcpy(&path[strlen(dirRoot)+strlen(reqline[1])], ".html");
+						strcpy(&path[strlen(dirRoot)+strlen(reqline[1])], ".tmp");
 						file = fopen(path, "w");
 
 						/*
@@ -607,6 +613,8 @@ void handleSignal(int sig){
 		close(listenfd);
 
 		// server
+
+		kill(0, SIGKILL);
 
 		// reset signal handling to default behavior
 		signal(SIGINT, SIG_DFL);

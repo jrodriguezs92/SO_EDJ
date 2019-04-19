@@ -146,8 +146,8 @@ int main(int argc, char* argv[]){
 
 	// server
 
-	fprintf(logStream,"%s > Server started @ Port: %s | Root directory: %s \n",
-			getTime(), port, dirRoot);
+	fprintf(logStream,"%s > Server started @ Port: %s | Root directory: %s | Workers: %d\n",
+			getTime(), port, dirRoot, workersNumber);
 	fflush(logStream);
 
 	if(customLog==1){

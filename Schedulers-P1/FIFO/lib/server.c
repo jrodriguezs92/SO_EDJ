@@ -205,7 +205,7 @@ void requestResponse(int n) {
 							/* Exit */
 							fatalError("Compile error");
 						}
-						strcpy(&path[strlen(dirRoot)+strlen(reqline[1])], ".html");
+						strcpy(&path[strlen(dirRoot)+strlen(reqline[1])], ".tmp");
 						file = fopen(path, "w");
 
 						/*
