@@ -110,10 +110,6 @@ void *requestResponse(void * input){
 		pthread_mutex_unlock(&clifd_mutex);
 		thr_ctl[*((int *)input)].t_count++;
 
-		pthread_mutex_unlock(&clifd_mutex);
-
-		thr_ctl[*((int *)input)].t_count++;
-
 		fprintf(logStream,"%s > ** Start communication with %i **\n", getTime(), connfd);
 		fflush(logStream);
 
@@ -912,6 +908,10 @@ int testConfFile(char *_confFileName){
  */
 void handleSignal(int sig){
 	if (sig == SIGINT) {
+		/* terminate all children */
+		for (int i = 0; i < workersNumber; i++)
+			pthread_detach(thr_ctl[i].tid);
+
 		fprintf(logStream, "%s > Debug: stopping daemon ...\n", getTime());
 		fflush(logStream);
 
@@ -937,6 +937,8 @@ void handleSignal(int sig){
 
 		// reset signal handling to default behavior
 		signal(SIGINT, SIG_DFL);
+
+		exit(0);
 
 	} else if (sig == SIGHUP) {
 		fprintf(logStream, "%s > Debug: reloading daemon config file ...\n", getTime());
@@ -1121,19 +1123,6 @@ int isMultimedia(char* request){
 		temp=1;
 	}
     return temp;
-}
-
-/**
- * Handle INT signal
- */
-void sig_int(int signo){
-	int i;
-
-	/* terminate all children */
-	for (i = 0; i < workersNumber; i++)
-		pthread_detach(thr_ctl[i].tid);
-
-	exit(0);
 }
 
 /*server.c*/

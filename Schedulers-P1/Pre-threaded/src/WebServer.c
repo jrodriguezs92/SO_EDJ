@@ -171,8 +171,6 @@ int main(int argc, char* argv[]){
 		}
 	}
 
-	signal(SIGINT, sig_int);
-
 	iget = iput = 0;
 	int newSock;
 
