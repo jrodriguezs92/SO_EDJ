@@ -283,16 +283,12 @@ void *requestResponse(void * input){
 							#endif
 
 							send(connfd, "HTTP/1.1 200 OK\n\n", 17, 0);
-							/**
-							Esta es la forma para NON-BLOCKING sockets
+
 							while ( (bytesLeidos=read(fd, data_to_send, BYTES))>0 ) {
-								// spin to ensure the data was wrote correctly
-								while( write(connfd, data_to_send, bytesLeidos)== -1){}
-							}
-							**/
-							while ( (bytesLeidos=read(fd, data_to_send, BYTES))>0 ) {
-								//send(connfd, data_to_send, bytesLeidos, 0);
-								write(connfd, data_to_send, bytesLeidos);
+								if(write(connfd, data_to_send, bytesLeidos)==-1){
+									break;
+
+								}
 							}
 						}
 
