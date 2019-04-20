@@ -18,6 +18,10 @@ echo "> Installing WebServer Daemon"
 # Starts the syslog
 service rsyslog start
 
+# Make a big files
+dd if=/dev/zero of=/usr/src/ws/bin/res/file.txt count=0 bs=1 seek=512MB
+dd if=/dev/zero of=/usr/src/ws/bin/res/empty.img count=0 bs=1 seek=1G
+
 # Copy "WebServer" executable in /usr/bin/
 cp /usr/src/ws/bin/WebServer /usr/bin/
 
