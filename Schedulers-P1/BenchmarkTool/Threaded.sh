@@ -29,10 +29,7 @@ echo ">>Testing Threaded"
 /$SCRIPTPATH/bin/bclient localhost 8005 img.jpg 1 100 
 
 #Few request 512MB file txt type
-#/$SCRIPTPATH/bin/bclient localhost 8005 file.txt 3 2
-
-#20 requests 512MB file txt type
-#/$SCRIPTPATH/bin/bclient localhost 8005 file.txt 10 2
+/$SCRIPTPATH/bin/bclient localhost 8005 file.txt 1 2
 
 #GIF type file
 /$SCRIPTPATH/bin/bclient localhost 8005 img.gif 10 5
