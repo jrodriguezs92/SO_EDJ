@@ -27,8 +27,14 @@ make all
 #Few requests lightweight file jpg type
 ./bin/bclient localhost 8001 img.jpg 10 2
 
-#1000 requests of lightweight file jpg type
-./bin/bclient localhost 8001 img.jpg 100 10 
+#600 requests of lightweight file jpg type
+./bin/bclient localhost 8001 img.jpg 100 6 
+
+#Few request 512MB file txt type
+#./bin/bclient localhost 8001 file.txt 3 2
+
+#20 requests 512MB file txt type
+#./bin/bclient localhost 8001 file.txt 10 2
 
 #GIF type file
 ./bin/bclient localhost 8001 img.gif 10 5
@@ -43,8 +49,14 @@ make all
 #Few requests lightweight file jpg type
 ./bin/bclient localhost 8003 img.jpg 10 2
 
-#1000 requests of lightweight file jpg type
-./bin/bclient localhost 8003 img.jpg 100 10 
+#600 requests of lightweight file jpg type
+./bin/bclient localhost 8003 img.jpg 100 6 
+
+#Few request 512MB file txt type
+#./bin/bclient localhost 8003 file.txt 3 2
+
+#20 requests 512MB file txt type
+#./bin/bclient localhost 8003 file.txt 10 2
 
 #GIF type file
 ./bin/bclient localhost 8003 img.gif 10 5
@@ -59,8 +71,14 @@ make all
 #Few requests lightweight file jpg type
 ./bin/bclient localhost 8005 img.jpg 10 2
 
-#1000 requests of lightweight file jpg type
-./bin/bclient localhost 8005 img.jpg 100 10 
+#600 requests of lightweight file jpg type
+./bin/bclient localhost 8005 img.jpg 100 6 
+
+#Few request 512MB file txt type
+#./bin/bclient localhost 8005 file.txt 3 2
+
+#20 requests 512MB file txt type
+#./bin/bclient localhost 8005 file.txt 10 2
 
 #GIF type file
 ./bin/bclient localhost 8005 img.gif 10 5
@@ -75,8 +93,14 @@ make all
 #Few requests lightweight file jpg type
 ./bin/bclient localhost 8007 img.jpg 10 2
 
-#1000 requests of lightweight file jpg type
-./bin/bclient localhost 8007 img.jpg 100 10 
+#600 requests of lightweight file jpg type
+./bin/bclient localhost 8007 img.jpg 100 6 
+
+#Few request 512MB file txt type
+#./bin/bclient localhost 8007 file.txt 3 2
+
+#20 requests 512MB file txt type
+#./bin/bclient localhost 8007 file.txt 10 2
 
 #GIF type file
 ./bin/bclient localhost 8007 img.gif 10 5
@@ -91,8 +115,14 @@ make all
 #Few requests lightweight file jpg type
 ./bin/bclient localhost 8009 img.jpg 10 2
 
-#1000 requests of lightweight file jpg type
-./bin/bclient localhost 8009 img.jpg 100 10 
+#600 requests of lightweight file jpg type
+./bin/bclient localhost 8009 img.jpg 100 6 
+
+#Few request 512MB file txt type
+#./bin/bclient localhost 8009 file.txt 3 2
+
+#20 requests 512MB file txt type
+#./bin/bclient localhost 8009 file.txt 10 2 
 
 #GIF type file
 ./bin/bclient localhost 8009 img.gif 10 5
