@@ -17,7 +17,7 @@ echo "> Running Benchmark"
 
 cd BenchmarkTool
 
-mkdir results
+mkdir -p results
 
 make all
 
