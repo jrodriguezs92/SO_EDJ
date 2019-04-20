@@ -80,10 +80,10 @@ int createCSV(int port, int threads, int cycles, char * reqTimeI, char * reqTime
 		webserverType = "Threaded";
 	}
 	else if (port==8007){
-		webserverType = "Prethreaded";
+		webserverType = "Preforked";
 	}
 	else if (port==8009){
-		webserverType = "Preforked";
+		webserverType = "Prethreaded";
 	}
 	else
 		webserverType="Not define";

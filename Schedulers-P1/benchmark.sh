@@ -89,7 +89,7 @@ make all
 #HTL type file  
 ./bin/bclient localhost 8005 404.html  20 2
 
-#******************Prethreaded Test*********************# 
+#******************Preforked Test*********************# 
 #Few requests lightweight file jpg type
 ./bin/bclient localhost 8007 img.jpg 10 2
 
@@ -111,7 +111,7 @@ make all
 #HTL type file  
 ./bin/bclient localhost 8007 404.html  20 2
 
-#******************Preforked Test*********************# 
+#******************Prethreaded Test*********************# 
 #Few requests lightweight file jpg type
 ./bin/bclient localhost 8009 img.jpg 10 2
 
