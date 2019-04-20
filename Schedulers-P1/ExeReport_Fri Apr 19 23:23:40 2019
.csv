@@ -1,0 +1,44 @@
+
+Thread execution
+Web Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time
+FIFO,50,Fri Apr 19 23:23:40 2019,Fri Apr 19 23:23:41 2019,gif,301060,0.401826,0.000000
+
+Thread execution
+Web Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time
+FIFO,50,Fri Apr 19 23:23:40 2019,Fri Apr 19 23:23:41 2019,gif,301060,0.439997,0.000000
+
+Thread execution
+Web Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time
+FIFO,50,Fri Apr 19 23:23:40 2019,Fri Apr 19 23:23:41 2019,gif,301060,0.448013,0.000000
+
+Thread execution
+Web Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time
+FIFO,50,Fri Apr 19 23:23:40 2019,Fri Apr 19 23:23:41 2019,gif,301060,0.448011,0.000000
+
+Thread execution
+Web Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time
+FIFO,50,Fri Apr 19 23:23:40 2019,Fri Apr 19 23:23:41 2019,gif,301060,0.448006,0.000000
+
+Thread execution
+Web Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time
+FIFO,50,Fri Apr 19 23:23:40 2019,Fri Apr 19 23:23:41 2019,gif,301060,0.448003,0.000000
+
+Thread execution
+Web Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time
+FIFO,50,Fri Apr 19 23:23:40 2019,Fri Apr 19 23:23:41 2019,gif,301060,0.448000,0.000000
+
+Thread execution
+Web Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time
+FIFO,50,Fri Apr 19 23:23:40 2019,Fri Apr 19 23:23:41 2019,gif,301060,0.447998,0.000000
+
+Thread execution
+Web Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time
+FIFO,50,Fri Apr 19 23:23:40 2019,Fri Apr 19 23:23:41 2019,gif,301060,0.447994,0.000000
+
+Thread execution
+Web Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time
+FIFO,50,Fri Apr 19 23:23:40 2019,Fri Apr 19 23:23:41 2019,gif,301060,0.447989,0.000000
+
+Complete execution
+Web Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time, Average time
+FIFO,50,Fri Apr 19 23:23:40 2019,Fri Apr 19 23:23:41 2019,gif,301060,0.448448,0.442584

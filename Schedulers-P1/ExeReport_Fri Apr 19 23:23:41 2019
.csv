@@ -1,0 +1,16 @@
+
+Thread execution
+Web Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time
+FIFO,6,Fri Apr 19 23:23:41 2019,Fri Apr 19 23:23:42 2019,mp4,14676745,1.342216,0.000000
+
+Thread execution
+Web Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time
+FIFO,6,Fri Apr 19 23:23:41 2019,Fri Apr 19 23:23:42 2019,mp4,14676745,1.545806,0.000000
+
+Thread execution
+Web Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time
+FIFO,6,Fri Apr 19 23:23:41 2019,Fri Apr 19 23:23:42 2019,mp4,14676745,1.800372,0.000000
+
+Complete execution
+Web Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time, Average time
+FIFO,6,Fri Apr 19 23:23:41 2019,Fri Apr 19 23:23:42 2019,mp4,14676745,1.800669,1.562798

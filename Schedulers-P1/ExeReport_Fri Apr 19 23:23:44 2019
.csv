@@ -1,0 +1,60 @@
+
+Thread execution
+Web Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time
+Forked,50,Fri Apr 19 23:23:44 2019,Fri Apr 19 23:23:44 2019,gif,301060,0.384747,0.000000
+
+Thread execution
+Web Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time
+Forked,50,Fri Apr 19 23:23:44 2019,Fri Apr 19 23:23:44 2019,gif,301060,0.384744,0.000000
+
+Thread execution
+Web Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time
+Forked,50,Fri Apr 19 23:23:44 2019,Fri Apr 19 23:23:44 2019,gif,301060,0.384743,0.000000
+
+Thread execution
+Web Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time
+Forked,50,Fri Apr 19 23:23:44 2019,Fri Apr 19 23:23:44 2019,gif,301060,0.384739,0.000000
+
+Thread execution
+Web Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time
+Forked,50,Fri Apr 19 23:23:44 2019,Fri Apr 19 23:23:44 2019,gif,301060,0.384738,0.000000
+
+Thread execution
+Web Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time
+Forked,50,Fri Apr 19 23:23:44 2019,Fri Apr 19 23:23:44 2019,gif,301060,0.384735,0.000000
+
+Thread execution
+Web Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time
+Forked,50,Fri Apr 19 23:23:44 2019,Fri Apr 19 23:23:44 2019,gif,301060,0.384734,0.000000
+
+Thread execution
+Web Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time
+Forked,50,Fri Apr 19 23:23:44 2019,Fri Apr 19 23:23:44 2019,gif,301060,0.384731,0.000000
+
+Thread execution
+Web Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time
+Forked,50,Fri Apr 19 23:23:44 2019,Fri Apr 19 23:23:44 2019,gif,301060,0.384727,0.000000
+
+Thread execution
+Web Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time
+Forked,50,Fri Apr 19 23:23:44 2019,Fri Apr 19 23:23:44 2019,gif,301060,0.397009,0.000000
+
+Complete execution
+Web Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time, Average time
+Forked,50,Fri Apr 19 23:23:44 2019,Fri Apr 19 23:23:44 2019,gif,301060,0.397604,0.385965
+
+Thread execution
+Web Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time
+Forked,6,Fri Apr 19 23:23:44 2019,Fri Apr 19 23:23:45 2019,mp4,14676745,0.778834,0.000000
+
+Thread execution
+Web Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time
+Forked,6,Fri Apr 19 23:23:44 2019,Fri Apr 19 23:23:45 2019,mp4,14676745,0.945720,0.000000
+
+Thread execution
+Web Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time
+Forked,6,Fri Apr 19 23:23:44 2019,Fri Apr 19 23:23:45 2019,mp4,14676745,1.057899,0.000000
+
+Complete execution
+Web Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time, Average time
+Forked,6,Fri Apr 19 23:23:44 2019,Fri Apr 19 23:23:45 2019,mp4,14676745,1.058162,0.927484

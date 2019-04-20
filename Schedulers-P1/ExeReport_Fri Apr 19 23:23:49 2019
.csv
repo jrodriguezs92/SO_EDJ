@@ -1,0 +1,8 @@
+
+Thread execution
+Web Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time
+Prethreaded,100,Fri Apr 19 23:23:49 2019,Fri Apr 19 23:24:03 2019,jpg,118202,13.059658,0.000000
+
+Complete execution
+Web Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time, Average time
+Prethreaded,100,Fri Apr 19 23:23:49 2019,Fri Apr 19 23:24:03 2019,jpg,118202,13.060141,13.059658

@@ -26,8 +26,8 @@ echo ">>Testing FIFO"
 #Few requests lightweight file jpg type
 /$SCRIPTPATH/bin/bclient localhost 8001 img.jpg 10 2
 
-#600 requests of lightweight file jpg type
-/$SCRIPTPATH/bin/bclient localhost 8001 img.jpg 100 6 
+#100 requests of lightweight file jpg type
+/$SCRIPTPATH/bin/bclient localhost 8001 img.jpg 1 100 
 
 #Few request 512MB file txt type
 #/$SCRIPTPATH/bin/bclient localhost 8001 file.txt 3 2

@@ -24,8 +24,8 @@ echo ">>Testing Prethreaded"
 #Few requests lightweight file jpg type
 /$SCRIPTPATH/bin/bclient localhost 8009 img.jpg 10 2
 
-#600 requests of lightweight file jpg type
-/$SCRIPTPATH/bin/bclient localhost 8009 img.jpg 100 6 
+#100 requests of lightweight file jpg type
+/$SCRIPTPATH/bin/bclient localhost 8009 img.jpg 1 100
 
 #Few request 512MB file txt type
 #/bin/bclient localhost 8009 file.txt 3 2
