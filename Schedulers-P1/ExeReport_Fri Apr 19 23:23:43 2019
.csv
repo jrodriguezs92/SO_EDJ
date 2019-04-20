@@ -1,8 +1,0 @@
-
-Thread execution
-Web Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time
-Forked,100,Fri Apr 19 23:23:43 2019,Fri Apr 19 23:23:44 2019,jpg,118202,1.001392,0.000000
-
-Complete execution
-Web Server Type,Request number,Initial request time,Final request time, File type, File size (bytes), Response time, Average time
-Forked,100,Fri Apr 19 23:23:43 2019,Fri Apr 19 23:23:44 2019,jpg,118202,1.001625,1.001392
