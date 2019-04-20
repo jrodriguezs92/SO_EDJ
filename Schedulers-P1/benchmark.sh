@@ -13,20 +13,24 @@
 #
 #************************************************************
 
+# Script absolute path
+SCRIPT=`realpath $0`
+SCRIPTPATH=`dirname $SCRIPT`
+
+mkdir -p $SCRIPTPATH/BenchmarkTool/results
+
+echo "> Compiling Benchmark"
+
+make all --directory=$SCRIPTPATH/BenchmarkTool
+
 echo "> Running Benchmark"
 
-cd BenchmarkTool
+/$SCRIPTPATH/BenchmarkTool/FIFO.sh
 
-mkdir -p results
+/$SCRIPTPATH/BenchmarkTool/Forked.sh
 
-make all
+/$SCRIPTPATH/BenchmarkTool/Threaded.sh
 
-./FIFO.sh
+/$SCRIPTPATH/BenchmarkTool/Preforked.sh
 
-./Forked.sh
-
-./Threaded.sh
-
-./Preforked.sh
-
-./Prethreaded.sh
+/$SCRIPTPATH/BenchmarkTool/Prethreaded.sh
