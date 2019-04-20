@@ -47,7 +47,6 @@ int main(int argc, char* argv[]){
 	appName = NULL;
 
 	// server
-	
 	port = (char*)malloc(10 * sizeof(char));
 	dirRoot = (char*)malloc(50 * sizeof(char));
 
@@ -103,12 +102,14 @@ int main(int argc, char* argv[]){
 	signal(SIGHUP, handleSignal);
 	signal(SIGPIPE, SIG_IGN);
 	
+	// default algoritm Round Robin
+	schedulerID = SRR;
+
 	// reads configuration from config file
 	readConfFile(0);
 
-	// scheduler as lottery
 #ifdef MYPTHREAD
-	pthread_setsched(RT);
+	pthread_setsched(schedulerID);
 #endif
 
 	// try to open log file to this daemon

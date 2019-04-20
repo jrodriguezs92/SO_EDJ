@@ -243,6 +243,7 @@ void respond(int n)
 	clients[n]=-1;
 	fprintf(logStream,"%s > ** End communication with %i **\n", getTime(), n);
 	fflush(logStream);
+	return;
 }
 
 /** 
