@@ -61,9 +61,9 @@ int createCSV(int port, int threads, int cycles, char * reqTimeI, char * reqTime
    		strcpy(tempTime, reqTimeI);
    	}
 
-   	fileName = malloc(strlen("ExeReport_")+strlen(tempTime)+strlen(".csv")+1);
+   	fileName = malloc(strlen("results/ExeReport_")+strlen(tempTime)+strlen(".csv")+1);
 
-   	strcpy(fileName,"ExeReport_");
+   	strcpy(fileName,"results/ExeReport_");
    	strcat(fileName, tempTime);
    	strcat(fileName,".csv");
    	
@@ -80,10 +80,10 @@ int createCSV(int port, int threads, int cycles, char * reqTimeI, char * reqTime
 		webserverType = "Threaded";
 	}
 	else if (port==8007){
-		webserverType = "Prethreaded";
+		webserverType = "Preforked";
 	}
 	else if (port==8009){
-		webserverType = "Preforked";
+		webserverType = "Prethreaded";
 	}
 	else
 		webserverType="Not define";
