@@ -147,10 +147,11 @@ int main(int argc, char* argv[]) {
 		}
 		
 	}
+	
+	addrlen = sizeof(clienteAddr);
 
 	// ACCEPT connections
 	while( running ) {
-		addrlen = sizeof(clienteAddr);
 		lastSocket = accept (listenfd, (struct sockaddr *) &clienteAddr, &addrlen);
 
 		if (lastSocket<0) {

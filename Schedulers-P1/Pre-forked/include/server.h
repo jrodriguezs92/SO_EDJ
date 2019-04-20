@@ -40,7 +40,7 @@
 #include <stdbool.h>
 #include <sys/utsname.h>
 
-#define CONNMAX 1024*1024
+#define CONNMAX 1024
 #define BYTES 1024
 #define MAXLEN 80
 #define STACK_SIZE (1024*1024)
