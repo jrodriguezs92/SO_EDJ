@@ -34,7 +34,7 @@
 #include <ph7.h>
 
 #define MAXLEN 80
-#define CONEXMAX 1000
+#define CONEXMAX 1024*1024
 #define BYTES 1024
 #define MSGLEN 9999
 
