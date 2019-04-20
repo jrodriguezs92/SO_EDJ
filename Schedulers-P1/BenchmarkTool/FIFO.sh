@@ -15,6 +15,7 @@
 
 #Formato de consulta
 #./bclient <host> <port> <file> <nThreads> <nCycles>
+echo ">>Testing FIFO"
 
 #******************FIFO Test*********************# 
 #Few requests lightweight file jpg type

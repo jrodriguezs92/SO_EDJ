@@ -15,6 +15,7 @@
 
 #Formato de consulta
 #./bclient <host> <port> <file> <nThreads> <nCycles>
+echo ">>Testing Preforked"
 #******************Preforked Test*********************# 
 #Few requests lightweight file jpg type
 ./bin/bclient localhost 8007 img.jpg 10 2

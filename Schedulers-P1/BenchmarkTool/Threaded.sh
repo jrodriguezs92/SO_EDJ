@@ -15,7 +15,7 @@
 
 #Formato de consulta
 #./bclient <host> <port> <file> <nThreads> <nCycles>
-
+echo ">>Testing Threaded"
 #******************Threaded Test*********************# 
 #Few requests lightweight file jpg type
 ./bin/bclient localhost 8005 img.jpg 10 2
