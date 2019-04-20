@@ -36,7 +36,7 @@
 #include <ph7.h>
 #include <sys/wait.h>
 
-#define CONNMAX 1000
+#define CONNMAX 1024
 #define BYTES 1024
 #define MAXLEN 80
 

@@ -145,7 +145,7 @@ int main(int argc, char *argv[]){
 
 	// defines the scheduler/ if no mypthread no problem
 #ifdef MYPTHREAD
-	pthread_setsched(RR);
+	pthread_setsched(SRR);
 #endif
 
     // Set the values to the corresponding arguments
