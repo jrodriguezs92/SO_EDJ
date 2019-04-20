@@ -24,7 +24,7 @@ static QUEUE* new;
 static TCB* running; // current thread
 static LIST* tickets; // for LOTTERY algorithm
 static bool initialized;
-static int sched = LOTTERY; // selfish round robin by default
+static int sched = SRR; // selfish round robin by default
 static int acceptedPriority; // max priority on accepted queue
 
 // Preemptive related prototypes
@@ -166,7 +166,6 @@ static void scheduleHandler(int signum, siginfo_t *nfo, void *context){
 
 	// Backup the current context
 	ucontext_t* stored = &running->context;
-
 	// Round robin
 	if(sched == RR){
 		if(ready->size !=0){
@@ -182,6 +181,8 @@ static void scheduleHandler(int signum, siginfo_t *nfo, void *context){
 
 			}
 		} else{ // only one thread running
+			// Manually leave the signal handler
+			errno = old_errno;
 			return;
 		}
 	} 
@@ -276,6 +277,8 @@ static void scheduleHandler(int signum, siginfo_t *nfo, void *context){
 						}
 					}
 				} else{
+					// Manually leave the signal handler
+					errno = old_errno;
 					return;
 				}
 				// else no context change
@@ -295,6 +298,8 @@ static void scheduleHandler(int signum, siginfo_t *nfo, void *context){
 				}
 			}
 		} else{
+			// Manually leave the signal handler
+			errno = old_errno;
 			return;
 		}
 		// else no context change / only the running thread is alive
@@ -303,7 +308,6 @@ static void scheduleHandler(int signum, siginfo_t *nfo, void *context){
 
 	// Manually leave the signal handler
 	errno = old_errno;
-
 	if (swapcontext(stored, &(running->context)) == -1) {
 		perror("swapcontext()");
 		abort();

@@ -25,36 +25,35 @@
 void *sendRequest(void* args){
 	long id = (long) args; // ID of the thread
 	printf("> Executing thread %ld\n", (id+1) );
+
 	// Variables for the connection
-	int socket_fd, n;
+	int n;
 	struct sockaddr_in serv_addr;
-	struct hostent *server;
 	char buffer[BUFFER];
 	int i;
 	size = 0;
+	struct hostent* server = gethostbyname(host);
+	
+	if (server == NULL) {
+		printf("gethostbyname()\n");
+		exit(1);
+
+	}
+
+	bzero((char *) &serv_addr, sizeof(serv_addr));
+	serv_addr.sin_family = AF_INET;
+	bcopy((char *) server->h_addr, (char *) &serv_addr.sin_addr.s_addr, server->h_length);
+	serv_addr.sin_port = htons(port);
 
 	// To do the N cycles requests
 	for (i = 0; i < n_cycles; i++) {		
-		socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+		int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
 		if (socket_fd < 0) {
 			perror("socket()");
 	  		exit(1);
 
 		}
 
-		server = gethostbyname(host);
-		
-		if (server == NULL) {
-			printf("gethostbyname()\n");
-			exit(1);
-
-		}
-			
-		bzero((char *) &serv_addr, sizeof(serv_addr));
-		serv_addr.sin_family = AF_INET;
-		bcopy((char *) server->h_addr, (char *) &serv_addr.sin_addr.s_addr, server->h_length);
-		serv_addr.sin_port = htons(port);
-		
 		// Tries to make the connection
 		if (connect(socket_fd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
 			perror("connect()");
@@ -62,6 +61,7 @@ void *sendRequest(void* args){
 
 		}
 		fcntl(socket_fd, F_SETFL, O_NONBLOCK); // non-blocking socket
+
 		// HTML Header
 		strcpy(buffer, "GET /");
 		strcat(buffer, file);		
@@ -75,7 +75,7 @@ void *sendRequest(void* args){
 			exit(1);
 
 		}
-		
+
 		int sizeRecv, totalSize=0;
 
 		while(true){ // to complete the download
@@ -91,6 +91,7 @@ void *sendRequest(void* args){
 		}
 		printf("> Total received (thread %d) = %d\n", (id+1), totalSize);
 		close(socket_fd);
+
 	}
 
 	pthread_exit(NULL);
