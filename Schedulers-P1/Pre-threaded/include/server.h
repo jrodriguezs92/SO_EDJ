@@ -37,8 +37,8 @@
 #include <pthread.h>
 
 #define MAXLEN 80
-#define CONEXMAX 1000
-#define BYTES 8
+#define CONEXMAX 1024
+#define BYTES 256
 #define MSGLEN 9999
 #define MAX_QUEUE 1000000
 

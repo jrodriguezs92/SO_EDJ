@@ -99,7 +99,7 @@ int main(int argc, char* argv[])
 	signal(SIGINT, handleSignal);
 	signal(SIGHUP, handleSignal);
 	signal(SIGPIPE, SIG_IGN);
-	signal(SIGCHLD, handleSignal);
+	signal(SIGCHLD, SIG_IGN);
 
 	// reads configuration from config file
 	readConfFile(0);
@@ -136,6 +136,7 @@ int main(int argc, char* argv[])
 	int i;
 	for (i=0; i<CONNMAX; i++)
 		clients[i]=-1;
+	printf("i=%d\n",i);
 	startServer(port);
 
 	// this global variable can be changed in function handling signal
@@ -150,17 +151,20 @@ int main(int argc, char* argv[])
 		if (clients[slot]<0) {
 			fprintf(logStream,"%s > accept() error\n", getTime());
 			fflush(logStream);
+			//running = 0;
 		}
 		else
 		{
 			if ( fork()==0 )
 			{
 				respond(slot);
+				close(listenfd);
 				exit(0);
 			}
 		}
-
+		int s = slot;
 		while (clients[slot]!=-1) slot = (slot+1)%CONNMAX;
+		close(clients[s]); // The parent needs to close the socket
 	}
 
 	// close log file, when it is used.

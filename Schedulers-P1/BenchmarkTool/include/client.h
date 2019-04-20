@@ -21,11 +21,12 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <time.h>
+#include <stdbool.h>
 
 // Threads Library
 #include <mypthread.h>
 
-#define BUFFER 1024
+#define BUFFER 2048
 #define NUMBER_OF_STRING 1000
 #define MAX_STRING_SIZE 10000
 #define MAX_FILENAME_SIZE 256

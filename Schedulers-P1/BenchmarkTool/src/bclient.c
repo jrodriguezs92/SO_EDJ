@@ -61,8 +61,11 @@ int createCSV(int port, int threads, int cycles, char * reqTimeI, char * reqTime
    		strcpy(tempTime, reqTimeI);
    	}
 
+   	//fileName = malloc(strlen("results/ExeReport_")+strlen(tempTime)+strlen(".csv")+1);
    	fileName = malloc(strlen("ExeReport_")+strlen(tempTime)+strlen(".csv")+1);
 
+
+   	//strcpy(fileName,"results/ExeReport_");
    	strcpy(fileName,"ExeReport_");
    	strcat(fileName, tempTime);
    	strcat(fileName,".csv");
@@ -80,10 +83,10 @@ int createCSV(int port, int threads, int cycles, char * reqTimeI, char * reqTime
 		webserverType = "Threaded";
 	}
 	else if (port==8007){
-		webserverType = "Prethreaded";
+		webserverType = "Preforked";
 	}
 	else if (port==8009){
-		webserverType = "Preforked";
+		webserverType = "Prethreaded";
 	}
 	else
 		webserverType="Not define";
@@ -142,7 +145,7 @@ int main(int argc, char *argv[]){
 
 	// defines the scheduler/ if no mypthread no problem
 #ifdef MYPTHREAD
-	pthread_setsched(RR);
+	pthread_setsched(SRR);
 #endif
 
     // Set the values to the corresponding arguments
