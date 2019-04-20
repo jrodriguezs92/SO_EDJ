@@ -15,19 +15,24 @@
 
 #Formato de consulta
 #./bclient <host> <port> <file> <nThreads> <nCycles>
+
+# Script absolute path
+SCRIPT=`realpath $0`
+SCRIPTPATH=`dirname $SCRIPT`
+
 echo ">>Testing Forked"
 #******************Forked Test*********************# 
 #Few requests lightweight file jpg type
-./bin/bclient localhost 8003 img.jpg 10 2
+$SCRIPTPATH/bin/bclient localhost 8003 img.jpg 10 2
 
 #600 requests of lightweight file jpg type
-./bin/bclient localhost 8003 img.jpg 100 6 
+$SCRIPTPATH/bin/bclient localhost 8003 img.jpg 100 6 
 
 #Few request 512MB file txt type
-#./bin/bclient localhost 8003 file.txt 3 2
+#$SCRIPTPATH/bin/bclient localhost 8003 file.txt 3 2
 
 #20 requests 512MB file txt type
-#./bin/bclient localhost 8003 file.txt 10 2
+#$SCRIPTPATH/bin/bclient localhost 8003 file.txt 10 2
 
 #GIF type file
 ./bin/bclient localhost 8003 img.gif 10 5
