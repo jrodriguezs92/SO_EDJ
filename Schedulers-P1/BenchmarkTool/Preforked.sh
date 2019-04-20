@@ -25,14 +25,11 @@ echo ">>Testing Preforked"
 #Few requests lightweight file jpg type
 /$SCRIPTPATH/bin/bclient localhost 8007 img.jpg 10 2
 
-#600 requests of lightweight file jpg type
-/$SCRIPTPATH/bin/bclient localhost 8007 img.jpg 100 6 
+#100 requests of lightweight file jpg type
+/$SCRIPTPATH/bin/bclient localhost 8007 img.jpg 1 100
 
 #Few request 512MB file txt type
-#/$SCRIPTPATH/bin/bclient localhost 8007 file.txt 3 2
-
-#20 requests 512MB file txt type
-#/$SCRIPTPATH/bin/bclient localhost 8007 file.txt 10 2
+/$SCRIPTPATH/bin/bclient localhost 8007 file.txt 1 2
 
 #GIF type file
 /$SCRIPTPATH/bin/bclient localhost 8007 img.gif 10 5
