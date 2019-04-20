@@ -24,22 +24,22 @@ echo ">>Testing FIFO"
 
 #******************FIFO Test*********************# 
 #Few requests lightweight file jpg type
-$SCRIPTPATH/bin/bclient localhost 8001 img.jpg 10 2
+/$SCRIPTPATH/bin/bclient localhost 8001 img.jpg 10 2
 
 #600 requests of lightweight file jpg type
-$SCRIPTPATH/bin/bclient localhost 8001 img.jpg 100 6 
+/$SCRIPTPATH/bin/bclient localhost 8001 img.jpg 100 6 
 
 #Few request 512MB file txt type
-#$SCRIPTPATH/bin/bclient localhost 8001 file.txt 3 2
+#/$SCRIPTPATH/bin/bclient localhost 8001 file.txt 3 2
 
 #20 requests 512MB file txt type
-#$SCRIPTPATH/bin/bclient localhost 8001 file.txt 10 2
+#/$SCRIPTPATH/bin/bclient localhost 8001 file.txt 10 2
 
 #GIF type file
-$SCRIPTPATH/bin/bclient localhost 8001 img.gif 10 5
+/$SCRIPTPATH/bin/bclient localhost 8001 img.gif 10 5
 
 #Video mp4 type 
-$SCRIPTPATH/bin/bclient localhost 8001 strokes.mp4 3 2
+/$SCRIPTPATH/bin/bclient localhost 8001 strokes.mp4 3 2
 
 #HTL type file  
-$SCRIPTPATH/bin/bclient localhost 8001 404.html  20 2
+/$SCRIPTPATH/bin/bclient localhost 8001 404.html  20 2
