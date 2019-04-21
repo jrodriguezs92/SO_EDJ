@@ -311,3 +311,101 @@ int removeTicket(LIST* list, int id){
 
 	return 0;
 }
+
+MLIST* newMutexLIST(void){
+	MLIST* new;
+
+	if ((new = calloc(1, sizeof(MLIST))) == NULL) {
+		return NULL;
+
+	}
+
+	return new;
+
+}
+
+mutex_t* getMutexByIndex(MLIST* list, int index){
+	mutex_t* temp;
+	if (list->head == NULL) {
+		return temp;
+	}
+
+	struct MNODE* cur = list->head;
+
+	int tmpIndex = 0;
+
+	while (tmpIndex <= index) {
+
+		if (tmpIndex == index){
+			temp = cur->mutex;
+			break;
+		}
+
+		cur  = cur->next;
+		tmpIndex++;
+	}
+	return temp;
+}
+
+int addMutex(MLIST* list, mutex_t* mutex){
+	struct MNODE *new;
+
+	if ((new = malloc(sizeof(struct MNODE))) == NULL) {
+		return errno;
+
+	}
+
+	new->mutex = mutex;
+	new->next = NULL;
+
+	// Enqueue the new TICKET
+
+	if (list->head == NULL) {
+		list->head = new;
+
+	} else {
+		struct MNODE *parent = list->head;
+		while (parent->next != NULL) {
+			parent = parent->next;
+
+		}
+		parent->next = new;
+
+	}
+
+	list->size++;
+	return 0;
+}
+
+int removeMutex(MLIST* list, int id){
+	if (list->head == NULL) {
+		return 0;
+
+	}
+
+	struct MNODE *prev = NULL;
+	struct MNODE *cur = list->head;
+
+	while (cur != NULL) {
+		if (cur->mutex->id == id) {
+			if (prev == NULL) {
+				list->head = cur->next;
+
+			} else {
+				prev->next = cur->next;
+
+			}
+
+			int retval = cur->mutex->id;
+			free(cur);
+			list->size--;
+			return retval;
+		}
+
+		prev = cur;
+		cur = cur->next;
+	}
+
+	return -1;
+
+}

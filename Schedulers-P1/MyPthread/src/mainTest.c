@@ -17,7 +17,9 @@
 void* func1(void* args){
 	clock_t start = clock();
 	printf("THREAD %d\n", args);
+#ifdef MYPTHREAD
 	pthread_setdeadline(1048576); // 1MB
+#endif
 	int i=0;
 	int it=0;
 	while(1){
@@ -72,12 +74,12 @@ void* func3(void* args){
 }
 
 int main(int argc, const char* argv[]){
+	// defines the scheduler/ if no mypthread no problem
+#ifdef MYPTHREAD
 	int sch = SRR;
 	if(argc==2){
 		sch = atoi(argv[1]);
 	}
-	// defines the scheduler/ if no mypthread no problem
-#ifdef MYPTHREAD
 	pthread_setsched(sch);
 	printf("> scheduler = %d\n", sch);
 #endif

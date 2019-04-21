@@ -13,6 +13,7 @@
 #************************************************************
 
 APP=mainTest
+APP1=mutex
 CC=gcc
 LIBS=../lib
 INCLUDE=../include
@@ -23,7 +24,7 @@ LINKERFLAGS=-lmypthread
 OUT=../bin
 OPTNS=-w
 
-all: $(APP) setup
+all: $(APP) $(APP1) setup
 
 # Creates the destination folder
 setup:
@@ -36,6 +37,14 @@ $(APP).o:$(APP).c
 # Linking with the libraries and binary generation
 $(APP):$(APP).o setup
 		$(CC) -o $(OUT)/$(APP) $(APP).o -L$(LIBS) $(LINKERFLAGS)
+
+# Object File
+$(APP1).o:$(APP1).c
+		$(CC) $(OPTNS) -c $(APP1).c -o $(APP1).o -I$(INCLUDE)
+
+# Linking with the libraries and binary generation
+$(APP1):$(APP1).o setup
+		$(CC) -o $(OUT)/$(APP1) $(APP1).o -L$(LIBS) $(LINKERFLAGS)
 
 clean:
 		rm -rf  $(OUT)
