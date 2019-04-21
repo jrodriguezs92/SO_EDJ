@@ -12,11 +12,12 @@ mutex_t* mutex2;
 void* trythis(void *arg) {
 
 #ifdef MYPTHREAD
+	int argInt = arg;
 	if (mymutex_trylock(&mutex2) == 0){ // does not blocked the thread
 #endif
 		counter += 1;
 		printf("\n Job %d has started\n", counter);
-		int argInt = arg;
+		
 		int k = 0;
 		for(i; i<(0xEEEEEEE);i++){
 			k++;
@@ -26,7 +27,7 @@ void* trythis(void *arg) {
 #ifdef MYPTHREAD
 		mymutex_unlock(&mutex2);
 	} else {
-		printf("Error: Mutex locked\n");
+		printf("Error: Mutex locked (thread %d)\n", argInt);
 	}
 #endif
 
@@ -59,11 +60,9 @@ int main(int argc, const char* argv[]){
 	int i = 0; 
 	int error;
 	printf("K1 %d\n", mutex);
-	//mutex = malloc(sizeof(mutex_t));
-	//mutex2 = malloc(sizeof(mutex_t));
 #ifdef MYPTHREAD
 	printf("K2\n");
-	pthread_setsched(RR);
+	pthread_setsched(RR); // at the time lottery is not working
 	printf("K3\n");
 	mymutex_init(&mutex);
 	mymutex_init(&mutex2);
@@ -82,10 +81,13 @@ int main(int argc, const char* argv[]){
 		}
 		thread++;
 	}
-
+	printf("Here 1\n");
 	pthread_join(tid[0], NULL);
+	printf("Here 2\n");
 	pthread_join(tid[1], NULL);
+	printf("Here 3\n");
 	pthread_join(tid[2], NULL);
+	printf("Here 4\n");
 
 	return 0;
 }

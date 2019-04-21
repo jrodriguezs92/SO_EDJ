@@ -24,7 +24,7 @@ static QUEUE* new;
 static QUEUE* blocked; // threads that are waiting the lock
 static TCB* running; // current thread
 static LIST* tickets; // for LOTTERY algorithm
-static MLIST* mutexes; // for LOTTERY algorithm
+static MLIST* mutexes; // mutex list
 static bool initialized;
 static int sched = SRR; // selfish round robin by default
 static int acceptedPriority; // max priority on accepted queue
@@ -251,6 +251,31 @@ static void scheduleHandler(int signum, siginfo_t *nfo, void *context){
 	}
 	// Lottery
 	else if(sched == LOTTERY) {
+		/**
+		>>> Using logic for mutexes <<
+		TCB* nextToRun;
+		bool found = false;
+		while(!found){
+			int winner = lotteryDraw();
+
+			int idWinner;
+			if ((idWinner = getByIndex(tickets,winner)) == -1){
+				perror("getByIndex()");
+				abort();
+			}
+
+			// Its a blocked thread
+			if ((nextToRun = getByID(blocked, idWinner)) != NULL){
+				printf("The thread is blocked\n");
+				continue;
+			}
+			if ((nextToRun = getByID(ready,idWinner)) != NULL){
+				running = nextToRun;
+				found = true;
+			}
+		}
+		**/
+
 		int winner = lotteryDraw();
 
 		int idWinner;
@@ -532,10 +557,35 @@ void pthread_exit(void *result){
 
 		removeByID(ready, running->id);
 
+		/**
+		>>> Using logic for mutexes <<
+		TCB* nextToRun;
+		bool found = false;
+		while(!found){
+			int winner = lotteryDraw();
+
+			int idWinner;
+			if ((idWinner = getByIndex(tickets,winner)) == -1){
+				perror("getByIndex()");
+				abort();
+			}
+
+			// Its a blocked thread
+			if ((nextToRun = getByID(blocked, idWinner)) != NULL){
+				printf("The thread is blocked\n");
+				continue;
+			}
+			if ((nextToRun = getByID(ready,idWinner)) != NULL){
+				running = nextToRun;
+				found = true;
+			}
+		}
+		**/
 		int winner = lotteryDraw();
 		int idWinner = getByIndex(tickets,winner);
 		TCB* nextToRun = getByID(ready,idWinner);
 		running = nextToRun;
+
 	}
 	else {
 		if ((running = dequeueTCB(ready)) == NULL) {

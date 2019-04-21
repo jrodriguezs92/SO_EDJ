@@ -327,7 +327,7 @@ MLIST* newMutexLIST(void){
 mutex_t* getMutexByIndex(MLIST* list, int index){
 	mutex_t* temp;
 	if (list->head == NULL) {
-		return temp;
+		return NULL;
 	}
 
 	struct MNODE* cur = list->head;
