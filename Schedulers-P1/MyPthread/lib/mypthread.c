@@ -251,8 +251,7 @@ static void scheduleHandler(int signum, siginfo_t *nfo, void *context){
 	}
 	// Lottery
 	else if(sched == LOTTERY) {
-		/**
-		>>> Using logic for mutexes <<
+		// >>> Using logic for mutexes <<
 		TCB* nextToRun;
 		bool found = false;
 		while(!found){
@@ -274,23 +273,6 @@ static void scheduleHandler(int signum, siginfo_t *nfo, void *context){
 				found = true;
 			}
 		}
-		**/
-
-		int winner = lotteryDraw();
-
-		int idWinner;
-		if ((idWinner = getByIndex(tickets,winner)) == -1){
-			perror("dequeueTCB()");
-			abort();
-		}
-
-		TCB* nextToRun;
-		if ((nextToRun = getByID(ready,idWinner)) == NULL){
-			perror("dequeueTCB()");
-			abort();
-		}
-
-		running = nextToRun;
 	}
 	// Real-time
 	else if(sched == RT) {
@@ -557,8 +539,7 @@ void pthread_exit(void *result){
 
 		removeByID(ready, running->id);
 
-		/**
-		>>> Using logic for mutexes <<
+		// >>> Using logic for mutexes <<
 		TCB* nextToRun;
 		bool found = false;
 		while(!found){
@@ -580,12 +561,6 @@ void pthread_exit(void *result){
 				found = true;
 			}
 		}
-		**/
-		int winner = lotteryDraw();
-		int idWinner = getByIndex(tickets,winner);
-		TCB* nextToRun = getByID(ready,idWinner);
-		running = nextToRun;
-
 	}
 	else {
 		if ((running = dequeueTCB(ready)) == NULL) {
@@ -631,18 +606,44 @@ int pthread_yield(void){
 
 	ucontext_t *stored = &running->context;
 
-	// Round robin
+	if (sched == LOTTERY){
+		// >>> Using logic for mutexes <<
+		TCB* nextToRun;
+		bool found = false;
+		while(!found){
+			int winner = lotteryDraw();
 
-	if (enqueueTCB(ready, running) != 0) {
-		perror("enqueueTCB()");
-		abort();
+			int idWinner;
+			if ((idWinner = getByIndex(tickets,winner)) == -1){
+				perror("getByIndex()");
+				abort();
+			}
 
-	}
+			// Its a blocked thread
+			if ((nextToRun = getByID(blocked, idWinner)) != NULL){
+				printf("The thread is blocked\n");
+				continue;
+			}
+			if ((nextToRun = getByID(ready,idWinner)) != NULL){
+				running = nextToRun;
+				found = true;
+			}
+		}
+	} else{
 
-	if ((running = dequeueTCB(ready)) == NULL) {
-		perror("dequeueTCB()");
-		abort();
+		// Round robin
 
+		if (enqueueTCB(ready, running) != 0) {
+			perror("enqueueTCB()");
+			abort();
+
+		}
+
+		if ((running = dequeueTCB(ready)) == NULL) {
+			perror("dequeueTCB()");
+			abort();
+
+		}
 	}
 
 	swapcontext(stored, &(running->context));
@@ -825,11 +826,39 @@ int mymutex_lock(mutex_t* mutex){
 
 				}
 
-				if ((running = dequeueTCB(ready)) == NULL) {
-					perror("dequeueTCB()");
-					abort();
+				if (sched == LOTTERY){
+					removeByID(ready, running->id);
 
+					// >>> Using logic for mutexes <<
+					TCB* nextToRun;
+					bool found = false;
+					while(!found){
+						int winner = lotteryDraw();
+
+						int idWinner;
+						if ((idWinner = getByIndex(tickets,winner)) == -1){
+							perror("getByIndex()");
+							abort();
+						}
+
+						// Its a blocked thread
+						if ((nextToRun = getByID(blocked, idWinner)) != NULL){
+							printf("The thread is blocked\n");
+							continue;
+						}
+						if ((nextToRun = getByID(ready,idWinner)) != NULL){
+							running = nextToRun;
+							found = true;
+						}
+					}
+
+				} else{
+					if ((running = dequeueTCB(ready)) == NULL) {
+						perror("dequeueTCB()");
+						abort();
+					}
 				}
+				
 				// Context change
 				swapcontext(stored, &(running->context));
 

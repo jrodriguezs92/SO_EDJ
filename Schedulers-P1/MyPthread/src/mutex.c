@@ -62,7 +62,7 @@ int main(int argc, const char* argv[]){
 	printf("K1 %d\n", mutex);
 #ifdef MYPTHREAD
 	printf("K2\n");
-	pthread_setsched(RR); // at the time lottery is not working
+	pthread_setsched(LOTTERY); // at the time lottery is not working
 	printf("K3\n");
 	mymutex_init(&mutex);
 	mymutex_init(&mutex2);
