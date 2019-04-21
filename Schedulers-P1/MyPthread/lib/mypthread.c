@@ -265,7 +265,6 @@ static void scheduleHandler(int signum, siginfo_t *nfo, void *context){
 
 			// Its a blocked thread
 			if ((nextToRun = getByID(blocked, idWinner)) != NULL){
-				printf("The thread is blocked\n");
 				continue;
 			}
 			if ((nextToRun = getByID(ready,idWinner)) != NULL){
@@ -553,9 +552,9 @@ void pthread_exit(void *result){
 
 			// Its a blocked thread
 			if ((nextToRun = getByID(blocked, idWinner)) != NULL){
-				printf("The thread is blocked\n");
 				continue;
 			}
+
 			if ((nextToRun = getByID(ready,idWinner)) != NULL){
 				running = nextToRun;
 				found = true;
@@ -621,7 +620,6 @@ int pthread_yield(void){
 
 			// Its a blocked thread
 			if ((nextToRun = getByID(blocked, idWinner)) != NULL){
-				printf("The thread is blocked\n");
 				continue;
 			}
 			if ((nextToRun = getByID(ready,idWinner)) != NULL){
@@ -843,9 +841,9 @@ int mymutex_lock(mutex_t* mutex){
 
 						// Its a blocked thread
 						if ((nextToRun = getByID(blocked, idWinner)) != NULL){
-							printf("The thread is blocked\n");
 							continue;
 						}
+						
 						if ((nextToRun = getByID(ready,idWinner)) != NULL){
 							running = nextToRun;
 							found = true;

@@ -13,7 +13,7 @@
 #************************************************************
 
 APP=mainTest
-APP1=mutex
+APP1=mainMutex
 CC=gcc
 LIBS=../lib
 INCLUDE=../include

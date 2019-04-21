@@ -23,10 +23,7 @@ void* func1(void* args){
 	int i=0;
 	int it=0;
 	while(1){
-		//printf("Executing within func1\n");
 		i+=1;
-		//yield();
-		//printf("Func1 Value - %d\n", i);
 		it++;
 		if(i==1234000001){
 			printf("ITERACIONES THREAD %d= %d\n",args, it );
@@ -34,6 +31,7 @@ void* func1(void* args){
 			double total = (double) (end-start)/CLOCKS_PER_SEC;
 			printf("> TIME FUNC1= %lfs\n", total );
 			return i;
+
 		}
 	}
 }
@@ -43,14 +41,12 @@ void* func2(void* args){
 	int i=0;
 	int it=0;
 	while(1){
-		//printf("Executing within func2\n");
 		i+=2;
-		//yield();
-		//printf("Func2 Value - %d\n", i);
 		it++;
 		if(i==246800000){
 			printf("ITERACIONES THREAD %d= %d\n",args, it );
 			return i;
+
 		}
 	}
 }
@@ -60,14 +56,12 @@ void* func3(void* args){
 	int i=0;
 	int it=0;
 	while(1){
-		//printf("Executing within func3\n");
 		i+=3;
-		//yield();
-		//printf("Func3 Value - %d\n", i);
 		it++;
 		if(i==370200000){
 			printf("ITERACIONES THREAD %d= %d\n",args, it );
 			return i;
+			
 		}
 		
 	}
