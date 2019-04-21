@@ -21,6 +21,12 @@
 #include <ucontext.h>
 #include <stdbool.h>
 
+// Mutex list
+typedef struct {
+	int id;
+	bool lock;
+} mutex_t;
+
 // Thread Control Block, to keep the track of all threads
 typedef struct {
 	int id; // identifier
@@ -32,6 +38,7 @@ typedef struct {
 	long priority; // to keep the track of the priority
 	int deadline; // to know how quickly needs to be serve
 	int quantums; // counter of how much quantums left
+	mutex_t* blocked; // mutex that bloked the thread
 } TCB;
 
 // Basic Data Structure to keep track of the TCBs
@@ -56,6 +63,18 @@ struct TICKET {
 	struct TICKET *next;
 };
 
+// Mutexes list
+struct MNODE {
+	mutex_t* mutex;
+	struct MNODE* next;
+	
+};
+
+typedef struct {
+	struct MNODE* head;
+	size_t size;
+} MLIST;
+
 // TCB related prototypes
 TCB* getNewTCB(void);
 void destroyTCB(TCB*);
@@ -68,8 +87,15 @@ int enqueueTCB(QUEUE*, TCB*);
 TCB* dequeueTCB(QUEUE*);
 TCB* removeByID(QUEUE*, int);
 TCB* getByID(QUEUE*, int);
+
 // TICKETS functions
 LIST* newLIST(void);
 int getByIndex(LIST*, int);
 int addTicket(LIST*, int);
 int removeTicket(LIST*, int);
+
+// MUTEX functions
+MLIST* newMutexLIST(void);
+mutex_t* getMutexByIndex(MLIST*, int);
+int addMutex(MLIST*, mutex_t*);
+int removeMutex(MLIST*, int);

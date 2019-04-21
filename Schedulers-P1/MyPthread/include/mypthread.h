@@ -44,6 +44,7 @@ void pthread_exit(void*); // mypthread_end
 int pthread_join(pthread_t id, void **result); // mypthread_join
 int pthread_yield(void); // mypthread_yield
 int pthread_detach(pthread_t thread); // mypthread_detach
+void pthread_setsched(int);
 void pthread_setpriority(long);
 void pthread_setdeadline(long);
 

@@ -44,11 +44,13 @@ void pthread_exit(void*); // mypthread_end
 int pthread_join(pthread_t id, void **result); // mypthread_join
 int pthread_yield(void); // mypthread_yield
 int pthread_detach(pthread_t thread); // mypthread_detach
-int pthread_mutex_init(pthread_mutex_t* restrict mutex, const pthread_mutexattr_t* restrict attr); // mymutex_init
-int pthread_mutex_destroy(pthread_mutex_t* mutex);// mymutex_destroy
-int pthread_mutex_lock(pthread_mutex_t* mutex);// mymutex_lock
-int pthread_mutex_unlock(pthread_mutex_t* mutex);// mymutex_unlock
-int pthread_mutex_trylock(pthread_mutex_t* mutex);// mymutex_trylock
 void pthread_setsched(int);
 void pthread_setpriority(long);
 void pthread_setdeadline(long);
+
+// Mutex prototypes
+int mymutex_init(mutex_t* mutex);
+int mymutex_destroy(mutex_t* mutex);
+int mymutex_lock(mutex_t* mutex);
+int mymutex_unlock(mutex_t* mutex);
+int mymutex_trylock(mutex_t* mutex);

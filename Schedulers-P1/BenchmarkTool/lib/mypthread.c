@@ -21,11 +21,15 @@
 static QUEUE* ready; // threads awaiting CPU / Will be the accepted queue for SRR
 static QUEUE* completed;
 static QUEUE* new;
+static QUEUE* blocked; // threads that are waiting the lock
 static TCB* running; // current thread
 static LIST* tickets; // for LOTTERY algorithm
+static MLIST* mutexes; // mutex list
 static bool initialized;
 static int sched = SRR; // selfish round robin by default
 static int acceptedPriority; // max priority on accepted queue
+static int mutexId;
+static bool initializedMutex;
 
 // Preemptive related prototypes
 static void blockSIGPROF(void);
@@ -48,16 +52,30 @@ static bool initQueues(void){
 	if ((ready = newQUEUE()) == NULL) {
 		return false;
 	}
+
 	if ((completed = newQUEUE()) == NULL) {
 		destroyQUEUE(ready);
 		return false;
 	}
+
 	if ((new = newQUEUE()) == NULL) {
+		return false;
+	}
+
+	if ((blocked = newQUEUE()) == NULL) {
 		return false;
 	}
 
 	if ((tickets = newLIST()) == NULL) {
 		return false;
+	}
+
+	if(!initializedMutex){
+		if ((mutexes = newMutexLIST()) == NULL) {
+			return false;
+		}
+		initializedMutex = true;
+		mutexId = 1; // starts ids from 1
 	}
 
 	return true;
@@ -82,6 +100,8 @@ static bool initFirstContext(void){
 	block->quantums = 1;
 	running = block;
 	acceptedPriority = 1; // initialize the accepted priority
+	mutex_t temp = {0, false};
+	block->blocked = &temp;
 
 	if (sched == LOTTERY){
 		if (enqueueTCB(ready, running) != 0) {
@@ -93,6 +113,8 @@ static bool initFirstContext(void){
 
 	return true;
 }
+
+
 
 /*
  *	Allocates memory on the heap later used as a stack. 
@@ -229,21 +251,27 @@ static void scheduleHandler(int signum, siginfo_t *nfo, void *context){
 	}
 	// Lottery
 	else if(sched == LOTTERY) {
-		int winner = lotteryDraw();
-
-		int idWinner;
-		if ((idWinner = getByIndex(tickets,winner)) == -1){
-			perror("dequeueTCB()");
-			abort();
-		}
-
+		// >>> Using logic for mutexes <<
 		TCB* nextToRun;
-		if ((nextToRun = getByID(ready,idWinner)) == NULL){
-			perror("dequeueTCB()");
-			abort();
-		}
+		bool found = false;
+		while(!found){
+			int winner = lotteryDraw();
 
-		running = nextToRun;
+			int idWinner;
+			if ((idWinner = getByIndex(tickets,winner)) == -1){
+				perror("getByIndex()");
+				abort();
+			}
+
+			// Its a blocked thread
+			if ((nextToRun = getByID(blocked, idWinner)) != NULL){
+				continue;
+			}
+			if ((nextToRun = getByID(ready,idWinner)) != NULL){
+				running = nextToRun;
+				found = true;
+			}
+		}
 	}
 	// Real-time
 	else if(sched == RT) {
@@ -445,6 +473,8 @@ int pthread_create(pthread_t* thread, void* attr, void *(*start_routine) (void *
 	newThread->priority = 0;
 	newThread->deadline = 1;
 	newThread->quantums = 1;
+	mutex_t temp = {0, false};
+	newThread->blocked = &temp;
 
 	if(sched == RR){
 		// Enqueue the newly created stack
@@ -508,10 +538,28 @@ void pthread_exit(void *result){
 
 		removeByID(ready, running->id);
 
-		int winner = lotteryDraw();
-		int idWinner = getByIndex(tickets,winner);
-		TCB* nextToRun = getByID(ready,idWinner);
-		running = nextToRun;
+		// >>> Using logic for mutexes <<
+		TCB* nextToRun;
+		bool found = false;
+		while(!found){
+			int winner = lotteryDraw();
+
+			int idWinner;
+			if ((idWinner = getByIndex(tickets,winner)) == -1){
+				perror("getByIndex()");
+				abort();
+			}
+
+			// Its a blocked thread
+			if ((nextToRun = getByID(blocked, idWinner)) != NULL){
+				continue;
+			}
+
+			if ((nextToRun = getByID(ready,idWinner)) != NULL){
+				running = nextToRun;
+				found = true;
+			}
+		}
 	}
 	else {
 		if ((running = dequeueTCB(ready)) == NULL) {
@@ -552,25 +600,52 @@ int pthread_join(pthread_t id, void **result){
  *	Yields the CPU to another thread
  */
 int pthread_yield(void){
+	blockSIGPROF();
 	// Backup the current context
 
 	ucontext_t *stored = &running->context;
 
-	// Round robin
+	if (sched == LOTTERY){
+		// >>> Using logic for mutexes <<
+		TCB* nextToRun;
+		bool found = false;
+		while(!found){
+			int winner = lotteryDraw();
 
-	if (enqueueTCB(ready, running) != 0) {
-		perror("enqueueTCB()");
-		abort();
+			int idWinner;
+			if ((idWinner = getByIndex(tickets,winner)) == -1){
+				perror("getByIndex()");
+				abort();
+			}
 
-	}
+			// Its a blocked thread
+			if ((nextToRun = getByID(blocked, idWinner)) != NULL){
+				continue;
+			}
+			if ((nextToRun = getByID(ready,idWinner)) != NULL){
+				running = nextToRun;
+				found = true;
+			}
+		}
+	} else{
 
-	if ((running = dequeueTCB(ready)) == NULL) {
-		perror("dequeueTCB()");
-		abort();
+		// Round robin
 
+		if (enqueueTCB(ready, running) != 0) {
+			perror("enqueueTCB()");
+			abort();
+
+		}
+
+		if ((running = dequeueTCB(ready)) == NULL) {
+			perror("dequeueTCB()");
+			abort();
+
+		}
 	}
 
 	swapcontext(stored, &(running->context));
+	unblockSIGPROF();
 	return 0;
 }
 
@@ -651,6 +726,229 @@ void pthread_setdeadline(long fileSize){
 		running->quantums = deadline;
 	}
 
+}
+
+/*
+ *	Initialize a mutex if is not yet
+ */
+int mymutex_init(mutex_t* mutex){
+	blockSIGPROF();
+	if(!initializedMutex){
+		if ((mutexes = newMutexLIST()) == NULL) {
+			return false;
+
+		}
+		initializedMutex = true;
+		mutexId = 1; // starts ids from 1
+
+	}
+
+	if(mutexes->size == 0){
+		mutex->id = mutexId;
+		mutex->lock = false;
+		mutexId++;
+		addMutex(mutexes, mutex);
+
+	} else{
+		if(mutex->id ==0){
+			mutex->id = mutexId;
+			mutex->lock = false;
+			mutexId++;
+			addMutex(mutexes, mutex);
+
+		} else {
+			struct MNODE* cursor;
+			for(cursor = mutexes->head ; cursor != NULL ; cursor = cursor->next){
+				if(cursor->mutex->id == mutex->id){
+					return -1;
+
+				}
+			}
+		}
+	}
+	unblockSIGPROF();
+	return 0;
+}
+
+/*
+ *	Destroy a mutex
+ */
+int mymutex_destroy(mutex_t* mutex){
+	blockSIGPROF();
+	if(!initializedMutex){
+		if ((mutexes = newMutexLIST()) == NULL) {
+			return false;
+
+		}
+		initializedMutex = true;
+		mutexId = 1; // starts ids from 1
+
+	}
+
+	if(mutexes->size != 0){
+		if(mutex->id !=0){
+			return removeMutex(mutexes, mutex->id);
+
+		}
+
+	}
+	unblockSIGPROF();
+	return 0;
+}
+
+/*
+ *	Locks a mutex
+ */
+int mymutex_lock(mutex_t* mutex){
+	blockSIGPROF();
+	// No mutex initialized
+	if(mutexes->size == 0){
+		return -1;
+
+	} else{
+		// The mutex is note initialized
+		if(mutex->id == 0){
+			return -1;
+
+		} else {
+			// The mutex is locked
+			if(mutex->lock == true){
+				// Blocks the thread that wants to access the lock
+				running->blocked = mutex;
+
+				ucontext_t *stored = &running->context;
+				// Blocks the thread thats needs the lock
+				if (enqueueTCB(blocked, running) != 0) {
+					perror("enqueueTCB()");
+					abort();
+
+				}
+
+				if (sched == LOTTERY){
+					removeByID(ready, running->id);
+
+					// >>> Using logic for mutexes <<
+					TCB* nextToRun;
+					bool found = false;
+					while(!found){
+						int winner = lotteryDraw();
+
+						int idWinner;
+						if ((idWinner = getByIndex(tickets,winner)) == -1){
+							perror("getByIndex()");
+							abort();
+						}
+
+						// Its a blocked thread
+						if ((nextToRun = getByID(blocked, idWinner)) != NULL){
+							continue;
+						}
+						
+						if ((nextToRun = getByID(ready,idWinner)) != NULL){
+							running = nextToRun;
+							found = true;
+						}
+					}
+
+				} else{
+					if ((running = dequeueTCB(ready)) == NULL) {
+						perror("dequeueTCB()");
+						abort();
+					}
+				}
+				
+				// Context change
+				swapcontext(stored, &(running->context));
+
+			} else {
+				mutex_t temp = {0, false};
+				running->blocked = &temp; // resets the threads mutex
+				mutex->lock = true;
+			}
+		}
+
+	}
+	unblockSIGPROF();
+	return 0;
+}
+
+/*
+ *	Try to locks the mutex, if is already locked, return error
+ */
+int mymutex_trylock(mutex_t* mutex){
+	blockSIGPROF();
+	// No mutex initialized
+	if(mutexes->size == 0){
+		unblockSIGPROF();
+		return -1;
+
+	} else{
+		// The mutex is note initialized
+		if(mutex->id == 0){
+			unblockSIGPROF();
+			return -1;
+
+		} else {
+			// The mutex is locked
+			if(mutex->lock == true){
+				unblockSIGPROF();
+				return -1;
+
+			} else {
+				mutex_t temp = {0, false};
+				running->blocked = &temp; // resets the threads mutex
+				mutex->lock = true;
+			}
+		}
+
+	}
+	unblockSIGPROF();
+	return 0;
+}
+
+
+/*
+ *	Unlocks a mutex
+ */
+int mymutex_unlock(mutex_t* mutex){
+	blockSIGPROF();
+	// No mutex initialized
+	if(mutexes->size == 0){
+		return -1;
+
+	} else{
+		// The mutex is not initialized
+		if(mutex->id == 0){
+			return -1;
+
+		} else {
+			// The mutex is already locked
+			if(mutex->lock == true) {
+				mutex->lock = false;
+				if(blocked->size !=0 ){
+					struct NODE* cursor;
+					// Looking for any ready to unblock thread
+					for(cursor = blocked->head ; cursor != NULL ; cursor = cursor->next){
+						if(cursor->thread->blocked->id == mutex->id){
+							mutex_t temp = {0, false};
+							cursor->thread->blocked = &temp; // resets the threads mutex
+							if(enqueueTCB(ready, removeByID(blocked, cursor->thread->id)) == -1){
+								perror("dequeueTCB()");
+								abort();
+
+							}
+							mutex->lock = true; // locks the mutex again until another unlock
+							break;
+						}
+					}
+				}
+
+			}
+		}
+
+	}
+	unblockSIGPROF();
+	return 0;
 }
 
 /**
