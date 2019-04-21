@@ -1,7 +1,10 @@
 WebServer-TC1/bin/*
+Schedulers-P1/*/.vscode
 DeamonTests
+Bootloader-TC2/old
 *.o
 *.a
 *.so
 *.img
 *.bin
+.vscode
