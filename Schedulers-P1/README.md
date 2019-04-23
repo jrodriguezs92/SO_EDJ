@@ -9,7 +9,10 @@ GNU/Linux Ubuntu 16.04.
 
 ## Instructions for the scripts
 ### Install
-1. Execute script "Install" that is located in the root of the project directory:
+1. Execute script "Install" that is located in the root of the project directory. There is two options to install: with five arguments (each argument is a port to be map from container), or with no arguments (default ports):
+
+Option 1:
+
 ```
 ./Install.sh p1 p2 p3 p4 p5
 ```
@@ -18,6 +21,14 @@ This will: install Docker Community Edition in the system, install the five dock
 Example:
 
 ./Install.sh 8001 8003 8005 8007 8009
+
+Option 2:
+
+```
+./Install.sh
+```
+
+This will: install Docker Community Edition in the system, install the five docker containers with the 5 ports by default, run all the containers and install and run the server daemon inside each container.
 
 Also, you can type './Install.sh help', to show the help commands.
 ### Uninstall
