@@ -21,6 +21,9 @@
 // Global variables
 char* confFileName;
 char* appName;
+char* cmmd;
+char* argX;
+char* argY;
 
 // Functions
 void printHelp(void);

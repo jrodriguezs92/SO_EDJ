@@ -151,11 +151,16 @@ int paser (char * line) {
         // If theres no parameters and command is pick or drop, continue.
         else if ( lineTmp==NULL && ( (strcmp(command, "pick")==0) || 
                                      (strcmp(command, "drop")==0) ) ) {
+
+            cmmd = command;
+
             return 0;
         }
         // If command is pick or drop, ignore the rest of the line and continue
         else if (lineTmp!=NULL && ( (strcmp(command, "pick")==0) || 
                                      (strcmp(command, "drop")==0) ) ) {
+            cmmd = command;
+
             return 0;
         }
         // Else, copy values as parameters
@@ -169,7 +174,6 @@ int paser (char * line) {
             strncpy (valueX, lineTmp, MAXLEN);
             trimValue (valueX);
             // Check if the value is a number
-            int i = isNumber(valueX);
             if (!isNumber(valueX)) {
                 printf("Parameter X: %s is not a decimal value \n", valueX);
                 return -1;
@@ -190,6 +194,14 @@ int paser (char * line) {
                 return -1;
             }
         }
+    }
+
+    cmmd = command;
+    
+    if ( (valueX != NULL) && (valueY != NULL) ) {
+        printf ("params \n");
+        argX = valueX;
+        argY = valueY;
     }
 
     return 0;
