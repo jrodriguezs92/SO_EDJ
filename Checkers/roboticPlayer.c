@@ -84,7 +84,6 @@ int readConfFile (void){
 
         // Ignore comments with "#" and blankspaces
 	    if (buff[0] == '\n' || buff[0] == '#'){
-            printf("COMMENTS\n");
             continue;
 	    }
 
@@ -107,13 +106,12 @@ int readConfFile (void){
 
 /**
  * Parse a line as a command
+ * Receive a string line type char * to parse
  * Return 0  -> succesfully
  *        1  -> Empty line
  *        -1 -> Error
  */
 int paser (char * line) {
-
-    printf(">>>>>>>NEW LINE: %s\n",line);
 
     char * lineTmp;
     char * buff = line;
@@ -131,9 +129,7 @@ int paser (char * line) {
 
         // Copy first token as a command
         strncpy(command, lineTmp, MAXLEN);
-        trimValue(command);        
-
-        printf("command: %s\n",command);
+        trimValue(command);
 
         // Check if the command is an allowed value
         if ( (strcmp(command, "move")!=0) && (strcmp(command, "pick")!=0) && 
@@ -168,13 +164,10 @@ int paser (char * line) {
             lineTmp = strtok(lineTmp, ")");
             strncpy(parameters, lineTmp, MAXLEN);
 
-            printf("parameters: %s\n",parameters);
-
             // First parameter
             lineTmp = strtok(parameters, ",");
             strncpy (valueX, lineTmp, MAXLEN);
             trimValue (valueX);
-            printf("param X: %s\n",valueX);
             // Check if the value is a number
             int i = isNumber(valueX);
             if (!isNumber(valueX)) {
@@ -191,7 +184,6 @@ int paser (char * line) {
             }
             strncpy (valueY, lineTmp, MAXLEN);
             trimValue (valueY);
-            printf("param Y: %s\n",valueY);
             // Check if the value is a number
             if (!isNumber(valueY)) {
                 printf("Parameter Y: %s is not a decimal value \n", valueY);
@@ -204,8 +196,10 @@ int paser (char * line) {
 }
 
 /** 
-  *This function trims the value found in readConfFile
- */
+  * This function trims the value found in readConfFile
+  * Receive a string line type char * to trim
+  * Return the trimed line
+  */
 char * trimValue (char * line){
   //Initialize start, end pointers 
   char *start = line, *end = &line[strlen (line) - 1];
@@ -226,6 +220,9 @@ char * trimValue (char * line){
 
 /**
  * This function check if a strig is a number value
+ * Recive a string type char * to verify if is a number
+ * Return 1 -> is Number
+ *        0 -> is not a number
  */
 int isNumber (const char * str) {
 
