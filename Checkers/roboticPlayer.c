@@ -148,19 +148,10 @@ int paser (char * line) {
             printf("Command sintax incorrect: %s \n", command);
             return -1;
         }
-        // If theres no parameters and command is pick or drop, continue.
-        else if ( lineTmp==NULL && ( (strcmp(command, "pick")==0) || 
-                                     (strcmp(command, "drop")==0) ) ) {
-
-            cmmd = command;
-
-            return 0;
-        }
         // If command is pick or drop, ignore the rest of the line and continue
-        else if (lineTmp!=NULL && ( (strcmp(command, "pick")==0) || 
-                                     (strcmp(command, "drop")==0) ) ) {
+        else if (( (strcmp(command, "pick")==0) || 
+                 (strcmp(command, "drop")==0) ) ) {
             cmmd = command;
-
             return 0;
         }
         // Else, copy values as parameters
@@ -197,7 +188,7 @@ int paser (char * line) {
     }
 
     cmmd = command;
-    
+
     if ( (valueX != NULL) && (valueY != NULL) ) {
         printf ("params \n");
         argX = valueX;
