@@ -22,8 +22,8 @@
 char* confFileName;
 char* appName;
 char* cmmd;
-char* argX;
-char* argY;
+float argX;
+float argY;
 
 // Functions
 void printHelp(void);
@@ -31,3 +31,9 @@ int readConfFile(void);
 int paser (char *);
 char * trimValue(char *);
 int isNumber (const char *);
+// robotPlayer functions
+void move(float,float);
+void pick(void);
+void drop(void);
+void moveandpick(float,float);
+void moveanddrop(float,float);

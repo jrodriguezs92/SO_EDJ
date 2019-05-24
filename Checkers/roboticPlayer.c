@@ -150,10 +150,7 @@ int paser (char * line) {
         }
         // If command is pick or drop, ignore the rest of the line and continue
         else if (( (strcmp(command, "pick")==0) || 
-                 (strcmp(command, "drop")==0) ) ) {
-            cmmd = command;
-            return 0;
-        }
+                 (strcmp(command, "drop")==0) ) ) {}
         // Else, copy values as parameters
         else {
             char parameters[MAXLEN];
@@ -190,12 +187,68 @@ int paser (char * line) {
     cmmd = command;
 
     if ( (valueX != NULL) && (valueY != NULL) ) {
-        printf ("params \n");
-        argX = valueX;
-        argY = valueY;
+        argX = atof(valueX);
+        argY = atof(valueY);
+    }
+
+    // Call respective function
+    if (strcmp(cmmd,"move")==0) {
+        move(argX,argY);
+    }
+    else if (strcmp(cmmd,"pick")==0) {
+        pick();
+    }
+    else if (strcmp(cmmd,"drop")==0) {
+        drop();
+    }
+    else if (strcmp(cmmd,"moveandpick")==0) {
+        moveandpick(argX,argY);
+    }
+    else if (strcmp(cmmd,"moveanddrop")==0) {
+        moveanddrop(argX,argY);
     }
 
     return 0;
+}
+
+/**
+ * This function execute the operation move
+ * Receive two floats values as a position
+ */
+void move (float x, float y) {
+    printf("move function: %f, %f \n", argX, argY);
+}
+
+/**
+ * This function execute the operation move
+ * Receive two floats values as a position
+ */
+void pick (void) {
+    printf("pick function: \n");
+}
+
+/**
+ * This function execute the operation move
+ * Receive two floats values as a position
+ */
+void drop (void) { 
+    printf("drop function: \n");
+}
+
+/**
+ * This function execute the operation move
+ * Receive two floats values as a position
+ */
+void moveandpick (float x, float y) {
+    printf("moveandpick function: %f, %f \n", argX, argY);
+}
+
+/**
+ * This function execute the operation move
+ * Receive two floats values as a position
+ */
+void moveanddrop (float x, float y) {
+    printf("moveanddrop function: %f, %f \n", argX, argY);
 }
 
 /** 
