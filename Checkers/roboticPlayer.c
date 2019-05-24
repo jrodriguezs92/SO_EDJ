@@ -220,23 +220,21 @@ void move (float x, float y) {
 }
 
 /**
- * This function execute the operation move
- * Receive two floats values as a position
+ * This function execute the operation pick
  */
 void pick (void) {
     printf("pick function: \n");
 }
 
 /**
- * This function execute the operation move
- * Receive two floats values as a position
+ * This function execute the operation drop
  */
 void drop (void) { 
     printf("drop function: \n");
 }
 
 /**
- * This function execute the operation move
+ * This function execute the operation moveandpick
  * Receive two floats values as a position
  */
 void moveandpick (float x, float y) {
@@ -244,7 +242,7 @@ void moveandpick (float x, float y) {
 }
 
 /**
- * This function execute the operation move
+ * This function execute the operation moveanddrop
  * Receive two floats values as a position
  */
 void moveanddrop (float x, float y) {
