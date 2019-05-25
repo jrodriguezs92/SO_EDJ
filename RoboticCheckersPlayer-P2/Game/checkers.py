@@ -28,6 +28,8 @@ GOLD		= (255, 215, 0)
 HIGH		= (160, 190, 255)
 GRAY		= (192, 192, 192)
 BLACK		= (  0,   0,   0)
+DARKPURPLE	= ( 51,   0,  51)
+PEACH		= (255, 204, 153)
 
 #Definition of directions of the movements
 NORTHWEST = "northwest"
@@ -52,7 +54,8 @@ class Game:
 	def setup(self):
 		self.drawGame.initializeScreen()
 
-	# Trigger events: exit and mouse click, here the pieces move 
+	#Trigger events: exit and mouse click, here the pieces move 
+	#Here robotic arm moves have to be define
 	def eventLoop(self):
 		self.mousePos = self.drawGame.boardCoords(pygame.mouse.get_pos())
 		if self.clickedPiece != None:
@@ -156,12 +159,6 @@ class DrawGame:
 		pygame.display.update()
 		self.clock.tick(self.fps)
 
-	#Drawing the squares on the board
-	def drawSquares(self, board):
-		for x in xrange(10):
-			for y in xrange(10):
-				pygame.draw.rect(self.screen, board[x][y].color, (x*self.squareSize, y*self.squareSize, self.squareSize, self.squareSize), )
-
 	#Drawing pieces
 	def drawPieces(self, board):
 		for x in xrange(10):
@@ -169,7 +166,7 @@ class DrawGame:
 				if board.matrix[x][y].occupant != None:
 					pygame.draw.circle(self.screen, board.matrix[x][y].occupant.color, self.pixelCoords((x,y)), self.pieceSize)
 					if board.location((x,y)).occupant.king == True:
-						pygame.draw.circle(self.screen, GOLD, self.pixelCoords((x,y)), int (self.pieceSize/1.7), self.pieceSize/4)
+						pygame.draw.circle(self.screen, PEACH, self.pixelCoords((x,y)), int (self.pieceSize/1.7), self.pieceSize/4)
     
     #Returns the pixel coordinates of the center of the square
 	def pixelCoords(self, coords):
@@ -190,7 +187,7 @@ class DrawGame:
 	def showMessage(self, message):
 		self.message = True
 		self.fontObj = pygame.font.Font('freesansbold.ttf',44)
-		self.textSurface = self.fontObj.render(message, True, HIGH, BLACK)
+		self.textSurface = self.fontObj.render(message, True, HIGH, DARKPURPLE)
 		self.textRect = self.textSurface.get_rect()
 		self.textRect.center = (WINDOWSIZE/2, WINDOWSIZE/2)
 #Create game board matrix
@@ -223,17 +220,6 @@ class Board:
 					matrix[x][y].occupant = Piece(LIGHTBLUE)
 
 		return matrix
-
-	#Return matrix with board scape colors
-	def boardString(self, board):
-		boardString = [[None]*10] * 10
-		for x in xrange(10):
-			for y in xrange(10):
-				if board[x][y].color == WHITE:
-					boardString[x][y] = "WHITE"
-				else: 
-					boardString[x][y] = "GRAY"
-		return boardString
 
 	#Directions
 	def directionMove(self, dir, (x,y)):
