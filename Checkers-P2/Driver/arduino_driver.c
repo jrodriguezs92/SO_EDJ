@@ -29,7 +29,7 @@
 
 // Device IDs
 #define VENDOR_ID		0x1A86
-#define PRODUCT_ID	0x7523
+#define PRODUCT_ID		0x7523
 
 // Buffer size
 #define BUF_SIZE		1024
@@ -53,7 +53,6 @@
 #define	CONTROL_RTS		0x40
 #define UART_STATE			0x00
 #define UART_OVERRUN_ERROR	0x01
-#define UART_BREAK_ERROR	//no define
 #define UART_PARITY_ERROR	0x02
 #define UART_FRAME_ERROR	0x06
 #define UART_RECV_ERROR		0x02
@@ -610,7 +609,6 @@ static int arduino_open( struct tty_struct *tty,
 		goto err_out;
 
 	}
-	printk(KERN_INFO "<*> arduino_driver: submit interrupt");
 	port->interrupt_in_urb->dev = serial->dev; 
 	retval = usb_submit_urb( port->interrupt_in_urb, GFP_KERNEL );
 	if(retval) {
@@ -722,7 +720,6 @@ static int arduino_ioctl( struct tty_struct *tty,
 			return wait_modem_info(port, arg);
 
 		default:
-			printk(KERN_INFO "<*> arduino_driver: not supported");
 			break;
 	}
 
@@ -924,7 +921,7 @@ static void arduino_read_int_callback( struct urb *urb ) {
 		case -ECONNRESET:
 		case -ENOENT:
 		case -ESHUTDOWN: //this urb is terminated, clean up
-			printk(KERN_INFO "<*> arduino_driver: shutting down with status");
+			printk(KERN_INFO "<*> arduino_driver: shutting down");
 			return;
 		default:
 			printk(KERN_INFO "<*> arduino_driver: nonzero urb status received");
@@ -1054,7 +1051,7 @@ static void arduino_write_bulk_callback( struct urb *urb ) {
 		case -ENOENT:
 		case -ESHUTDOWN:
 			// this urb is terminated, clean up
-			printk(KERN_INFO "<*> arduino_driver: urb shutting down with status");
+			printk(KERN_INFO "<*> arduino_driver: urb shutting down");
 			priv->write_urb_in_use = 0;
 			return;
 		default:
