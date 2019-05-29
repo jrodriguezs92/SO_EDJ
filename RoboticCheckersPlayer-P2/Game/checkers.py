@@ -132,6 +132,11 @@ class DrawGame:
 		self.fps = 60
 		self.clock = pygame.time.Clock()
 
+		#Add music 
+		pygame.mixer.init()
+		pygame.mixer.music.load('music/game.mp3')
+		pygame.mixer.music.play(-1,0.0)
+
 		#Create window
 		self.screen = pygame.display.set_mode((WINDOWSIZE, WINDOWSIZE))
 		self.background = pygame.image.load('images/BOARD.png')
