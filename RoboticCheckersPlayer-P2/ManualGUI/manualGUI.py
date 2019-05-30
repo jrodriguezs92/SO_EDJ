@@ -35,10 +35,12 @@ def alertPopUp(title, message):
 	popUp = Tk()
 	popUp.title(title)
 	popUp.geometry("200x50")
-	msgLabel = Label(popUp, text = message)
-	msgLabel.pack()
-	okButton = Button(popUp, text = "OK", command =  popUp.destroy, width = 6)
-	okButton.pack()
+	canvasPop = Canvas(popUp, width = 200, height = 50, background = "#0C528E")
+	canvasPop.pack()
+	msgLabel = Label(canvasPop, text = message, background = "#0C528E", foreground = "#68B0E0")
+	msgLabel.place(x = 15, y = 1)
+	okButton = Button(canvasPop, text = "OK", command =  popUp.destroy, width = 3)
+	okButton.place(x = 90, y = 20)
 
 #Window
 window = Tk()
