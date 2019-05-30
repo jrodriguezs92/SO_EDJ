@@ -50,7 +50,7 @@ canvas = Canvas(window, width = 400, height = 200)
 canvas.pack()
 
 #Image
-bgImage = PhotoImage(file = "imagenes/bg.gif")
+bgImage = PhotoImage(file = "images/bg.gif")
 canvas.create_image(0, 0 , anchor = NW, image = bgImage)
 
 #Title label 
