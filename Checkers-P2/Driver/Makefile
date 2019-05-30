@@ -5,7 +5,16 @@ PWD :=$(shell pwd)
 obj-m := arduino_driver.o
 
 default:
-	$(MAKE) -C $(KERNELDIR)  M=$(PWD) 
+		$(MAKE) -C $(KERNELDIR)  M=$(PWD) 
+
+install: default
+		sudo insmod arduino_driver.ko
+
+uninstall:
+		sudo rmmod arduino_driver
+
+uninstall_others:
+		sudo rmmod ch341
 	
 clean:
 		rm -f *.o
@@ -15,4 +24,4 @@ clean:
 		rm -f *.order
 		rm -rf .*
 
-.PHONY: clean
+.PHONY: clean uninstall

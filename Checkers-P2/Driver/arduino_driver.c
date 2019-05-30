@@ -617,6 +617,7 @@ static int arduino_open( struct tty_struct *tty,
 		goto err_out;
 
 	}
+	printk(KERN_INFO "<*> arduino_driver: device open\n");
 
 err_out:
 	return retval;
@@ -750,6 +751,10 @@ static void arduino_send( struct usb_serial_port *port ) {
 		return;
 
 	}
+
+	//printk("<*> arduino_driver: writting -> %s \n\n", port->write_urb->transfer_buffer);
+	printk("<*> arduino_driver: writting data");
+
 
 	priv->write_urb_in_use = 1;
 	spin_unlock_irqrestore( &priv->lock, flags );
@@ -927,7 +932,6 @@ static void arduino_read_int_callback( struct urb *urb ) {
 			printk(KERN_INFO "<*> arduino_driver: nonzero urb status received");
 			goto exit;
 	}
-
 	usb_serial_debug_data( &port->dev, __func__,
 			urb->actual_length, urb->transfer_buffer );
 
@@ -970,7 +974,7 @@ static void arduino_read_bulk_callback( struct urb *urb ) {
 			}
 		}
 
-		printk(KERN_INFO "<*> arduino_driver: unable to handle the error, exiting");
+		printk(KERN_INFO "<*> arduino_driver: exiting");
 		return;
 
 	}
