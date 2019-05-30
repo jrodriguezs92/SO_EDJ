@@ -11,7 +11,7 @@
 ********************************************************
 
 > Before compilation, the next library needs to be installed
-	$ wget https://github.com/yorkhackspace/meArm/archive/master.zip
+	$ wget https://github.com/phenoptix/meArm-1/archive/master.zip
 
 > Import the .zip in the Arduino Sketch
 
