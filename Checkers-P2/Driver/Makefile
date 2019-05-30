@@ -1,17 +1,17 @@
+
+DRIVER=arduino_mearm
 KERNELDIR := /lib/modules/$(shell uname -r)/build
-
 PWD :=$(shell pwd)
-
-obj-m := arduino_driver.o
+obj-m := $(DRIVER).o
 
 default:
 		$(MAKE) -C $(KERNELDIR)  M=$(PWD) 
 
 install: default
-		sudo insmod arduino_driver.ko
+		sudo insmod $(DRIVER).ko
 
 uninstall:
-		sudo rmmod arduino_driver
+		sudo rmmod $(DRIVER)
 
 uninstall_others:
 		sudo rmmod ch341
@@ -22,6 +22,9 @@ clean:
 		rm -f *.mod.c
 		rm -f *.symvers
 		rm -f *.order
-		rm -rf .*
+		rm -rf .tmp_versions
+		rm -rf .arduino*
+		rm -rf .cache*
+		clear
 
-.PHONY: clean uninstall
+.PHONY: clean default uninstall
