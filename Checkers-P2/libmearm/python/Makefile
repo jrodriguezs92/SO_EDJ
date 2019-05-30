@@ -3,7 +3,6 @@
 #				Computer Engineering
 #
 #		Programmer: Esteban Agüero Pérez (estape11)
-#		Programming Language: C
 #		Version: 1.0
 #		Last Update: 30/05/2019
 #

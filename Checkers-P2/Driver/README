@@ -10,12 +10,19 @@
 				Professor. Diego Vargas
 ********************************************************
 
-> To compile:
+> To compile
 	$ make
 
-> After init, it is a must to send a write to initilize the device
+> To install the driver
+	$ make install
+	* It is important to verify if there is another driver and remove it
+		$ make unistall_others
 
-> To use the python library
-	import sys
-	sys.path.insert(0, 'path')
-	import <lib>
+> To uninstall the driver
+	$ make uninstall
+
+> Manual installation
+	# insmod arduino_mearm.ko
+
+> Manual uninstall
+	# rmmod arduino_mearm.ko

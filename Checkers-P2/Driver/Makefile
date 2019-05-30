@@ -1,3 +1,14 @@
+#********************************************************
+#			Instituto Tecnológico de Costa Rica
+#				Computer Engineering
+#
+#		Programmer: Esteban Agüero Pérez (estape11)
+#		Version: 1.0
+#		Last Update: 30/05/2019
+#
+#				Operating Systems Principles
+#				Professor. Diego Vargas
+#********************************************************
 
 DRIVER=arduino_mearm
 KERNELDIR := /lib/modules/$(shell uname -r)/build
