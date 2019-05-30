@@ -555,7 +555,7 @@ static void arduino_close( struct usb_serial_port *port ) {
 	unsigned long flags;
 	unsigned int c_cflag;
 
-	printk(KERN_INFO "<*> arduino_driver: device closed");
+	printk(KERN_INFO "<*> arduino-meArm: device closed");
 
 	spin_lock_irqsave( &priv->lock, flags );
 	// clear out any remaining data in the buffer
@@ -604,7 +604,7 @@ static int arduino_open( struct tty_struct *tty,
 	port->read_urb->dev = serial->dev; 
 	retval = usb_submit_urb( port->read_urb, GFP_KERNEL );
 	if(retval) {
-		printk(KERN_INFO "<*> arduino_driver: failed submit read");
+		printk(KERN_INFO "<*> arduino-meArm: failed submit read");
 		arduino_close(port);
 		goto err_out;
 
@@ -612,12 +612,12 @@ static int arduino_open( struct tty_struct *tty,
 	port->interrupt_in_urb->dev = serial->dev; 
 	retval = usb_submit_urb( port->interrupt_in_urb, GFP_KERNEL );
 	if(retval) {
-		printk(KERN_INFO "<*> arduino_driver: failed submit read");
+		printk(KERN_INFO "<*> arduino-meArm: failed submit read");
 		arduino_close(port);
 		goto err_out;
 
 	}
-	printk(KERN_INFO "<*> arduino_driver: device open\n");
+	printk(KERN_INFO "<*> arduino-meArm: device open\n");
 
 err_out:
 	return retval;
@@ -752,8 +752,8 @@ static void arduino_send( struct usb_serial_port *port ) {
 
 	}
 
-	//printk("<*> arduino_driver: writting -> %s \n\n", port->write_urb->transfer_buffer);
-	printk("<*> arduino_driver: writting data");
+	//printk("<*> arduino-meArm: writting -> %s \n\n", port->write_urb->transfer_buffer);
+	printk("<*> arduino-meArm: writting data");
 
 
 	priv->write_urb_in_use = 1;
@@ -766,7 +766,7 @@ static void arduino_send( struct usb_serial_port *port ) {
 	port->write_urb->dev = port->serial->dev;
 	retval = usb_submit_urb( port->write_urb, GFP_ATOMIC );
 	if( retval ) {
-		printk(KERN_INFO "<*> arduino_driver: failed submitting write");
+		printk(KERN_INFO "<*> arduino-meArm: failed submitting write");
 		priv->write_urb_in_use = 0;
 		// reschedule arduino_send
 	}
@@ -838,7 +838,7 @@ static int arduino_attach( struct usb_serial *serial ) {
 	int i;
 	char buf[8];
 
-	printk(KERN_INFO "<*> arduino_driver: new device attached");
+	printk(KERN_INFO "<*> arduino-meArm: new device attached");
 
 	for( i = 0; i < serial->num_ports; ++i ) {
 		priv = kzalloc( sizeof(struct arduino_private), GFP_KERNEL );
@@ -926,10 +926,10 @@ static void arduino_read_int_callback( struct urb *urb ) {
 		case -ECONNRESET:
 		case -ENOENT:
 		case -ESHUTDOWN: //this urb is terminated, clean up
-			printk(KERN_INFO "<*> arduino_driver: shutting down");
+			printk(KERN_INFO "<*> arduino-meArm: shutting down");
 			return;
 		default:
-			printk(KERN_INFO "<*> arduino_driver: nonzero urb status received");
+			printk(KERN_INFO "<*> arduino-meArm: nonzero urb status received");
 			goto exit;
 	}
 	usb_serial_debug_data( &port->dev, __func__,
@@ -940,7 +940,7 @@ static void arduino_read_int_callback( struct urb *urb ) {
 exit:
 	retval = usb_submit_urb( urb, GFP_ATOMIC ); 
 	if( retval ) {
-		printk(KERN_INFO "<*> arduino_driver: usb_submit_urb failed with result");
+		printk(KERN_INFO "<*> arduino-meArm: usb_submit_urb failed");
 
 	}
 
@@ -964,17 +964,17 @@ static void arduino_read_bulk_callback( struct urb *urb ) {
 
 	if( status ) {
 		if( status == -EPROTO ) {
-			printk(KERN_INFO "<*> arduino_driver: caught -EPROTO, resubmitting the urb");
+			printk(KERN_INFO "<*> arduino-meArm: caught -EPROTO, resubmitting the urb");
 			urb->dev = port->serial->dev;
 			retval = usb_submit_urb( urb, GFP_ATOMIC );
 			if( retval ) {
-				printk(KERN_INFO "<*> arduino_driver: failed resubmitting read urb");
+				printk(KERN_INFO "<*> arduino-meArm: failed resubmitting read urb");
 				return;
 
 			}
 		}
 
-		printk(KERN_INFO "<*> arduino_driver: exiting");
+		printk(KERN_INFO "<*> arduino-meArm: exiting");
 		return;
 
 	}
@@ -1031,7 +1031,7 @@ static void arduino_read_bulk_callback( struct urb *urb ) {
 	urb->dev = port->serial->dev;
 	retval = usb_submit_urb( urb, GFP_ATOMIC );
 	if( retval ) {
-		printk(KERN_INFO "<*> arduino_driver: failed resubmitting read urb");
+		printk(KERN_INFO "<*> arduino-meArm: failed resubmitting read urb");
 
 	}
 
@@ -1055,18 +1055,18 @@ static void arduino_write_bulk_callback( struct urb *urb ) {
 		case -ENOENT:
 		case -ESHUTDOWN:
 			// this urb is terminated, clean up
-			printk(KERN_INFO "<*> arduino_driver: urb shutting down");
+			printk(KERN_INFO "<*> arduino-meArm: urb shutting down");
 			priv->write_urb_in_use = 0;
 			return;
 		default:
 			// error in the urb, so we have to resubmit it
-			printk(KERN_INFO "<*> arduino_driver: Overflow in write");
-			printk(KERN_INFO "<*> arduino_driver: nonzero write bulk status received");
+			printk(KERN_INFO "<*> arduino-meArm: Overflow in write");
+			printk(KERN_INFO "<*> arduino-meArm: nonzero write bulk status received");
 			port->write_urb->transfer_buffer_length = 1;
 			port->write_urb->dev = port->serial->dev;
 			retval = usb_submit_urb(port->write_urb, GFP_ATOMIC);
 			if( retval ) {
-				printk(KERN_INFO "<*> arduino_driver: failed resubmitting write urb");
+				printk(KERN_INFO "<*> arduino-meArm: failed resubmitting write urb");
 
 			}
 
@@ -1109,14 +1109,14 @@ static struct usb_serial_driver *const serial_driver [] = {
 };
 
 static int __init arduino_init(void) {
-	printk(KERN_INFO "<*> arduino_driver: registering driver with kernel\n");
+	printk(KERN_INFO "<*> arduino-meArm: registering driver with kernel\n");
 	return usb_serial_register_drivers( serial_driver, 
 			KBUILD_MODNAME, id_table );
 
 }
 
 static void __exit arduino_exit(void) {
-	printk(KERN_INFO "<*> arduino_driver: unregistering driver with kernel\n");
+	printk(KERN_INFO "<*> arduino-meArm: unregistering driver with kernel\n");
 	usb_serial_deregister_drivers( serial_driver );
 
 }
