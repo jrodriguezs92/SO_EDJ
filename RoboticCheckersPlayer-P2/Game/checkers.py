@@ -51,6 +51,7 @@ class Game:
 		self.hop = False
 		self.selectedLegalMoves = []
 
+	#Window setup
 	def setup(self):
 		self.drawGame.initializeScreen()
 
@@ -99,7 +100,7 @@ class Game:
 			self.eventLoop()
 			self.update()
 
-	#Switch player
+	#Switch player turn 
 	def endTurn(self):
 		if self.turn == LIGHTBLUE:
 			self.turn = PINK
@@ -114,7 +115,7 @@ class Game:
 			else:
 				self.drawGame.showMessage("LIGHTBLUE WINS!")
 
-	#Player wins, game ends
+	#Check if game is over
 	def checkendGame(self):
 		for x in xrange(10):
 			for y in xrange(10):
@@ -151,7 +152,7 @@ class DrawGame:
 		pygame.init()
 		pygame.display.set_caption(self.caption)
 
-	#Updates screen
+	#Updates screen, pieces on board, possible moves and check if a player wins to display winning message
 	def updateScreen(self, board, legalMoves, clickedPiece):
 		self.screen.blit(self.background, (0,0))
 
@@ -195,6 +196,7 @@ class DrawGame:
 		self.textSurface = self.fontObj.render(message, True, HIGH, DARKPURPLE)
 		self.textRect = self.textSurface.get_rect()
 		self.textRect.center = (WINDOWSIZE/2, WINDOWSIZE/2)
+
 #Create game board matrix
 class Board:
 	def __init__(self):
@@ -288,7 +290,7 @@ class Board:
 
 		return legalMoves
 
-	#Removes the piece from the board
+	#Removes the piece from the board, changing position occupant state
 	def removePiece(self,(x,y)):
 		self.matrix[x][y].occupant = None
 
