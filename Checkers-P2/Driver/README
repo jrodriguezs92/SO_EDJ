@@ -1,0 +1,28 @@
+********************************************************
+			Instituto Tecnológico de Costa Rica
+				Computer Engineering
+
+		Programmer: Esteban Agüero Pérez (estape11)
+		Version: 1.0
+		Last Update: 30/05/2019
+
+				Operating Systems Principles
+				Professor. Diego Vargas
+********************************************************
+
+> To compile
+	$ make
+
+> To install the driver
+	$ make install
+	* It is important to verify if there is another driver and remove it
+		$ make uninstall_others
+
+> To uninstall the driver
+	$ make uninstall
+
+> Manual installation
+	# insmod arduino_mearm.ko
+
+> Manual uninstall
+	# rmmod arduino_mearm.ko

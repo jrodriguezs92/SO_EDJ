@@ -138,7 +138,7 @@ void requestResponse(int n) {
 				fflush(logStream);
 
 				if ( (fd=open(path, O_RDONLY))!=-1 ) { // file found
-					send(clients[n], "HTTP/1.1 200 OK\n\n", 17, 0);
+				send(clients[n], "HTTP/1.1 200 OK\n\n", 17, 0);
 
 					while ( (bytesLeidos=read(fd, data_to_send, BYTES))>0 ) {
 						write (clients[n], data_to_send, bytesLeidos);
