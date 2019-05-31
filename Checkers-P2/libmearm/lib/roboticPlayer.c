@@ -93,16 +93,18 @@ int paser (char * line) {
                 return -1;
         }
 
-        // Next Token (Parameters) (if there is anyone)
-        lineTmp = strtok(NULL, "(");
+        if ( (strcmp(command, "pick")!=0) && (strcmp(command, "drop")!=0) ) {
+            // Next Token (Parameters) (if there is anyone)
+            lineTmp = strtok(NULL, "(");
+        }
         // If theres no parameters and not certain commands
         if ( (lineTmp==NULL && ( (strcmp(command, "move")==0) || 
                                 (strcmp(command, "moveandpick")==0) || 
                                 (strcmp(command, "moveanddrop")==0) ) ) || 
-            (strcmp(lineTmp, ")") && ( (strcmp(command, "move")==0) || 
+            ((strcmp(lineTmp, ")")==0) && ( (strcmp(command, "move")==0) || 
                                 (strcmp(command, "moveandpick")==0) || 
                                 (strcmp(command, "moveanddrop")==0) ) ) ) {
-            printf("Command sintax incorrect: %s \n", command);
+            printf("Command sintax incorrect. Parameters not found: %s \n", command);
             return -1;
         }
         // If command is pick or drop, ignore the rest of the line and continue
@@ -128,7 +130,7 @@ int paser (char * line) {
             lineTmp = strtok(NULL, ",");
             // If theres no a second parameter
             if (lineTmp == NULL) {
-                printf("Command sintax incorrect: %s \n", command);
+                printf("Command sintax incorrect. Second parameter not found: %s \n", command);
                 return -1;
             }
             strncpy (valueY, lineTmp, MAXLEN);
@@ -140,7 +142,6 @@ int paser (char * line) {
             }
         }
     }
-
     cmmd = command;
 
     if ( (valueX != NULL) && (valueY != NULL) ) {
@@ -173,8 +174,42 @@ int paser (char * line) {
  * Receive two int values as a position
  */
 void move (int x, int y) {
-    //printf("move function: %f, %f \n", argX, argY);
-    meArmWrite(robot,"M");
+    printf("move function: %d, %d \n", argX, argY);
+
+    // Intruction buffer
+    char instruction[MAXLEN];
+
+    //////// Move Z
+
+    snprintf(instruction,MAXLEN,"Z50\n");
+
+    printf("Sending instruction: %s\n",instruction);
+
+    // Write isntruction to the device
+    meArmWrite(robot,instruction);
+    sleep(2);
+
+    //////// Move X
+
+    // Cast the integer argument X to string and concatenate command
+    snprintf(instruction,MAXLEN,"X%d\n",x);
+
+    printf("Sending instruction: %s\n",instruction);
+
+    // Write isntruction to the device
+    meArmWrite(robot,instruction);
+    sleep(2);
+
+    //////// Move Y
+
+    // Cast the integer argument X to string and concatenate command
+    snprintf(instruction,MAXLEN,"Y%d\n",y);
+
+    printf("Sending instruction: %s\n",instruction);
+
+    // Write isntruction to the device
+    meArmWrite(robot,instruction);
+
     sleep(2);
 }
 
@@ -182,8 +217,24 @@ void move (int x, int y) {
  * This function execute the operation pick
  */
 void pick (void) {
-    //printf("pick function: \n");
+    printf("pick function \n");
+
+    // Intruction buffer
+    char instruction[MAXLEN];
+
+    //////// Move Z
+
+    snprintf(instruction,MAXLEN,"Z-25\n");
+
+    printf("Sending instruction: %s\n",instruction);
+
+    // Write isntruction to the device
+    meArmWrite(robot,instruction);
+    sleep(2);
+
+    // Pick
     meArmWrite(robot,"P");
+
     sleep(2);
 }
 
@@ -191,8 +242,25 @@ void pick (void) {
  * This function execute the operation drop
  */
 void drop (void) {
-    //printf("drop function: \n");
+    printf("drop function \n");
+
+    // Intruction buffer
+    char instruction[MAXLEN];
+
+    //////// Move Z
+
+    snprintf(instruction,MAXLEN,"Z-25\n");
+
+    printf("Sending instruction: %s\n",instruction);
+
+    // Write isntruction to the device
+    meArmWrite(robot,instruction);
+    sleep(2);
+
+    //Drop
+
     meArmWrite(robot,"D");
+
     sleep(2);
 }
 
@@ -201,8 +269,61 @@ void drop (void) {
  * Receive two int values as a position
  */
 void moveandpick (int x, int y) {
-    //printf("moveandpick function: %f, %f \n", argX, argY);
-    meArmWrite(robot,"M");
+    printf("moveandpick function: %d, %d \n", argX, argY);
+
+    // Intruction buffer
+    char instruction[MAXLEN];
+
+    //////// Move Z
+
+    snprintf(instruction,MAXLEN,"Z50\n");
+
+    printf("Sending instruction: %s\n",instruction);
+
+    // Write isntruction to the device
+    meArmWrite(robot,instruction);
+    sleep(2);
+
+    //////// Move X
+
+    // Cast the integer argument X to string and concatenate command
+    snprintf(instruction,MAXLEN,"X%d\n",x);
+
+    printf("Sending instruction: %s\n",instruction);
+
+    // Write isntruction to the device
+    meArmWrite(robot,instruction);
+    sleep(2);
+
+    //////// Move Y
+
+    // Cast the integer argument X to string and concatenate command
+    snprintf(instruction,MAXLEN,"Y%d\n",y);
+
+    printf("Sending instruction: %s\n",instruction);
+
+    // Write isntruction to the device
+    meArmWrite(robot,instruction);
+
+    sleep(2);
+
+    //////// Move Z
+
+    snprintf(instruction,MAXLEN,"Z-25\n");
+
+    printf("Sending instruction: %s\n",instruction);
+
+    // Write isntruction to the device
+    meArmWrite(robot,instruction);
+    sleep(2);
+
+    // Pick
+
+    snprintf(instruction,MAXLEN,"P\n");
+
+    printf("Sending instruction: %s\n",instruction);
+    meArmWrite(robot,instruction);
+
     sleep(2);
 }
 
@@ -211,8 +332,61 @@ void moveandpick (int x, int y) {
  * Receive two int values as a position
  */
 void moveanddrop (int x, int y) {
-    //printf("moveanddrop function: %f, %f \n", argX, argY);
-    meArmWrite(robot,"M");
+    printf("moveanddrop function: %d, %d \n", argX, argY);
+
+    // Intruction buffer
+    char instruction[MAXLEN];
+
+    //////// Move Z
+
+    snprintf(instruction,MAXLEN,"Z50\n");
+
+    printf("Sending instruction: %s\n",instruction);
+
+    // Write isntruction to the device
+    meArmWrite(robot,instruction);
+    sleep(2);
+
+    //////// Move X
+
+    // Cast the integer argument X to string and concatenate command
+    snprintf(instruction,MAXLEN,"X%d\n",x);
+
+    printf("Sending instruction: %s\n",instruction);
+
+    // Write isntruction to the device
+    meArmWrite(robot,instruction);
+    sleep(2);
+
+    //////// Move Y
+
+    // Cast the integer argument X to string and concatenate command
+    snprintf(instruction,MAXLEN,"Y%d\n",y);
+
+    printf("Sending instruction: %s\n",instruction);
+
+    // Write isntruction to the device
+    meArmWrite(robot,instruction);
+
+    sleep(2);
+
+    //////// Move Z
+
+    snprintf(instruction,MAXLEN,"Z-25\n");
+
+    printf("Sending instruction: %s\n",instruction);
+
+    // Write isntruction to the device
+    meArmWrite(robot,instruction);
+    sleep(2);
+
+    // Drop
+
+    snprintf(instruction,MAXLEN,"D\n");
+
+    printf("Sending instruction: %s\n",instruction);
+    meArmWrite(robot,instruction);
+
     sleep(2);
 }
 

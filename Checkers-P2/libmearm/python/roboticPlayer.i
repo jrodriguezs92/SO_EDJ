@@ -29,8 +29,8 @@
 extern char* confFileName;
 extern char* appName;
 extern char* cmmd;
-extern float argX;
-extern float argY;
+extern int argX;
+extern int argY;
 extern int robot;
 
 extern int readConfFile(void);
