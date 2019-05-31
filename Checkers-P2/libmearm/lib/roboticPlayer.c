@@ -96,9 +96,12 @@ int paser (char * line) {
         // Next Token (Parameters) (if there is anyone)
         lineTmp = strtok(NULL, "(");
         // If theres no parameters and not certain commands
-        if ( lineTmp==NULL && ( (strcmp(command, "move")==0) || 
+        if ( (lineTmp==NULL && ( (strcmp(command, "move")==0) || 
                                 (strcmp(command, "moveandpick")==0) || 
-                                (strcmp(command, "moveanddrop")==0) ) ) {
+                                (strcmp(command, "moveanddrop")==0) ) ) || 
+            (strcmp(lineTmp, ")") && ( (strcmp(command, "move")==0) || 
+                                (strcmp(command, "moveandpick")==0) || 
+                                (strcmp(command, "moveanddrop")==0) ) ) ) {
             printf("Command sintax incorrect: %s \n", command);
             return -1;
         }
@@ -141,8 +144,8 @@ int paser (char * line) {
     cmmd = command;
 
     if ( (valueX != NULL) && (valueY != NULL) ) {
-        argX = atof(valueX);
-        argY = atof(valueY);
+        argX = atoi(valueX);
+        argY = atoi(valueY);
     }
 
     // Call respective function
@@ -167,40 +170,50 @@ int paser (char * line) {
 
 /**
  * This function execute the operation move
- * Receive two floats values as a position
+ * Receive two int values as a position
  */
-void move (float x, float y) {
-    printf("move function: %f, %f \n", argX, argY);
+void move (int x, int y) {
+    //printf("move function: %f, %f \n", argX, argY);
+    meArmWrite(robot,"M");
+    sleep(2);
 }
 
 /**
  * This function execute the operation pick
  */
 void pick (void) {
-    printf("pick function: \n");
+    //printf("pick function: \n");
+    meArmWrite(robot,"P");
+    sleep(2);
 }
 
 /**
  * This function execute the operation drop
  */
-void drop (void) { 
-    printf("drop function: \n");
+void drop (void) {
+    //printf("drop function: \n");
+    meArmWrite(robot,"D");
+    sleep(2);
 }
 
 /**
  * This function execute the operation moveandpick
- * Receive two floats values as a position
+ * Receive two int values as a position
  */
-void moveandpick (float x, float y) {
-    printf("moveandpick function: %f, %f \n", argX, argY);
+void moveandpick (int x, int y) {
+    //printf("moveandpick function: %f, %f \n", argX, argY);
+    meArmWrite(robot,"M");
+    sleep(2);
 }
 
 /**
  * This function execute the operation moveanddrop
- * Receive two floats values as a position
+ * Receive two int values as a position
  */
-void moveanddrop (float x, float y) {
-    printf("moveanddrop function: %f, %f \n", argX, argY);
+void moveanddrop (int x, int y) {
+    //printf("moveanddrop function: %f, %f \n", argX, argY);
+    meArmWrite(robot,"M");
+    sleep(2);
 }
 
 /** 
@@ -276,4 +289,20 @@ int isNumber (const char * str) {
     }
 
     return 1;
+}
+/**
+ * call init Function from the device library
+ * Receive the device file path and the baud speed to communicate
+ */
+void initDevice (const char* path, int baud) {
+    if ((robot = meArmInit(path,baud))<0) {
+        printf("Init device error \n");
+    }
+}
+
+/**
+ * Call the Close function from the device library
+ */
+void closeDevice () {
+    meArmClose(robot);
 }

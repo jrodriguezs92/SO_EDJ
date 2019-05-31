@@ -38,10 +38,18 @@ int main(int argc, char *argv[]) {
 			default:
 				break;
 		}
-	}   
+	}
 
-	// Reads configuration from config file
-	readConfFile();
+	// Init device
+	initDevice("/dev/ttyUSB0",115200);
+
+	if (robot != -1) {
+		// Reads configuration from config file
+		readConfFile();
+
+		// Close device
+		closeDevice();
+	}
 
 	return 0;
 	

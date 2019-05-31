@@ -15,7 +15,7 @@ LIB2=roboticPlayer
 CC=gcc
 INCLUDE=../include
 LIBDIR=../lib
-PYTHON=/usr/include/python3.5
+PYTHON=/usr/include/python2.7
 
 all:_$(LIB1).so _$(LIB2).so
 

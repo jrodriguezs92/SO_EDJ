@@ -23,8 +23,10 @@
 char* confFileName;
 char* appName;
 char* cmmd;
-float argX;
-float argY;
+int argX;
+int argY;
+
+int robot;
 
 // Functions
 int readConfFile(void);
@@ -33,11 +35,11 @@ char * trimValue(char *);
 int isNumber (const char *);
 
 // robotPlayer functions
-void move(float,float);
+void move(int,int);
 void pick(void);
 void drop(void);
-void moveandpick(float,float);
-void moveanddrop(float,float);
-
-// Recibe la instruccion, la parsea, y ejecuta la accion correspondiente
-// int execute(char *);
+void moveandpick(int,int);
+void moveanddrop(int,int);
+// Calls library
+void initDevice(const char*,int);
+void closeDevice();

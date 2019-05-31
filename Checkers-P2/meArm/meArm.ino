@@ -33,19 +33,12 @@ void refresh(String cmd){
     } else if (cmd[0] == 'Z') {
         arm.gotoPoint(arm.getX(), arm.getY(), value);
            
-    } else if (cmd[0] == 'C') {
-        if (claw) {
-            //Serial.println("Closing claw");
-            arm.closeGripper();
-            claw = false;
-            
-        } else {
-            //Serial.println("Opening claw");
-            arm.openGripper();
-            claw = true;
-                
-        }
-        
+    } else if (cmd[0] == 'P') {
+        arm.closeGripper();
+
+    } else if (cmd[0] == 'D') {
+	arm.openGripper();
+
     }
     
 }

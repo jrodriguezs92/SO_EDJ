@@ -10,6 +10,7 @@
 #				Professor. Diego Vargas
 #********************************************************
 
+BIN=roboticPlayer
 APP=main
 CC=gcc
 LIBS=../lib
@@ -18,16 +19,16 @@ LINKERFLAGS=-lroboticPlayer
 OUT=../bin
 OPTNS=-Wall
 
-all: $(APP)
+all: $(BIN)
 
 $(APP).o:$(APP).c
 		$(CC) $(OPTNS) -c $(APP).c -o $(APP).o -I$(INCLUDE)
 
-$(APP):$(APP).o
-		$(CC) -o $(OUT)/$(APP) $(APP).o -L$(LIBS) $(LINKERFLAGS)
+$(BIN):$(APP).o
+		$(CC) -o $(OUT)/$(BIN) $(APP).o -L$(LIBS) $(LINKERFLAGS)
 
 clean:
-		rm -f  $(OUT)/$(APP)*
+		rm -f  $(OUT)/$(BIN)*
 		rm -f *.o 
 		rm -f *.so
 		rm -f *.a
