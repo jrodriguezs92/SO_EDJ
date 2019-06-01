@@ -1,0 +1,1 @@
+cmd_/home/estape/Documents/SO_EDJ/Checkers-P2/Driver/arduino_mearm.ko := ld -r -m elf_x86_64 -z max-page-size=0x200000 -T ./scripts/module-common.lds --build-id  -o /home/estape/Documents/SO_EDJ/Checkers-P2/Driver/arduino_mearm.ko /home/estape/Documents/SO_EDJ/Checkers-P2/Driver/arduino_mearm.o /home/estape/Documents/SO_EDJ/Checkers-P2/Driver/arduino_mearm.mod.o ;  true
