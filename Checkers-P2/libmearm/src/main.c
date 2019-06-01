@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	// Init device
-	initDevice("/dev/ttyUSB1",115200);
+	initDevice("/dev/ttyUSB0",115200);
 
 	if (robot != -1) {
 		// NOP
