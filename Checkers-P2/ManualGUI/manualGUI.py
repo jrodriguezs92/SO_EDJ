@@ -76,6 +76,36 @@ class DrawScreen:
 		else: 
 			#Move the arm 
 			print(self.positionMove)
+			if (self.positionMove == "0.0"):
+				roboticPlayer.paser("move(80,100)")
+
+			elif (self.positionMove == "0.9"):
+				roboticPlayer.paser("move(-80,100)")
+
+			elif (self.positionMove == "9.0"):
+				roboticPlayer.paser("move(80,200)")
+
+			elif (self.positionMove == "9.9"):
+				roboticPlayer.paser("move(-80,200)")
+
+			elif (self.positionMove == "0.4"):
+				roboticPlayer.paser("move(0,100)")
+
+			elif (self.positionMove == "4.4"):
+				roboticPlayer.paser("move(0,150)")
+
+			elif (self.positionMove == "4.0"):
+				roboticPlayer.paser("move(80,150)")
+
+			elif (self.positionMove == "4.9"):
+				roboticPlayer.paser("move(-80,150)")
+
+			elif (self.positionMove == "9.4"):
+				roboticPlayer.paser("move(0,200)")
+
+			else:
+				print("> Not implemented")
+
 
 	def pick(self):
 		#Pick the piece

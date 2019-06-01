@@ -17,6 +17,10 @@ import pygame
 import sys 
 from pygame.locals import * #to import pygame constants
 
+# This path NEEDS TO BE UPDATED
+sys.path.insert(0, '/home/estape/Documents/SO_EDJ/Checkers-P2/libmearm/python')
+import roboticPlayer
+
 #to use text
 pygame.font.init() 
 
@@ -333,8 +337,11 @@ class Square:
 
 #Calls the Game class
 def main():
+	# Starts the interpreter
+	roboticPlayer.initDevice("/dev/ttyUSB0", 115200)
 	game = Game()
 	game.main()
+	roboticPlayer.closeDevice()
 
 if __name__ == "__main__":
 	main()
