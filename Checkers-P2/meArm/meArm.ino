@@ -14,9 +14,9 @@
 #include "meArm.h"
 #include <Servo.h>
 
-int baseServo = 11;
-int rightServo = 10;
-int leftServo = 9;
+int baseServo = 5;
+int rightServo = 4;
+int leftServo = 3;
 int clawPin = 8;
 
 meArm arm;
