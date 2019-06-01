@@ -1,0 +1,18 @@
+********************************************************
+			Instituto Tecnológico de Costa Rica
+				Computer Engineering
+
+		Programmer: Esteban Agüero Pérez (estape11)
+		Version: 1.0
+		Last Update: 30/05/2019
+
+				Operating Systems Principles
+				Professor. Diego Vargas
+********************************************************
+
+> Before compilation, the next library needs to be installed
+	$ wget https://github.com/phenoptix/meArm-1/archive/master.zip
+
+> Import the .zip in the Arduino Sketch
+
+> To use meArm, import the project in Arduino Sketch

@@ -1,0 +1,8 @@
+.tmp_versions
+.arduino*
+.cache*
+*.ko
+*.symvers
+*.order
+*.mod.c
+*.o

@@ -1,0 +1,2 @@
+moveandpick(80,200)
+moveanddrop(-80,150)
