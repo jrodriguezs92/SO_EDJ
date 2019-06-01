@@ -17,7 +17,7 @@
 int baseServo = 5;
 int rightServo = 4;
 int leftServo = 3;
-int clawPin = 8;
+int clawPin = 6;
 
 meArm arm;
 bool claw = false; // closed

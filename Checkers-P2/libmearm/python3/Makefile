@@ -15,7 +15,7 @@ LIB2=roboticPlayer
 CC=gcc
 INCLUDE=../include
 LIBDIR=../lib
-PYTHON=/usr/include/python2.7
+PYTHON=/usr/include/python3.5
 
 all:_$(LIB1).so _$(LIB2).so
 
@@ -38,6 +38,7 @@ _$(LIB1).so:$(LIB1)_wrap.c
 		ld -shared $(LIB1).o $(LIB1)_wrap.o -o _$(LIB1).so
 		rm -rf $(LIB1).c
 
+# Add the meArmSerial is needed for robotic player
 _$(LIB2).so:$(LIB2)_wrap.c
 		$(CC) -fPIC -c $(LIB2).c $(LIB2)_wrap.c -I$(PYTHON) -I$(INCLUDE)
 		ld -shared $(LIB1).o $(LIB2).o $(LIB2)_wrap.o -o _$(LIB2).so

@@ -14,6 +14,11 @@
 
 from tkinter import *
 from tkinter.ttk import *
+import sys
+
+# This path NEEDS TO BE UPDATED
+sys.path.insert(0, '/home/estape/Documents/SO_EDJ/Checkers-P2/libmearm/python3')
+import roboticPlayer
 
 #Warning Popup window
 class PopUp:
@@ -71,18 +76,26 @@ class DrawScreen:
 		else: 
 			#Move the arm 
 			print(self.positionMove)
+
 	def pick(self):
 		#Pick the piece
-		print("PICK")
+		print("> pick")
+		roboticPlayer.paser("pick")
+
 	def drop(self):
 		#drop the piece
-		print("DROP")
+		print("> drop")
+		roboticPlayer.paser("drop")
 
 
 def main():
+	# Starts the interpreter
+	roboticPlayer.initDevice("/dev/ttyUSB0", 115200)
 	window = Tk()
 	drawScreen = DrawScreen(window)
 	window.mainloop()
+	roboticPlayer.closeDevice()
+
 
 if __name__ == "__main__":
 	main()

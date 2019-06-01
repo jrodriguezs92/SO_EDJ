@@ -10,7 +10,7 @@
 #				Professor. Diego Vargas
 #********************************************************
 
-all: src python
+all: src python python3
 
 lib:
 		$(MAKE) -C lib
@@ -21,10 +21,14 @@ src: lib
 python:	
 		$(MAKE) -C python
 
+python3:	
+		$(MAKE) -C python3
+
 clean:
 		$(MAKE) -C lib clean
 		$(MAKE) -C src clean
 		$(MAKE) -C python clean
+		$(MAKE) -C python3 clean
 		clear
 
-.PHONY: all lib src python clean
+.PHONY: all lib src python python3 clean
